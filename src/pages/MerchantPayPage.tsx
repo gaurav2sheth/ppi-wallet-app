@@ -1,0 +1,104 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Header } from '../components/layout/Header';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { AmountInput } from '../components/ui/AmountInput';
+import { useAuthStore } from '../store/auth.store';
+import { useBalance } from '../hooks/useBalance';
+import { useTransaction } from '../hooks/useTransaction';
+import { sagaApi } from '../api/saga.api';
+import { formatPaise, rupeesToPaise } from '../utils/format';
+import { ROUTES } from '../utils/constants';
+
+export function MerchantPayPage() {
+  const navigate = useNavigate();
+  const { walletId } = useAuthStore();
+  const { availablePaise } = useBalance(walletId);
+  const { execute, isLoading, result, error, reset } = useTransaction();
+  const [merchantId, setMerchantId] = useState('');
+  const [amount, setAmount] = useState('');
+  const [step, setStep] = useState<'input' | 'result'>('input');
+
+  const paise = rupeesToPaise(amount);
+
+  const handlePay = async () => {
+    if (!walletId || !merchantId.trim() || paise <= 0) return;
+    try {
+      await execute(() => sagaApi.merchantPay(walletId, merchantId.trim(), paise));
+      setStep('result');
+    } catch {
+      setStep('result');
+    }
+  };
+
+  if (step === 'result') {
+    const success = result?.status === 'COMPLETED';
+    return (
+      <div className="page-enter">
+        <Header showBack title="Merchant Payment" />
+        <div className="px-4 pt-12 text-center space-y-6">
+          <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center ${success ? 'bg-green-50' : 'bg-red-50'}`}>
+            {success ? (
+              <svg width="40" height="40" fill="none" stroke="#4CAF50" strokeWidth="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            ) : (
+              <svg width="40" height="40" fill="none" stroke="#E53935" strokeWidth="3" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+            )}
+          </div>
+          <div>
+            <p className="text-xl font-bold">{success ? 'Payment Successful!' : 'Payment Failed'}</p>
+            <p className="text-2xl font-bold mt-2">{formatPaise(String(paise))}</p>
+            <p className="text-sm text-paytm-muted mt-1">to {merchantId}</p>
+            {!success && <p className="text-sm text-paytm-red mt-2">{error?.message ?? result?.error}</p>}
+          </div>
+          <div className="space-y-3">
+            <Button fullWidth onClick={() => navigate(ROUTES.HOME)}>Done</Button>
+            {!success && <Button fullWidth variant="outline" onClick={() => { reset(); setStep('input'); }}>Retry</Button>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-enter">
+      <Header showBack title="Pay Merchant" />
+      <div className="px-4 pt-6 space-y-6">
+        {/* QR Placeholder */}
+        <Card className="text-center py-8">
+          <div className="w-24 h-24 mx-auto border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center mb-3">
+            <svg width="40" height="40" fill="none" stroke="#8b949e" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+          </div>
+          <p className="text-sm text-paytm-muted">Scan QR Code</p>
+          <p className="text-xs text-paytm-muted mt-1">Camera not available in web preview</p>
+        </Card>
+
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-paytm-muted">Or pay using details</span><div className="flex-1 h-px bg-gray-200" />
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-medium text-paytm-muted mb-1 block">Merchant ID</label>
+            <input
+              value={merchantId}
+              onChange={e => setMerchantId(e.target.value)}
+              placeholder="Enter merchant ID"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors"
+            />
+          </div>
+          <AmountInput value={amount} onChange={setAmount} label="Amount" presets={[50, 100, 200, 500]} />
+          <Card className="!p-3 bg-gray-50">
+            <div className="flex justify-between text-xs">
+              <span className="text-paytm-muted">Available Balance</span>
+              <span className="font-semibold text-paytm-text">{formatPaise(availablePaise)}</span>
+            </div>
+          </Card>
+          <Button fullWidth loading={isLoading} disabled={!merchantId.trim() || paise <= 0} onClick={handlePay}>
+            Pay {paise > 0 ? formatPaise(String(paise)) : ''}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

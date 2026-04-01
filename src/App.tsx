@@ -1,0 +1,40 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AppShell, AuthGuard } from './components/layout/AppShell';
+import { LoginPage } from './pages/LoginPage';
+import { HomePage } from './pages/HomePage';
+import { WalletOverviewPage } from './pages/WalletOverviewPage';
+import { WalletDetailPage } from './pages/WalletDetailPage';
+import { AddMoneyPage } from './pages/AddMoneyPage';
+import { MerchantPayPage } from './pages/MerchantPayPage';
+import { SendMoneyPage } from './pages/SendMoneyPage';
+import { TransferToBankPage } from './pages/TransferToBankPage';
+import { BillPayPage } from './pages/BillPayPage';
+import { PassbookPage } from './pages/PassbookPage';
+import { KycStatusPage } from './pages/KycStatusPage';
+import { ProfilePage } from './pages/ProfilePage';
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route element={<AuthGuard />}>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/wallet" element={<WalletOverviewPage />} />
+            <Route path="/wallet/detail" element={<WalletDetailPage />} />
+            <Route path="/wallet/add-money" element={<AddMoneyPage />} />
+            <Route path="/pay" element={<MerchantPayPage />} />
+            <Route path="/send" element={<SendMoneyPage />} />
+            <Route path="/transfer-bank" element={<TransferToBankPage />} />
+            <Route path="/bill-pay" element={<BillPayPage />} />
+            <Route path="/passbook" element={<PassbookPage />} />
+            <Route path="/kyc" element={<KycStatusPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
