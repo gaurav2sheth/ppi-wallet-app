@@ -1,17 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
+import { Avatar } from '../components/ui/Avatar';
 import { useAuthStore } from '../store/auth.store';
 import { useBalance } from '../hooks/useBalance';
 import { useLedger } from '../hooks/useLedger';
 import { formatPaise, formatTime } from '../utils/format';
-import { ROUTES, TRANSACTION_TYPE_LABELS } from '../utils/constants';
+import { getMccCategory } from '../utils/mcc';
+import { ROUTES } from '../utils/constants';
 
 const actionItems = [
-  { label: 'Download Statement', icon: '📄', color: 'text-paytm-cyan', path: null },
+  { label: 'Download Statement', icon: '📄', color: 'text-paytm-cyan', path: '/wallet/statement' },
   { label: 'Send Money to Bank', icon: '🏦', color: 'text-paytm-cyan', path: ROUTES.TRANSFER_BANK },
   { label: 'Add money to Wallet', icon: '➕', color: 'text-paytm-cyan', path: ROUTES.ADD_MONEY },
-  { label: 'View Spend Analytics', icon: '📊', color: 'text-paytm-cyan', path: null },
+  { label: 'Automatic Add Money', icon: '🔄', color: 'text-paytm-cyan', path: null, badge: 'Active' },
+  { label: 'View Spend Analytics', icon: '📊', color: 'text-paytm-cyan', path: '/analytics' },
 ];
 
 export function WalletDetailPage() {
@@ -39,9 +42,9 @@ export function WalletDetailPage() {
               className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition active:bg-gray-100"
             >
               <span className="text-lg">{a.icon}</span>
-              <span className={`text-sm font-medium ${a.color}`}>{a.label}</span>
-              {a.label === 'Automatic Add Money' && (
-                <span className="ml-auto text-[10px] bg-orange-50 text-paytm-orange px-2 py-0.5 rounded-full font-semibold">Paused</span>
+              <span className={`text-sm font-medium flex-1 text-left ${a.color}`}>{a.label}</span>
+              {a.badge && (
+                <span className="text-[10px] bg-green-50 text-paytm-green px-2 py-0.5 rounded-full font-semibold">{a.badge}</span>
               )}
             </button>
           ))}
@@ -73,15 +76,11 @@ export function WalletDetailPage() {
             <div className="space-y-2">
               {entries.map(e => {
                 const isCredit = e.entry_type === 'CREDIT' || e.entry_type === 'HOLD_RELEASE';
-                const label = TRANSACTION_TYPE_LABELS[e.transaction_type] ?? e.transaction_type;
+                const mcc = getMccCategory(e.transaction_type, e.description, e.entry_type);
                 return (
                   <Card key={e.id} className="!p-3">
                     <div className="flex items-start gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-sm ${
-                        isCredit ? 'bg-green-50 text-paytm-green' : 'bg-red-50 text-paytm-red'
-                      }`}>
-                        {isCredit ? '↓' : '↑'}
-                      </div>
+                      <Avatar name={e.description ?? mcc.label} size="md" mcc={mcc} />
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start">
                           <p className="text-sm font-medium text-paytm-text truncate">
@@ -92,7 +91,10 @@ export function WalletDetailPage() {
                           </p>
                         </div>
                         <div className="flex justify-between items-center mt-1">
-                          <span className="text-[11px] text-paytm-muted">{formatTime(e.created_at)} · {label}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] text-paytm-muted">{formatTime(e.created_at)}</span>
+                            <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${mcc.bgColor} ${mcc.textColor}`}>{mcc.label}</span>
+                          </div>
                           <span className="text-[10px] text-paytm-muted">Bal: {formatPaise(e.balance_after_paise)}</span>
                         </div>
                       </div>

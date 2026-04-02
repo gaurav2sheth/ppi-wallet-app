@@ -4,7 +4,7 @@ import { LoginPage } from './pages/LoginPage';
 import { HomePage } from './pages/HomePage';
 import { WalletOverviewPage } from './pages/WalletOverviewPage';
 import { WalletDetailPage } from './pages/WalletDetailPage';
-import { AddMoneyPage } from './pages/AddMoneyPage';
+import { PaymentGatewayPage } from './pages/PaymentGatewayPage';
 import { MerchantPayPage } from './pages/MerchantPayPage';
 import { SendMoneyPage } from './pages/SendMoneyPage';
 import { TransferToBankPage } from './pages/TransferToBankPage';
@@ -12,6 +12,8 @@ import { BillPayPage } from './pages/BillPayPage';
 import { PassbookPage } from './pages/PassbookPage';
 import { KycStatusPage } from './pages/KycStatusPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { SpendAnalyticsPage } from './pages/SpendAnalyticsPage';
+import { WalletStatementPage } from './pages/WalletStatementPage';
 
 export default function App() {
   return (
@@ -23,7 +25,7 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/wallet" element={<WalletOverviewPage />} />
             <Route path="/wallet/detail" element={<WalletDetailPage />} />
-            <Route path="/wallet/add-money" element={<AddMoneyPage />} />
+            <Route path="/wallet/add-money" element={<PaymentGatewayPage />} />
             <Route path="/pay" element={<MerchantPayPage />} />
             <Route path="/send" element={<SendMoneyPage />} />
             <Route path="/transfer-bank" element={<TransferToBankPage />} />
@@ -31,6 +33,8 @@ export default function App() {
             <Route path="/passbook" element={<PassbookPage />} />
             <Route path="/kyc" element={<KycStatusPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/analytics" element={<SpendAnalyticsPage />} />
+            <Route path="/wallet/statement" element={<WalletStatementPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -2,9 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
 import { Avatar } from '../components/ui/Avatar';
+import { WalletStrip } from '../components/wallet/WalletStrip';
 import { useAuthStore } from '../store/auth.store';
-import { useBalance } from '../hooks/useBalance';
-import { formatPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
 
 const primaryActions = [
@@ -31,8 +30,7 @@ const billActions = [
 
 export function HomePage() {
   const navigate = useNavigate();
-  const { userName, walletId } = useAuthStore();
-  const { availablePaise, kycTier, isLoading } = useBalance(walletId);
+  const { userName } = useAuthStore();
 
   return (
     <div className="page-enter">
@@ -53,36 +51,8 @@ export function HomePage() {
       />
 
       <div className="px-4 pt-4 space-y-4">
-        {/* Wallet Balance Card */}
-        <Card className="bg-gradient-to-r from-paytm-navy to-[#00508F] text-white !rounded-2xl" onClick={() => navigate(ROUTES.WALLET)}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white/70 text-xs font-medium">Wallet Balance</p>
-              <p className="text-3xl font-bold mt-1">
-                {isLoading ? (
-                  <span className="inline-block w-32 h-8 bg-white/20 rounded animate-pulse" />
-                ) : (
-                  formatPaise(availablePaise)
-                )}
-              </p>
-              {kycTier && (
-                <span className={`inline-block mt-2 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                  kycTier === 'FULL' ? 'bg-green-400/20 text-green-200' : 'bg-orange-400/20 text-orange-200'
-                }`}>
-                  {kycTier === 'FULL' ? 'Full KYC' : 'Min KYC'}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
-                <svg width="24" height="24" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24">
-                  <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
-                </svg>
-              </div>
-              <span className="text-[10px] text-white/60">Tap to view</span>
-            </div>
-          </div>
-        </Card>
+        {/* Wallet Strip (UPI Lite style) */}
+        <WalletStrip />
 
         {/* UPI Money Transfer */}
         <Card>
@@ -108,26 +78,10 @@ export function HomePage() {
           <div className="grid grid-cols-4 gap-3">
             {billActions.map(a => (
               <button key={a.label} onClick={() => navigate(ROUTES.BILL_PAY)} className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
-                <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-xl">
-                  {a.icon}
-                </div>
+                <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-xl">{a.icon}</div>
                 <span className="text-[11px] font-medium text-paytm-text text-center leading-tight">{a.label}</span>
               </button>
             ))}
-          </div>
-        </Card>
-
-        {/* Add Money CTA */}
-        <Card className="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-100" onClick={() => navigate(ROUTES.ADD_MONEY)}>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-paytm-cyan/20 rounded-full flex items-center justify-center shrink-0">
-              <svg width="20" height="20" fill="none" stroke="#00BCD4" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-paytm-text">Add Money to Wallet</p>
-              <p className="text-xs text-paytm-muted">Instant top-up via UPI, Debit Card</p>
-            </div>
-            <svg width="20" height="20" fill="none" stroke="#8b949e" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
           </div>
         </Card>
 
@@ -138,9 +92,7 @@ export function HomePage() {
               <p className="font-bold text-sm">Get up to ₹200 Cashback</p>
               <p className="text-xs text-white/70 mt-1">On your first wallet transaction</p>
             </div>
-            <button className="bg-white text-blue-600 px-4 py-2 rounded-full text-xs font-bold">
-              Claim Now
-            </button>
+            <button className="bg-white text-blue-600 px-4 py-2 rounded-full text-xs font-bold">Claim Now</button>
           </div>
         </Card>
       </div>

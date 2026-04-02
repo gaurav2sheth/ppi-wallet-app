@@ -11,6 +11,8 @@ export const ROUTES = {
   PASSBOOK: '/passbook',
   KYC: '/kyc',
   PROFILE: '/profile',
+  ANALYTICS: '/analytics',
+  WALLET_STATEMENT: '/wallet/statement',
 } as const;
 
 export const STORAGE_KEYS = {

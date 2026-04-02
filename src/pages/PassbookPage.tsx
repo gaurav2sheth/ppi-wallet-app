@@ -7,7 +7,8 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { useAuthStore } from '../store/auth.store';
 import { useLedger } from '../hooks/useLedger';
 import { formatPaise, formatDate } from '../utils/format';
-import { TRANSACTION_TYPE_LABELS, TRANSACTION_TYPE_COLORS } from '../utils/constants';
+import { getMccCategory } from '../utils/mcc';
+import { TRANSACTION_TYPE_LABELS } from '../utils/constants';
 
 const filterOptions = [
   { label: 'All', value: '' },
@@ -58,42 +59,55 @@ export function PassbookPage() {
             <p className="text-sm text-paytm-muted">No transactions found</p>
           </Card>
         ) : (
-          Array.from(groupedEntries.entries()).map(([month, entries]) => (
-            <div key={month}>
-              <div className="flex justify-between items-center mb-2">
-                <p className="text-sm font-bold text-paytm-text">{month}</p>
-              </div>
-              <div className="space-y-2">
-                {entries.map(e => {
-                  const isCredit = e.entry_type === 'CREDIT' || e.entry_type === 'HOLD_RELEASE';
-                  const typeLabel = TRANSACTION_TYPE_LABELS[e.transaction_type] ?? e.transaction_type;
-                  const typeColor = TRANSACTION_TYPE_COLORS[e.transaction_type] ?? 'bg-gray-50 text-gray-700';
-                  const name = e.description ?? typeLabel;
+          Array.from(groupedEntries.entries()).map(([month, entries]) => {
+            const monthDebitTotal = entries
+              .filter(e => e.entry_type === 'DEBIT')
+              .reduce((sum, e) => sum + BigInt(e.amount_paise), 0n);
 
-                  return (
-                    <Card key={e.id} className="!p-3">
-                      <div className="flex items-start gap-3">
-                        <Avatar name={name} size="md" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start">
-                            <p className="text-sm font-medium text-paytm-text truncate pr-2">{name}</p>
-                            <p className={`text-sm font-bold shrink-0 ${isCredit ? 'text-paytm-green' : 'text-paytm-text'}`}>
-                              {isCredit ? '+' : '-'}{formatPaise(e.amount_paise)}
-                            </p>
+            return (
+              <div key={month}>
+                <div className="flex justify-between items-center mb-2">
+                  <p className="text-sm font-bold text-paytm-text">{month}</p>
+                  {monthDebitTotal > 0n && (
+                    <p className="text-[11px] text-paytm-muted">
+                      Spent <span className="font-semibold text-paytm-text">{formatPaise(monthDebitTotal.toString())}</span>
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  {entries.map(e => {
+                    const isCredit = e.entry_type === 'CREDIT' || e.entry_type === 'HOLD_RELEASE';
+                    const mcc = getMccCategory(e.transaction_type, e.description, e.entry_type);
+                    const typeLabel = TRANSACTION_TYPE_LABELS[e.transaction_type] ?? mcc.label;
+                    const name = e.description ?? typeLabel;
+
+                    return (
+                      <Card key={e.id} className="!p-3">
+                        <div className="flex items-start gap-3">
+                          <Avatar name={name} size="md" mcc={mcc} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start">
+                              <p className="text-sm font-medium text-paytm-text truncate pr-2">{name}</p>
+                              <p className={`text-sm font-bold shrink-0 ${isCredit ? 'text-paytm-green' : 'text-paytm-text'}`}>
+                                {isCredit ? '+' : '-'}{formatPaise(e.amount_paise)}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-[11px] text-paytm-muted">{formatDate(e.created_at)}</span>
+                              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${mcc.bgColor} ${mcc.textColor}`}>
+                                {mcc.label}
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-paytm-muted mt-1">Balance: {formatPaise(e.balance_after_paise)}</p>
                           </div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[11px] text-paytm-muted">{formatDate(e.created_at)}</span>
-                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${typeColor}`}>{typeLabel}</span>
-                          </div>
-                          <p className="text-[10px] text-paytm-muted mt-1">Balance: {formatPaise(e.balance_after_paise)}</p>
                         </div>
-                      </div>
-                    </Card>
-                  );
-                })}
+                      </Card>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
 
         <div ref={loaderRef}>
