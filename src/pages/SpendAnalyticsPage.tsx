@@ -24,7 +24,7 @@ export function SpendAnalyticsPage() {
   // Build conic-gradient for donut chart
   const donutGradient = (() => {
     if (analytics.categoryBreakdown.length === 0) return 'conic-gradient(#e5e7eb 0deg 360deg)';
-    const colors = ['#003D82', '#00BCD4', '#FF9800', '#4CAF50', '#E53935', '#9C27B0', '#FF5722', '#607D8B'];
+    const colors = ['#002E6E', '#00B9F1', '#FF9800', '#4CAF50', '#E53935', '#9C27B0', '#FF5722', '#607D8B'];
     const segments: string[] = [];
     let angle = 0;
     analytics.categoryBreakdown.forEach((cat, i) => {
@@ -37,7 +37,7 @@ export function SpendAnalyticsPage() {
     return `conic-gradient(${segments.join(', ')})`;
   })();
 
-  const colors = ['#003D82', '#00BCD4', '#FF9800', '#4CAF50', '#E53935', '#9C27B0', '#FF5722', '#607D8B'];
+  const colors = ['#002E6E', '#00B9F1', '#FF9800', '#4CAF50', '#E53935', '#9C27B0', '#FF5722', '#607D8B'];
   const maxDailySpend = analytics.dailySpend.reduce((max, d) => d.totalPaise > max ? d.totalPaise : max, 0n);
 
   return (

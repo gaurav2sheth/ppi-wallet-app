@@ -41,7 +41,7 @@ export function WalletStrip() {
               </p>
             </div>
             <div className="w-12 h-12 bg-paytm-navy/10 rounded-xl flex items-center justify-center">
-              <svg width="24" height="24" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24">
+              <svg width="24" height="24" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24">
                 <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
               </svg>
             </div>
@@ -116,7 +116,7 @@ export function WalletStrip() {
           {/* Payment Source */}
           <div className="flex items-center gap-2 p-2.5 border border-gray-100 rounded-lg">
             <div className="w-7 h-7 bg-blue-50 rounded-md flex items-center justify-center">
-              <svg width="14" height="14" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3" /></svg>
+              <svg width="14" height="14" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3" /></svg>
             </div>
             <div className="flex-1">
               <p className="text-[10px] text-paytm-muted">From</p>

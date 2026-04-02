@@ -114,7 +114,7 @@ export function WalletStatementPage() {
         {/* Info */}
         <Card className="!p-3 bg-blue-50/50 border border-blue-100">
           <div className="flex gap-2">
-            <svg width="16" height="16" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24" className="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+            <svg width="16" height="16" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24" className="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
             <p className="text-[11px] text-paytm-navy leading-relaxed">
               Statement will be sent as a PDF attachment. It includes all wallet transactions for the selected period.
             </p>

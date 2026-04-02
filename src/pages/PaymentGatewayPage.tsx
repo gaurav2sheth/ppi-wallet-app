@@ -102,7 +102,7 @@ export function PaymentGatewayPage() {
         {step === 'method' && (
           <>
             {/* Amount Summary */}
-            <Card className="bg-gradient-to-r from-paytm-navy to-[#00508F] text-white">
+            <Card className="bg-gradient-to-r from-paytm-navy to-[#004A8F] text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-white/70">Adding to Wallet</p>

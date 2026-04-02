@@ -35,12 +35,12 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-paytm-navy to-[#00508F] flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-gradient-to-br from-paytm-navy to-[#004A8F] flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-[380px]">
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#003D82" strokeWidth="2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#002E6E" strokeWidth="2">
               <rect x="2" y="7" width="20" height="14" rx="2" />
               <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
               <line x1="12" y1="12" x2="12" y2="16" /><line x1="10" y1="14" x2="14" y2="14" />

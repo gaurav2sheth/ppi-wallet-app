@@ -8,18 +8,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function Button({ variant = 'primary', size = 'md', loading, fullWidth, className, children, disabled, ...props }: ButtonProps) {
-  const base = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none';
+  const base = 'inline-flex items-center justify-center font-semibold rounded-full transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none';
   const variants = {
-    primary: 'bg-paytm-navy text-white hover:bg-paytm-navy-dark',
-    secondary: 'bg-paytm-cyan text-white hover:opacity-90',
-    outline: 'border-2 border-paytm-navy text-paytm-navy hover:bg-paytm-navy/5',
+    primary: 'bg-paytm-cyan text-white hover:brightness-110 shadow-sm',
+    secondary: 'bg-paytm-navy text-white hover:bg-paytm-navy-dark',
+    outline: 'border-2 border-paytm-cyan text-paytm-cyan hover:bg-paytm-cyan-light',
     danger: 'bg-paytm-red text-white hover:opacity-90',
-    ghost: 'text-paytm-navy hover:bg-paytm-navy/5',
+    ghost: 'text-paytm-cyan hover:bg-paytm-cyan-light',
   };
   const sizes = {
-    sm: 'px-4 py-2 text-sm',
+    sm: 'px-5 py-2 text-sm',
     md: 'px-6 py-3 text-base',
-    lg: 'px-8 py-4 text-lg',
+    lg: 'px-8 py-3.5 text-lg',
   };
 
   return (

@@ -9,16 +9,16 @@ import { ROUTES } from '../utils/constants';
 
 const quickActions = [
   { label: 'Pay', path: ROUTES.PAY, icon: (
-    <svg width="24" height="24" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+    <svg width="24" height="24" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
   )},
   { label: 'Transfer to Bank', path: ROUTES.TRANSFER_BANK, icon: (
-    <svg width="24" height="24" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3" /><path d="M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3" /></svg>
+    <svg width="24" height="24" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3" /><path d="M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3" /></svg>
   )},
   { label: 'FASTag', path: ROUTES.BILL_PAY, icon: (
-    <svg width="24" height="24" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><rect x="1" y="4" width="22" height="16" rx="2" /><path d="M1 10h22" /></svg>
+    <svg width="24" height="24" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><rect x="1" y="4" width="22" height="16" rx="2" /><path d="M1 10h22" /></svg>
   )},
   { label: 'Passbook', path: ROUTES.PASSBOOK, icon: (
-    <svg width="24" height="24" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" /></svg>
+    <svg width="24" height="24" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" /></svg>
   )},
 ];
 
@@ -49,7 +49,7 @@ export function WalletOverviewPage() {
         <Card className="text-center" onClick={() => navigate(ROUTES.WALLET_DETAIL)}>
           <p className="text-xs text-paytm-muted font-medium">Total Wallet Balance</p>
           <div className="flex items-center justify-center gap-2 mt-2">
-            <svg width="20" height="20" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24">
+            <svg width="20" height="20" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24">
               <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
             </svg>
             <span className="text-4xl font-bold text-paytm-text">
@@ -84,7 +84,7 @@ export function WalletOverviewPage() {
         <Card className="bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-100">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 bg-paytm-navy/10 rounded-full flex items-center justify-center shrink-0 mt-1">
-              <svg width="20" height="20" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+              <svg width="20" height="20" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
             </div>
             <div className="flex-1">
               <p className="font-bold text-sm text-paytm-text">Charter of Customer Rights</p>
@@ -104,7 +104,7 @@ export function WalletOverviewPage() {
             <p className="text-xs font-semibold text-paytm-muted tracking-wide">WALLET & NCMC CARD</p>
             <button className="text-xs font-semibold text-paytm-cyan">Manage</button>
           </div>
-          <div className="bg-gradient-to-r from-paytm-navy to-[#00508F] rounded-xl p-4 text-white">
+          <div className="bg-gradient-to-r from-paytm-navy to-[#004A8F] rounded-xl p-4 text-white">
             <p className="text-[10px] text-white/60 mb-1">Card Holder</p>
             <p className="font-semibold text-sm">{userName?.toUpperCase() ?? 'WALLET USER'}</p>
             <p className="text-xs text-white/60 mt-3 font-mono tracking-widest">•••• •••• •••• {walletId?.slice(-4) ?? '0000'}</p>

@@ -16,8 +16,8 @@ export function FilterPills({ options, selected, onSelect }: FilterPillsProps) {
           className={cn(
             'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors border',
             o.value === selected
-              ? 'bg-paytm-navy text-white border-paytm-navy'
-              : 'bg-white text-paytm-text border-gray-200 hover:border-paytm-navy/30'
+              ? 'bg-paytm-cyan text-white border-paytm-cyan'
+              : 'bg-white text-paytm-text border-paytm-border hover:border-paytm-cyan/40'
           )}
         >
           {o.label}

@@ -17,7 +17,7 @@ export function AmountInput({ value, onChange, presets = [100, 500, 1000, 2000],
   return (
     <div className="space-y-3">
       {label && <p className="text-sm text-paytm-muted font-medium">{label}</p>}
-      <div className="flex items-center gap-2 border-b-2 border-gray-200 focus-within:border-paytm-navy pb-2 transition-colors">
+      <div className="flex items-center gap-2 border-b-2 border-paytm-border focus-within:border-paytm-cyan pb-2 transition-colors">
         <span className="text-2xl text-paytm-muted font-light">₹</span>
         <input
           type="text"
@@ -37,8 +37,8 @@ export function AmountInput({ value, onChange, presets = [100, 500, 1000, 2000],
             className={cn(
               'px-4 py-2 rounded-full text-sm font-medium border transition-colors',
               value === p.toString()
-                ? 'bg-paytm-navy/10 border-paytm-navy text-paytm-navy'
-                : 'border-gray-200 text-paytm-text hover:border-paytm-navy/30'
+                ? 'bg-paytm-cyan-light border-paytm-cyan text-paytm-cyan'
+                : 'border-paytm-border text-paytm-text hover:border-paytm-cyan/40'
             )}
           >
             ₹{p.toLocaleString('en-IN')}

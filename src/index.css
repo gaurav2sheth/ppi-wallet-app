@@ -1,16 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paytm-navy: #003D82;
-  --color-paytm-navy-dark: #002D61;
-  --color-paytm-cyan: #00BCD4;
-  --color-paytm-green: #4CAF50;
+  /* Paytm PODS Design System Colors (Nov 2025 redesign) */
+  --color-paytm-navy: #002E6E;
+  --color-paytm-navy-dark: #001F4D;
+  --color-paytm-cyan: #00B9F1;
+  --color-paytm-cyan-light: #E6F7FE;
+  --color-paytm-green: #28A745;
   --color-paytm-red: #E53935;
   --color-paytm-orange: #FF9800;
-  --color-paytm-bg: #F5F7FA;
+  --color-paytm-bg: #F8F9FA;
   --color-paytm-surface: #FFFFFF;
-  --color-paytm-text: #1A1A2E;
-  --color-paytm-muted: #8b949e;
+  --color-paytm-text: #1A1A1A;
+  --color-paytm-muted: #707070;
+  --color-paytm-border: #E0E0E0;
   --font-family-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
@@ -18,10 +21,12 @@ html, body, #root {
   height: 100%;
   margin: 0;
   background: var(--color-paytm-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
 .page-enter { animation: fadeIn 0.2s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }

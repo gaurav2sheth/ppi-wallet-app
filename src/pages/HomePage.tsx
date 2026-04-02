@@ -13,7 +13,7 @@ const primaryActions = [
   { label: 'Pay Anyone', path: ROUTES.SEND, color: 'from-orange-400 to-orange-500', icon: (
     <svg width="28" height="28" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 014-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 01-4 4H3" /></svg>
   )},
-  { label: 'Bank Transfer', path: ROUTES.TRANSFER_BANK, color: 'from-paytm-navy to-[#00508F]', icon: (
+  { label: 'Bank Transfer', path: ROUTES.TRANSFER_BANK, color: 'from-paytm-navy to-[#004A8F]', icon: (
     <svg width="28" height="28" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><path d="M3 21h18" /><path d="M3 10h18" /><path d="M5 6l7-3 7 3" /><path d="M4 10v11" /><path d="M20 10v11" /><path d="M8 14v3" /><path d="M12 14v3" /><path d="M16 14v3" /></svg>
   )},
   { label: 'Balance & History', path: ROUTES.PASSBOOK, color: 'from-teal-500 to-teal-600', icon: (
@@ -39,10 +39,10 @@ export function HomePage() {
         rightActions={
           <div className="flex items-center gap-3">
             <button className="p-2 rounded-full hover:bg-gray-100 transition">
-              <svg width="20" height="20" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
+              <svg width="20" height="20" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
             </button>
             <button className="p-2 rounded-full hover:bg-gray-100 transition relative">
-              <svg width="20" height="20" fill="none" stroke="#003D82" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+              <svg width="20" height="20" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
               <span className="absolute top-1 right-1 w-2 h-2 bg-paytm-red rounded-full" />
             </button>
             {userName && <Avatar name={userName} size="sm" />}
@@ -56,7 +56,7 @@ export function HomePage() {
 
         {/* UPI Money Transfer */}
         <Card>
-          <p className="text-xs font-semibold text-paytm-muted mb-4 tracking-wide">UPI MONEY TRANSFER</p>
+          <p className="text-xs font-semibold text-paytm-muted mb-4 tracking-wide">MONEY TRANSFER</p>
           <div className="grid grid-cols-4 gap-3">
             {primaryActions.map(a => (
               <button key={a.label} onClick={() => navigate(a.path)} className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
