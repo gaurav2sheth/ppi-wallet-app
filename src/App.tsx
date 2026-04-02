@@ -14,6 +14,9 @@ import { KycStatusPage } from './pages/KycStatusPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SpendAnalyticsPage } from './pages/SpendAnalyticsPage';
 import { WalletStatementPage } from './pages/WalletStatementPage';
+import { TransactionDetailPage } from './pages/TransactionDetailPage';
+import { NotificationsPage } from './pages/NotificationsPage';
+import { BudgetPage } from './pages/BudgetPage';
 
 export default function App() {
   return (
@@ -35,6 +38,9 @@ export default function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/analytics" element={<SpendAnalyticsPage />} />
             <Route path="/wallet/statement" element={<WalletStatementPage />} />
+            <Route path="/transaction" element={<TransactionDetailPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/budget" element={<BudgetPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

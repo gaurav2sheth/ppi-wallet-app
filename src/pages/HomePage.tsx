@@ -4,6 +4,7 @@ import { Card } from '../components/ui/Card';
 import { Avatar } from '../components/ui/Avatar';
 import { WalletStrip } from '../components/wallet/WalletStrip';
 import { useAuthStore } from '../store/auth.store';
+import { useNotificationsStore } from '../store/notifications.store';
 import { ROUTES } from '../utils/constants';
 
 const primaryActions = [
@@ -31,6 +32,7 @@ const billActions = [
 export function HomePage() {
   const navigate = useNavigate();
   const { userName } = useAuthStore();
+  const unreadCount = useNotificationsStore(s => s.unreadCount);
 
   return (
     <div className="page-enter">
@@ -41,9 +43,13 @@ export function HomePage() {
             <button className="p-2 rounded-full hover:bg-gray-100 transition">
               <svg width="20" height="20" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
             </button>
-            <button className="p-2 rounded-full hover:bg-gray-100 transition relative">
+            <button onClick={() => navigate('/notifications')} className="p-2 rounded-full hover:bg-gray-100 transition relative">
               <svg width="20" height="20" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
-              <span className="absolute top-1 right-1 w-2 h-2 bg-paytm-red rounded-full" />
+              {unreadCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 bg-paytm-red rounded-full flex items-center justify-center text-[9px] text-white font-bold px-1">
+                  {unreadCount}
+                </span>
+              )}
             </button>
             {userName && <Avatar name={userName} size="sm" />}
           </div>

@@ -7,6 +7,7 @@ import { AmountInput } from '../components/ui/AmountInput';
 import { useAuthStore } from '../store/auth.store';
 import { useBalance } from '../hooks/useBalance';
 import { useTransaction } from '../hooks/useTransaction';
+import { PinModal } from '../components/ui/PinModal';
 import { sagaApi } from '../api/saga.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
@@ -15,7 +16,7 @@ export function MerchantPayPage() {
   const navigate = useNavigate();
   const { walletId } = useAuthStore();
   const { availablePaise } = useBalance(walletId);
-  const { execute, isLoading, result, error, reset } = useTransaction();
+  const { executeWithPin, onPinVerified, cancelPin, isPinPending, isLoading, result, error, reset } = useTransaction();
   const [merchantId, setMerchantId] = useState('');
   const [amount, setAmount] = useState('');
   const [step, setStep] = useState<'input' | 'result'>('input');
@@ -24,8 +25,12 @@ export function MerchantPayPage() {
 
   const handlePay = async () => {
     if (!walletId || !merchantId.trim() || paise <= 0) return;
+    executeWithPin(() => sagaApi.merchantPay(walletId, merchantId.trim(), paise));
+  };
+
+  const handlePinVerified = async () => {
     try {
-      await execute(() => sagaApi.merchantPay(walletId, merchantId.trim(), paise));
+      await onPinVerified();
       setStep('result');
     } catch {
       setStep('result');
@@ -62,6 +67,7 @@ export function MerchantPayPage() {
 
   return (
     <div className="page-enter">
+      <PinModal isOpen={isPinPending} onVerified={handlePinVerified} onCancel={cancelPin} title="Authorize Payment" />
       <Header showBack title="Pay Merchant" />
       <div className="px-4 pt-6 space-y-6">
         {/* QR Placeholder */}

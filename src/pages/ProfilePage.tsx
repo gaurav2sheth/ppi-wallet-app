@@ -11,9 +11,11 @@ import { ROUTES } from '../utils/constants';
 const menuItems = [
   { label: 'KYC Status', path: ROUTES.KYC, icon: '🛡️' },
   { label: 'Transaction History', path: ROUTES.PASSBOOK, icon: '📋' },
+  { label: 'Spend Analytics', path: '/analytics', icon: '📊' },
+  { label: 'Budget Controls', path: '/budget', icon: '🎯' },
   { label: 'Wallet Details', path: ROUTES.WALLET, icon: '💳' },
+  { label: 'Notifications', path: '/notifications', icon: '🔔' },
   { label: 'Help & Support', path: null, icon: '💬' },
-  { label: 'About', path: null, icon: 'ℹ️' },
 ];
 
 export function ProfilePage() {
