@@ -7,7 +7,9 @@ import { AmountInput } from '../components/ui/AmountInput';
 import { useAuthStore } from '../store/auth.store';
 import { useBalance } from '../hooks/useBalance';
 import { useTransaction } from '../hooks/useTransaction';
+import { usePayeesStore } from '../store/payees.store';
 import { PinModal } from '../components/ui/PinModal';
+import { RecentPayees } from '../components/wallet/RecentPayees';
 import { sagaApi } from '../api/saga.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
@@ -17,13 +19,14 @@ export function MerchantPayPage() {
   const { walletId } = useAuthStore();
   const { availablePaise } = useBalance(walletId);
   const { executeWithPin, onPinVerified, cancelPin, isPinPending, isLoading, result, error, reset } = useTransaction();
+  const addPayee = usePayeesStore(s => s.addPayee);
   const [merchantId, setMerchantId] = useState('');
   const [amount, setAmount] = useState('');
   const [step, setStep] = useState<'input' | 'result'>('input');
 
   const paise = rupeesToPaise(amount);
 
-  const handlePay = async () => {
+  const handlePay = () => {
     if (!walletId || !merchantId.trim() || paise <= 0) return;
     executeWithPin(() => sagaApi.merchantPay(walletId, merchantId.trim(), paise));
   };
@@ -31,6 +34,7 @@ export function MerchantPayPage() {
   const handlePinVerified = async () => {
     try {
       await onPinVerified();
+      addPayee({ id: merchantId.trim(), name: merchantId.trim(), type: 'merchant', detail: merchantId.trim() });
       setStep('result');
     } catch {
       setStep('result');
@@ -78,6 +82,9 @@ export function MerchantPayPage() {
           <p className="text-sm text-paytm-muted">Scan QR Code</p>
           <p className="text-xs text-paytm-muted mt-1">Camera not available in web preview</p>
         </Card>
+
+        {/* Recent Merchants */}
+        <RecentPayees type="merchant" onSelect={(p) => setMerchantId(p.detail)} />
 
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-paytm-muted">Or pay using details</span><div className="flex-1 h-px bg-gray-200" />

@@ -7,6 +7,7 @@ import { AmountInput } from '../components/ui/AmountInput';
 import { useAuthStore } from '../store/auth.store';
 import { useBalance } from '../hooks/useBalance';
 import { useTransaction } from '../hooks/useTransaction';
+import { PinModal } from '../components/ui/PinModal';
 import { sagaApi } from '../api/saga.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
@@ -27,7 +28,7 @@ export function PaymentGatewayPage() {
   const presetAmount = searchParams.get('amount');
   const { walletId } = useAuthStore();
   const { availablePaise } = useBalance(walletId);
-  const { execute, isLoading, result, error, reset } = useTransaction();
+  const { executeWithPin, onPinVerified, cancelPin, isPinPending, isLoading, result, error, reset } = useTransaction();
 
   const [amount, setAmount] = useState(presetAmount ?? '');
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('upi');
@@ -43,14 +44,16 @@ export function PaymentGatewayPage() {
     { id: 'paylater', label: 'Paytm Postpaid', subtitle: 'Pay next month', icon: '📅', available: false },
   ];
 
-  const handlePay = async () => {
+  const handlePay = () => {
     if (!walletId || paise <= 0) return;
+    executeWithPin(() => sagaApi.addMoney(walletId, paise));
+  };
+
+  const handlePinVerified = async () => {
     try {
-      await execute(() => sagaApi.addMoney(walletId, paise));
+      await onPinVerified();
       setStep('result');
-    } catch {
-      setStep('result');
-    }
+    } catch { setStep('result'); }
   };
 
   if (step === 'result') {
@@ -83,6 +86,7 @@ export function PaymentGatewayPage() {
 
   return (
     <div className="page-enter">
+      <PinModal isOpen={isPinPending} onVerified={handlePinVerified} onCancel={cancelPin} title="Authorize Payment" />
       <Header showBack title="Add Money to Wallet" />
       <div className="px-4 pt-6 space-y-5">
         {step === 'amount' && (

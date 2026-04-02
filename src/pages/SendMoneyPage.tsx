@@ -4,9 +4,12 @@ import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { AmountInput } from '../components/ui/AmountInput';
+import { PinModal } from '../components/ui/PinModal';
+import { RecentPayees } from '../components/wallet/RecentPayees';
 import { useAuthStore } from '../store/auth.store';
 import { useBalance } from '../hooks/useBalance';
 import { useTransaction } from '../hooks/useTransaction';
+import { usePayeesStore } from '../store/payees.store';
 import { sagaApi } from '../api/saga.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
@@ -15,14 +18,14 @@ export function SendMoneyPage() {
   const navigate = useNavigate();
   const { walletId } = useAuthStore();
   const { availablePaise, kycTier } = useBalance(walletId);
-  const { execute, isLoading, result, error, reset } = useTransaction();
+  const { executeWithPin, onPinVerified, cancelPin, isPinPending, isLoading, result, error, reset } = useTransaction();
+  const addPayee = usePayeesStore(s => s.addPayee);
   const [beneficiaryId, setBeneficiaryId] = useState('');
   const [amount, setAmount] = useState('');
   const [step, setStep] = useState<'input' | 'result'>('input');
 
   const paise = rupeesToPaise(amount);
 
-  // P2P requires FULL KYC
   if (kycTier === 'MINIMUM') {
     return (
       <div className="page-enter">
@@ -42,10 +45,15 @@ export function SendMoneyPage() {
     );
   }
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!walletId || !beneficiaryId.trim() || paise <= 0) return;
+    executeWithPin(() => sagaApi.p2pTransfer(walletId, beneficiaryId.trim(), paise));
+  };
+
+  const handlePinVerified = async () => {
     try {
-      await execute(() => sagaApi.p2pTransfer(walletId, beneficiaryId.trim(), paise));
+      await onPinVerified();
+      addPayee({ id: beneficiaryId.trim(), name: `Wallet ${beneficiaryId.slice(0, 6)}...`, type: 'p2p', detail: beneficiaryId.trim() });
       setStep('result');
     } catch {
       setStep('result');
@@ -60,7 +68,7 @@ export function SendMoneyPage() {
         <div className="px-4 pt-12 text-center space-y-6">
           <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center ${success ? 'bg-green-50' : 'bg-red-50'}`}>
             {success ? (
-              <svg width="40" height="40" fill="none" stroke="#4CAF50" strokeWidth="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <svg width="40" height="40" fill="none" stroke="#28A745" strokeWidth="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             ) : (
               <svg width="40" height="40" fill="none" stroke="#E53935" strokeWidth="3" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
             )}
@@ -79,15 +87,19 @@ export function SendMoneyPage() {
 
   return (
     <div className="page-enter">
+      <PinModal isOpen={isPinPending} onVerified={handlePinVerified} onCancel={cancelPin} title="Authorize Transfer" />
       <Header showBack title="Send Money" />
-      <div className="px-4 pt-6 space-y-6">
+      <div className="px-4 pt-6 space-y-5">
+        {/* Recent Payees */}
+        <RecentPayees type="p2p" onSelect={(p) => setBeneficiaryId(p.detail)} />
+
         <div>
           <label className="text-xs font-medium text-paytm-muted mb-1 block">Beneficiary Wallet ID</label>
           <input
             value={beneficiaryId}
             onChange={e => setBeneficiaryId(e.target.value)}
             placeholder="Enter wallet UUID"
-            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors font-mono text-sm"
+            className="w-full border-2 border-paytm-border rounded-xl px-4 py-3 outline-none focus:border-paytm-cyan transition-colors font-mono text-sm"
           />
         </div>
         <AmountInput value={amount} onChange={setAmount} label="Amount" />

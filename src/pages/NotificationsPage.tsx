@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
 import { useNotificationsStore, type Notification } from '../store/notifications.store';
@@ -12,7 +13,13 @@ const typeColors: Record<string, string> = {
 };
 
 export function NotificationsPage() {
+  const navigate = useNavigate();
   const { items, markRead, markAllRead, unreadCount } = useNotificationsStore();
+
+  const handleTap = (n: Notification) => {
+    markRead(n.id);
+    if (n.actionPath) navigate(n.actionPath);
+  };
 
   return (
     <div className="page-enter">
@@ -36,7 +43,7 @@ export function NotificationsPage() {
             <Card
               key={n.id}
               className={`!p-3 ${!n.read ? 'border-l-3 border-l-paytm-cyan' : ''}`}
-              onClick={() => markRead(n.id)}
+              onClick={() => handleTap(n)}
             >
               <div className="flex items-start gap-3">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0 ${typeColors[n.type] ?? 'bg-gray-50'}`}>
@@ -48,7 +55,17 @@ export function NotificationsPage() {
                     {!n.read && <span className="w-2 h-2 bg-paytm-cyan rounded-full shrink-0 mt-1.5" />}
                   </div>
                   <p className="text-xs text-paytm-muted mt-0.5 leading-relaxed">{n.body}</p>
-                  <p className="text-[10px] text-paytm-muted mt-1">{formatDate(n.createdAt)}</p>
+                  <div className="flex items-center justify-between mt-1.5">
+                    <p className="text-[10px] text-paytm-muted">{formatDate(n.createdAt)}</p>
+                    {n.actionLabel && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); markRead(n.id); if (n.actionPath) navigate(n.actionPath); }}
+                        className="text-[11px] font-semibold text-paytm-cyan bg-paytm-cyan-light px-3 py-1 rounded-full"
+                      >
+                        {n.actionLabel}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </Card>

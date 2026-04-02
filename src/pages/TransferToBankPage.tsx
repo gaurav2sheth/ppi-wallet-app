@@ -4,9 +4,12 @@ import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { AmountInput } from '../components/ui/AmountInput';
+import { PinModal } from '../components/ui/PinModal';
+import { RecentPayees } from '../components/wallet/RecentPayees';
 import { useAuthStore } from '../store/auth.store';
 import { useBalance } from '../hooks/useBalance';
 import { useTransaction } from '../hooks/useTransaction';
+import { usePayeesStore } from '../store/payees.store';
 import { sagaApi } from '../api/saga.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
@@ -17,7 +20,8 @@ export function TransferToBankPage() {
   const navigate = useNavigate();
   const { walletId } = useAuthStore();
   const { availablePaise } = useBalance(walletId);
-  const { execute, isLoading, result, error, reset } = useTransaction();
+  const { executeWithPin, onPinVerified, cancelPin, isPinPending, isLoading, result, error, reset } = useTransaction();
+  const addPayee = usePayeesStore(s => s.addPayee);
   const [bankAccount, setBankAccount] = useState('');
   const [ifsc, setIfsc] = useState('');
   const [amount, setAmount] = useState('');
@@ -29,21 +33,21 @@ export function TransferToBankPage() {
   const validateIfsc = (v: string) => {
     const upper = v.toUpperCase();
     setIfsc(upper);
-    if (upper.length === 11 && !IFSC_REGEX.test(upper)) {
-      setIfscError('Invalid IFSC format (e.g., HDFC0001234)');
-    } else {
-      setIfscError('');
-    }
+    if (upper.length === 11 && !IFSC_REGEX.test(upper)) setIfscError('Invalid IFSC format (e.g., HDFC0001234)');
+    else setIfscError('');
   };
 
-  const handleTransfer = async () => {
+  const handleTransfer = () => {
     if (!walletId || !bankAccount.trim() || !IFSC_REGEX.test(ifsc) || paise <= 0) return;
+    executeWithPin(() => sagaApi.walletToBank(walletId, paise, bankAccount.trim(), ifsc));
+  };
+
+  const handlePinVerified = async () => {
     try {
-      await execute(() => sagaApi.walletToBank(walletId, paise, bankAccount.trim(), ifsc));
+      await onPinVerified();
+      addPayee({ id: bankAccount.trim(), name: `A/C ${bankAccount.slice(-4)}`, type: 'bank', detail: `${bankAccount} · ${ifsc}` });
       setStep('result');
-    } catch {
-      setStep('result');
-    }
+    } catch { setStep('result'); }
   };
 
   if (step === 'result') {
@@ -54,7 +58,7 @@ export function TransferToBankPage() {
         <div className="px-4 pt-12 text-center space-y-6">
           <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center ${success ? 'bg-green-50' : 'bg-red-50'}`}>
             {success ? (
-              <svg width="40" height="40" fill="none" stroke="#4CAF50" strokeWidth="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <svg width="40" height="40" fill="none" stroke="#28A745" strokeWidth="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             ) : (
               <svg width="40" height="40" fill="none" stroke="#E53935" strokeWidth="3" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
             )}
@@ -74,29 +78,20 @@ export function TransferToBankPage() {
 
   return (
     <div className="page-enter">
+      <PinModal isOpen={isPinPending} onVerified={handlePinVerified} onCancel={cancelPin} title="Authorize Transfer" />
       <Header showBack title="Transfer to Bank" />
       <div className="px-4 pt-6 space-y-5">
+        <RecentPayees type="bank" onSelect={(p) => { const [acct, code] = p.detail.split(' · '); setBankAccount(acct); if (code) setIfsc(code); }} />
+
         <div>
           <label className="text-xs font-medium text-paytm-muted mb-1 block">Bank Account Number</label>
-          <input
-            value={bankAccount}
-            onChange={e => setBankAccount(e.target.value.replace(/\D/g, ''))}
-            maxLength={20}
-            placeholder="Enter account number"
-            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors"
-          />
+          <input value={bankAccount} onChange={e => setBankAccount(e.target.value.replace(/\D/g, ''))} maxLength={20} placeholder="Enter account number"
+            className="w-full border-2 border-paytm-border rounded-xl px-4 py-3 outline-none focus:border-paytm-cyan transition-colors" />
         </div>
         <div>
           <label className="text-xs font-medium text-paytm-muted mb-1 block">IFSC Code</label>
-          <input
-            value={ifsc}
-            onChange={e => validateIfsc(e.target.value)}
-            maxLength={11}
-            placeholder="e.g. HDFC0001234"
-            className={`w-full border-2 rounded-xl px-4 py-3 outline-none transition-colors uppercase ${
-              ifscError ? 'border-paytm-red' : 'border-gray-200 focus:border-paytm-navy'
-            }`}
-          />
+          <input value={ifsc} onChange={e => validateIfsc(e.target.value)} maxLength={11} placeholder="e.g. HDFC0001234"
+            className={`w-full border-2 rounded-xl px-4 py-3 outline-none transition-colors uppercase ${ifscError ? 'border-paytm-red' : 'border-paytm-border focus:border-paytm-cyan'}`} />
           {ifscError && <p className="text-xs text-paytm-red mt-1">{ifscError}</p>}
         </div>
         <AmountInput value={amount} onChange={setAmount} label="Amount" presets={[500, 1000, 5000, 10000]} />
@@ -106,12 +101,7 @@ export function TransferToBankPage() {
             <span className="font-semibold">{formatPaise(availablePaise)}</span>
           </div>
         </Card>
-        <Button
-          fullWidth
-          loading={isLoading}
-          disabled={!bankAccount.trim() || !IFSC_REGEX.test(ifsc) || paise <= 0}
-          onClick={handleTransfer}
-        >
+        <Button fullWidth loading={isLoading} disabled={!bankAccount.trim() || !IFSC_REGEX.test(ifsc) || paise <= 0} onClick={handleTransfer}>
           Transfer {paise > 0 ? formatPaise(String(paise)) : ''}
         </Button>
       </div>

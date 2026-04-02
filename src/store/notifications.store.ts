@@ -8,6 +8,8 @@ export interface Notification {
   type: 'credit' | 'debit' | 'reward' | 'alert' | 'info';
   read: boolean;
   createdAt: string;
+  actionPath?: string; // Route to navigate on tap
+  actionLabel?: string; // Button label
 }
 
 interface NotificationsState {
@@ -20,10 +22,11 @@ interface NotificationsState {
 
 export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   items: [
-    { id: '1', title: 'Welcome to Paytm Wallet', body: 'Your wallet is ready. Add money to get started!', icon: '👋', type: 'info', read: false, createdAt: new Date(Date.now() - 3600000).toISOString() },
-    { id: '2', title: 'KYC Verified', body: 'Your Full KYC is complete. Enjoy higher limits!', icon: '✅', type: 'info', read: true, createdAt: new Date(Date.now() - 86400000).toISOString() },
+    { id: '1', title: 'Welcome to Paytm Wallet', body: 'Your wallet is ready. Add money to get started!', icon: '👋', type: 'info', read: false, createdAt: new Date(Date.now() - 3600000).toISOString(), actionPath: '/wallet/add-money', actionLabel: 'Add Money' },
+    { id: '2', title: 'KYC Verified', body: 'Your Full KYC is complete. Enjoy higher limits!', icon: '✅', type: 'info', read: true, createdAt: new Date(Date.now() - 86400000).toISOString(), actionPath: '/kyc', actionLabel: 'View KYC' },
+    { id: '3', title: 'Set your budget', body: 'Track spending by category. Set monthly limits to stay on target.', icon: '🎯', type: 'info', read: false, createdAt: new Date(Date.now() - 7200000).toISOString(), actionPath: '/budget', actionLabel: 'Set Budget' },
   ],
-  unreadCount: 1,
+  unreadCount: 2,
 
   add: (n) => {
     const notification: Notification = {

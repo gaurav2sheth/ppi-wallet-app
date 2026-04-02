@@ -7,6 +7,7 @@ import { AmountInput } from '../components/ui/AmountInput';
 import { useAuthStore } from '../store/auth.store';
 import { useBalance } from '../hooks/useBalance';
 import { useTransaction } from '../hooks/useTransaction';
+import { PinModal } from '../components/ui/PinModal';
 import { sagaApi } from '../api/saga.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
@@ -24,7 +25,7 @@ export function BillPayPage() {
   const navigate = useNavigate();
   const { walletId } = useAuthStore();
   const { availablePaise } = useBalance(walletId);
-  const { execute, isLoading, result, error, reset } = useTransaction();
+  const { executeWithPin, onPinVerified, cancelPin, isPinPending, isLoading, result, error, reset } = useTransaction();
   const [category, setCategory] = useState('');
   const [billerId, setBillerId] = useState('');
   const [billerRef, setBillerRef] = useState('');
@@ -33,14 +34,16 @@ export function BillPayPage() {
 
   const paise = rupeesToPaise(amount);
 
-  const handlePay = async () => {
+  const handlePay = () => {
     if (!walletId || !billerId.trim() || !billerRef.trim() || paise <= 0) return;
+    executeWithPin(() => sagaApi.billPay(walletId, billerId.trim(), billerRef.trim(), paise));
+  };
+
+  const handlePinVerified = async () => {
     try {
-      await execute(() => sagaApi.billPay(walletId, billerId.trim(), billerRef.trim(), paise));
+      await onPinVerified();
       setStep('result');
-    } catch {
-      setStep('result');
-    }
+    } catch { setStep('result'); }
   };
 
   if (step === 'result') {
@@ -70,6 +73,7 @@ export function BillPayPage() {
 
   return (
     <div className="page-enter">
+      <PinModal isOpen={isPinPending} onVerified={handlePinVerified} onCancel={cancelPin} title="Authorize Bill Payment" />
       <Header showBack title="Bill Payment" />
       <div className="px-4 pt-6 space-y-5">
         {/* Categories */}

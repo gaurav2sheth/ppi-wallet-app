@@ -38,6 +38,8 @@ export function useTransaction() {
           body: `${isCredit ? 'Added' : 'Paid'} ${formatPaise((res.result as Record<string, string>)?.balance_after_paise ?? '0')} via ${type.replace(/_/g, ' ').toLowerCase()}`,
           icon: isCredit ? '💰' : '✅',
           type: isCredit ? 'credit' : 'debit',
+          actionPath: '/passbook',
+          actionLabel: 'View History',
         });
       }
 
