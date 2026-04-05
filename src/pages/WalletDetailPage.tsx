@@ -97,6 +97,9 @@ export function WalletDetailPage() {
                           </div>
                           <span className="text-[10px] text-paytm-muted">Bal: {formatPaise(e.balance_after_paise)}</span>
                         </div>
+                        {e.payment_source && (
+                          <p className="text-[9px] text-paytm-cyan font-medium mt-0.5">via {e.payment_source}</p>
+                        )}
                       </div>
                     </div>
                   </Card>

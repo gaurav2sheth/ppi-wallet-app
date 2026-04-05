@@ -96,6 +96,7 @@ export function TransactionDetailPage() {
             <DetailRow label="Category" value={`${mcc.icon} ${mcc.label}`} />
             <DetailRow label="Date & Time" value={formatDate(txn.created_at)} />
             <DetailRow label="Balance After" value={formatPaise(txn.balance_after_paise)} />
+            {txn.payment_source && <DetailRow label="Payment Source" value={txn.payment_source} />}
             {txn.reference_id && <DetailRow label="Reference ID" value={txn.reference_id} mono />}
             <DetailRow label="Idempotency Key" value={truncateId(txn.idempotency_key, 20)} mono />
           </div>

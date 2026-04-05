@@ -3,18 +3,18 @@ import { mockApi } from './mock';
 import { generateIdempotencyKey } from '../utils/idempotency';
 import type { SagaResponse } from '../types/api.types';
 
-async function sagaPost(path: string, body: Record<string, unknown>, sagaType: string, amountPaise: number, isCredit: boolean, description?: string): Promise<SagaResponse> {
+async function sagaPost(path: string, body: Record<string, unknown>, sagaType: string, amountPaise: number, isCredit: boolean, description?: string, paymentSource?: string): Promise<SagaResponse> {
   try {
     return await api.post(path, { ...body, idempotency_key: generateIdempotencyKey() });
   } catch (err) {
-    if (!apiReachable) return mockApi.sagaSuccess(sagaType, amountPaise, isCredit, description);
+    if (!apiReachable) return mockApi.sagaSuccess(sagaType, amountPaise, isCredit, description, paymentSource);
     throw err;
   }
 }
 
 export const sagaApi = {
-  addMoney: (wallet_id: string, amount_paise: number) =>
-    sagaPost('/saga/add-money', { wallet_id, amount_paise }, 'ADD_MONEY', amount_paise, true, 'Wallet Top-up'),
+  addMoney: (wallet_id: string, amount_paise: number, paymentSource?: string) =>
+    sagaPost('/saga/add-money', { wallet_id, amount_paise }, 'ADD_MONEY', amount_paise, true, 'Wallet Top-up', paymentSource),
 
   merchantPay: (wallet_id: string, merchant_id: string, amount_paise: number) =>
     sagaPost('/saga/merchant-pay', { wallet_id, merchant_id, amount_paise }, 'MERCHANT_PAY', amount_paise, false, `Payment to ${merchant_id}`),

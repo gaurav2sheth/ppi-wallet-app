@@ -43,9 +43,16 @@ export function PaymentGatewayPage() {
     { id: 'paylater', label: 'Paytm Postpaid', subtitle: 'Pay next month', icon: '📅', available: false },
   ];
 
+  const getSourceLabel = () => {
+    const method = paymentMethods.find(m => m.id === selectedMethod);
+    if (!method) return undefined;
+    if (selectedMethod === 'upi') return 'UPI - HDFC Bank 7125';
+    return method.label;
+  };
+
   const handlePay = () => {
     if (!walletId || paise <= 0) return;
-    executeWithPin(() => sagaApi.addMoney(walletId, paise));
+    executeWithPin(() => sagaApi.addMoney(walletId, paise, getSourceLabel()));
   };
 
   const handlePinVerified = async () => {

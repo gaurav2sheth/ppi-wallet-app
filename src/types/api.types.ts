@@ -28,6 +28,7 @@ export interface LedgerEntry {
   idempotency_key: string;
   hold_id: string | null;
   created_at: string;
+  payment_source?: string; // e.g. "UPI - HDFC Bank", "Debit Card", "Net Banking"
 }
 
 export interface LedgerResponse {

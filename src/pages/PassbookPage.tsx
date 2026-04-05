@@ -138,7 +138,12 @@ export function PassbookPage() {
                                 {mcc.label}
                               </span>
                             </div>
-                            <p className="text-[10px] text-paytm-muted mt-1">Balance: {formatPaise(e.balance_after_paise)}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <p className="text-[10px] text-paytm-muted">Balance: {formatPaise(e.balance_after_paise)}</p>
+                              {e.payment_source && (
+                                <span className="text-[9px] text-paytm-cyan font-medium">via {e.payment_source}</span>
+                              )}
+                            </div>
                           </div>
                           <svg width="14" height="14" fill="none" stroke="#ccc" strokeWidth="2" viewBox="0 0 24 24" className="shrink-0 mt-2"><path d="M9 18l6-6-6-6" /></svg>
                         </div>
