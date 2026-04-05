@@ -9,6 +9,7 @@ import { formatPaise, truncateId } from '../utils/format';
 import { ROUTES } from '../utils/constants';
 
 const menuItems = [
+  { label: 'Rewards & Cashback', path: '/rewards', icon: '🎁' },
   { label: 'KYC Status', path: ROUTES.KYC, icon: '🛡️' },
   { label: 'Transaction History', path: ROUTES.PASSBOOK, icon: '📋' },
   { label: 'Spend Analytics', path: '/analytics', icon: '📊' },

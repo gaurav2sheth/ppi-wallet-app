@@ -5,6 +5,7 @@ import { Avatar } from '../components/ui/Avatar';
 import { WalletStrip } from '../components/wallet/WalletStrip';
 import { useAuthStore } from '../store/auth.store';
 import { useNotificationsStore } from '../store/notifications.store';
+import { useRewardsStore } from '../store/rewards.store';
 import { ROUTES } from '../utils/constants';
 
 const primaryActions = [
@@ -33,6 +34,8 @@ export function HomePage() {
   const navigate = useNavigate();
   const { userName } = useAuthStore();
   const unreadCount = useNotificationsStore(s => s.unreadCount);
+  const totalCashback = useRewardsStore(s => s.totalCashback);
+  const scratchCardCount = useRewardsStore(s => s.scratchCards.length);
 
   return (
     <div className="page-enter">
@@ -88,6 +91,26 @@ export function HomePage() {
                 <span className="text-[11px] font-medium text-paytm-text text-center leading-tight">{a.label}</span>
               </button>
             ))}
+          </div>
+        </Card>
+
+        {/* Rewards Strip */}
+        <Card className="!py-2.5 !px-4" onClick={() => navigate('/rewards')}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base">🎁</span>
+                <span className="text-[11px] text-paytm-muted">Cashback:</span>
+                <span className="text-[11px] font-bold text-paytm-text">₹{(totalCashback / 100).toFixed(totalCashback % 100 === 0 ? 0 : 2)}</span>
+              </div>
+              <div className="w-px h-4 bg-paytm-border" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-base">🎰</span>
+                <span className="text-[11px] text-paytm-muted">Cards:</span>
+                <span className="text-[11px] font-bold text-paytm-text">{scratchCardCount}</span>
+              </div>
+            </div>
+            <svg width="14" height="14" fill="none" stroke="#707070" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
           </div>
         </Card>
 
