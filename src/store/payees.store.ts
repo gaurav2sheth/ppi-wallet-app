@@ -6,7 +6,7 @@ export interface Payee {
   id: string;
   name: string;
   type: 'p2p' | 'merchant' | 'bank';
-  detail: string; // wallet ID, merchant ID, or account number
+  detail: string;
   lastUsed: string;
   count: number;
 }
@@ -14,7 +14,6 @@ export interface Payee {
 interface PayeesState {
   payees: Payee[];
   addPayee: (payee: Omit<Payee, 'lastUsed' | 'count'>) => void;
-  getRecent: (type?: Payee['type']) => Payee[];
   hydrate: () => void;
 }
 
@@ -38,11 +37,6 @@ export const usePayeesStore = create<PayeesState>((set, get) => ({
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payees));
   },
 
-  getRecent: (type) => {
-    const all = get().payees;
-    return type ? all.filter(p => p.type === type) : all;
-  },
-
   hydrate: () => {
     try {
       const stored = sessionStorage.getItem(STORAGE_KEY);
@@ -50,3 +44,8 @@ export const usePayeesStore = create<PayeesState>((set, get) => ({
     } catch { /* ignore */ }
   },
 }));
+
+// Selector helper — use outside of store to avoid infinite loop
+export function selectPayeesByType(payees: Payee[], type: Payee['type']): Payee[] {
+  return payees.filter(p => p.type === type);
+}

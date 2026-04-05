@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Avatar } from '../ui/Avatar';
 import { usePayeesStore, type Payee } from '../../store/payees.store';
 import { truncateId } from '../../utils/format';
@@ -8,15 +9,16 @@ interface RecentPayeesProps {
 }
 
 export function RecentPayees({ type, onSelect }: RecentPayeesProps) {
-  const recent = usePayeesStore(s => s.getRecent(type));
+  const payees = usePayeesStore(s => s.payees);
+  const filtered = useMemo(() => payees.filter(p => p.type === type), [payees, type]);
 
-  if (recent.length === 0) return null;
+  if (filtered.length === 0) return null;
 
   return (
     <div>
       <p className="text-xs font-semibold text-paytm-muted mb-2 tracking-wide">RECENT</p>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-        {recent.slice(0, 6).map(p => (
+        {filtered.slice(0, 6).map(p => (
           <button
             key={`${p.type}-${p.id}`}
             onClick={() => onSelect(p)}
