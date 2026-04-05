@@ -12,7 +12,7 @@ import { sagaApi } from '../api/saga.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
 
-type PaymentMethod = 'wallet' | 'upi' | 'card' | 'netbanking' | 'paylater';
+type PaymentMethod = 'upi' | 'card' | 'netbanking' | 'paylater';
 
 interface PayMethod {
   id: PaymentMethod;
@@ -37,7 +37,6 @@ export function PaymentGatewayPage() {
   const paise = rupeesToPaise(amount);
 
   const paymentMethods: PayMethod[] = [
-    { id: 'wallet', label: 'Paytm Wallet', subtitle: `Balance: ${formatPaise(availablePaise)}`, icon: '💳', available: true },
     { id: 'upi', label: 'UPI', subtitle: 'HDFC Bank - 7125', icon: '🏧', available: true },
     { id: 'card', label: 'Debit / Credit Card', subtitle: 'Visa, Mastercard, RuPay', icon: '💎', available: true },
     { id: 'netbanking', label: 'Net Banking', subtitle: '50+ banks supported', icon: '🏦', available: true },
