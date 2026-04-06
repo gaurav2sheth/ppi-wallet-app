@@ -1,5 +1,6 @@
 import type { WalletBalanceResponse, LedgerResponse, LedgerEntry, SagaResponse, KycStatusResponse, LimitsUsageResponse, WalletStatusResponse } from '../types/api.types';
 import { v4 as uuidv4 } from 'uuid';
+import { syncTransaction, syncBalanceUpdate } from '../utils/sync';
 
 const DEMO_WALLET_ID = 'demo-wallet';
 const STORAGE_KEY_LEDGER = '__mock_ledger';
@@ -134,9 +135,27 @@ export const mockApi = {
     ledger.unshift(entry);
     saveLedger(ledger);
 
+    const sagaId = uuidv4();
+
+    // Sync to admin dashboard
+    const walletId = localStorage.getItem('ppsl_wallet_id') ?? DEMO_WALLET_ID;
+    const userName = localStorage.getItem('ppsl_user_name') ?? 'Demo User';
+    syncTransaction({
+      saga_id: sagaId,
+      wallet_id: walletId,
+      user_name: userName,
+      saga_type: type,
+      status: 'COMPLETED',
+      amount_paise: amountPaise.toString(),
+      description: description ?? (isCredit ? 'Wallet Top-up' : 'Payment'),
+      entry_type: isCredit ? 'CREDIT' : 'DEBIT',
+      counterparty: description ?? '',
+    });
+    syncBalanceUpdate(walletId, bal.toString(), 'FULL');
+
     return {
       success: true,
-      saga_id: uuidv4(),
+      saga_id: sagaId,
       saga_type: type,
       status: 'COMPLETED',
       result: { balance_after_paise: bal.toString() },

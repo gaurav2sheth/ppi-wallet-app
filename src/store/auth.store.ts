@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { STORAGE_KEYS } from '../utils/constants';
+import { syncUserLogin } from '../utils/sync';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -25,6 +26,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.setItem(STORAGE_KEYS.WALLET_ID, walletId);
     localStorage.setItem(STORAGE_KEYS.USER_ID, userId);
     set({ isAuthenticated: true, phone, userName: name, walletId, userId });
+    // Sync user to admin dashboard
+    syncUserLogin({ wallet_id: walletId, user_id: userId, name, phone, kyc_tier: 'MINIMUM', kyc_state: 'MIN_KYC' });
   },
 
   logout: () => {
