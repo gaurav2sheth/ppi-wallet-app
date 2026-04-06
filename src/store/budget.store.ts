@@ -40,7 +40,7 @@ export const useBudgetStore = create<BudgetState>((set, get) => ({
 
   hydrate: () => {
     try {
-      const stored = sessionStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const data = JSON.parse(stored);
         set({ limits: data.limits ?? [], monthlyCapPaise: data.monthlyCapPaise ?? 0 });
@@ -50,5 +50,5 @@ export const useBudgetStore = create<BudgetState>((set, get) => ({
 }));
 
 function persist(state: { limits: BudgetLimit[]; monthlyCapPaise: number }) {
-  sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ limits: state.limits, monthlyCapPaise: state.monthlyCapPaise }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ limits: state.limits, monthlyCapPaise: state.monthlyCapPaise }));
 }

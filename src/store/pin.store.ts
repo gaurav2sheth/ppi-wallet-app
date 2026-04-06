@@ -15,7 +15,7 @@ export const usePinStore = create<PinState>((set, get) => ({
   pin: null,
 
   setPin: (pin: string) => {
-    sessionStorage.setItem(STORAGE_KEY, pin);
+    localStorage.setItem(STORAGE_KEY, pin);
     set({ isSet: true, pin });
   },
 
@@ -24,7 +24,7 @@ export const usePinStore = create<PinState>((set, get) => ({
   },
 
   hydrate: () => {
-    const stored = sessionStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) set({ isSet: true, pin: stored });
   },
 }));

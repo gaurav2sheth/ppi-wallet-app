@@ -34,12 +34,12 @@ export const usePayeesStore = create<PayeesState>((set, get) => ({
     }
     payees = payees.sort((a, b) => new Date(b.lastUsed).getTime() - new Date(a.lastUsed).getTime()).slice(0, 20);
     set({ payees });
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payees));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payees));
   },
 
   hydrate: () => {
     try {
-      const stored = sessionStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) set({ payees: JSON.parse(stored) });
     } catch { /* ignore */ }
   },

@@ -31,27 +31,27 @@ function createSeedLedger(): LedgerEntry[] {
   ];
 }
 
-// --- Persistence helpers using sessionStorage ---
+// --- Persistence helpers using localStorage (survives tab close & browser restart) ---
 function loadLedger(): LedgerEntry[] {
   try {
-    const stored = sessionStorage.getItem(STORAGE_KEY_LEDGER);
+    const stored = localStorage.getItem(STORAGE_KEY_LEDGER);
     if (stored) return JSON.parse(stored);
   } catch { /* ignore */ }
   const seed = createSeedLedger();
-  sessionStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(seed));
+  localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(seed));
   return seed;
 }
 
 function saveLedger(ledger: LedgerEntry[]) {
-  sessionStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
+  localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
 }
 
 function loadBalance(): string {
-  return sessionStorage.getItem(STORAGE_KEY_BALANCE) ?? DEFAULT_BALANCE;
+  return localStorage.getItem(STORAGE_KEY_BALANCE) ?? DEFAULT_BALANCE;
 }
 
 function saveBalance(paise: string) {
-  sessionStorage.setItem(STORAGE_KEY_BALANCE, paise);
+  localStorage.setItem(STORAGE_KEY_BALANCE, paise);
 }
 
 export const mockApi = {
