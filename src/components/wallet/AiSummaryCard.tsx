@@ -2,34 +2,83 @@ import { useState } from 'react';
 import { Card } from '../ui/Card';
 import { walletApi } from '../../api/wallet.api';
 import { useAuthStore } from '../../store/auth.store';
+import type { LedgerEntry } from '../../types/api.types';
 import axios from 'axios';
+
+function formatPaise(paise: string): string {
+  return '₹' + (Number(paise) / 100).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+}
+
+/** Generates a plain-English summary from ledger entries without needing an API */
+function generateLocalSummary(entries: LedgerEntry[]): string {
+  if (entries.length === 0) return 'No transactions found to summarise.';
+
+  const debits = entries.filter(e => e.entry_type === 'DEBIT');
+  const credits = entries.filter(e => e.entry_type === 'CREDIT');
+  const totalSpent = debits.reduce((sum, e) => sum + Number(e.amount_paise), 0);
+  const totalReceived = credits.reduce((sum, e) => sum + Number(e.amount_paise), 0);
+
+  const largest = [...entries].sort((a, b) => Number(b.amount_paise) - Number(a.amount_paise))[0];
+  const highValue = entries.filter(e => Number(e.amount_paise) >= 500000); // ≥ ₹5,000
+
+  const lines: string[] = [];
+  lines.push(`You had ${entries.length} transactions recently — ${debits.length} debits totalling ${formatPaise(totalSpent.toString())} and ${credits.length} credits totalling ${formatPaise(totalReceived.toString())}.`);
+  lines.push(`Largest transaction: ${formatPaise(largest.amount_paise)} (${largest.description}) on ${formatDate(largest.created_at)}.`);
+
+  if (highValue.length > 0) {
+    lines.push(`${highValue.length} high-value transaction${highValue.length > 1 ? 's' : ''} above ₹5,000 detected.`);
+  }
+
+  const typeCount: Record<string, number> = {};
+  for (const e of debits) typeCount[e.transaction_type] = (typeCount[e.transaction_type] || 0) + 1;
+  const topType = Object.entries(typeCount).sort((a, b) => b[1] - a[1])[0];
+  if (topType) {
+    const label = topType[0].replace(/_/g, ' ').toLowerCase();
+    lines.push(`Most frequent spend category: ${label} (${topType[1]} transactions).`);
+  }
+
+  return lines.join('\n');
+}
 
 export function AiSummaryCard() {
   const [summary, setSummary] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAiSummary, setIsAiSummary] = useState(false);
   const walletId = useAuthStore(s => s.walletId);
 
   const handleGenerate = async () => {
     setLoading(true);
     setError(null);
     setSummary(null);
+    setIsAiSummary(false);
 
     try {
       // Fetch recent transactions from the wallet's ledger
       const ledger = await walletApi.getLedger(walletId ?? 'demo-wallet', { limit: 30 });
 
-      const res = await axios.post('/api/summarise-transactions', {
-        transactions: ledger.entries.map(e => ({
-          entry_type: e.entry_type,
-          transaction_type: e.transaction_type,
-          amount_paise: e.amount_paise,
-          description: e.description,
-          created_at: e.created_at,
-        })),
-      }, { timeout: 30000 });
+      // Try Claude API via server-side middleware first
+      try {
+        const res = await axios.post('/api/summarise-transactions', {
+          transactions: ledger.entries.map(e => ({
+            entry_type: e.entry_type,
+            transaction_type: e.transaction_type,
+            amount_paise: e.amount_paise,
+            description: e.description,
+            created_at: e.created_at,
+          })),
+        }, { timeout: 30000 });
 
-      setSummary(res.data.summary);
+        setSummary(res.data.summary);
+        setIsAiSummary(true);
+      } catch {
+        // Fallback: generate summary locally (works on static deployments)
+        setSummary(generateLocalSummary(ledger.entries));
+      }
     } catch (err: any) {
       const msg = err?.response?.data?.error || err?.message || 'Failed to generate summary';
       setError(msg);
@@ -98,7 +147,7 @@ export function AiSummaryCard() {
       )}
 
       <div className="flex justify-end mt-2">
-        <span className="text-[9px] text-paytm-muted">Powered by Claude</span>
+        <span className="text-[9px] text-paytm-muted">{isAiSummary ? 'Powered by Claude' : 'Smart Summary'}</span>
       </div>
     </Card>
   );
