@@ -83,6 +83,51 @@ function walletSyncPlugin() {
         }
       })
 
+      // POST /api/chat — Natural language AI chat (server-side, agentic tool loop)
+      server.middlewares.use('/api/chat', (req: any, res: any) => {
+        if (req.method === 'OPTIONS') {
+          res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'Content-Type' })
+          res.end()
+          return
+        }
+        if (req.method !== 'POST') {
+          res.writeHead(405, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ error: 'Method not allowed' }))
+          return
+        }
+
+        let body = ''
+        req.on('data', (chunk: Buffer) => { body += chunk.toString() })
+        req.on('end', async () => {
+          res.setHeader('Content-Type', 'application/json')
+          try {
+            const { message } = JSON.parse(body)
+            if (!message || typeof message !== 'string') {
+              res.writeHead(400)
+              res.end(JSON.stringify({ error: 'Message is required' }))
+              return
+            }
+
+            const env = loadEnvFile()
+            const apiKey = process.env.ANTHROPIC_API_KEY || env['ANTHROPIC_API_KEY'] || ''
+            if (!apiKey || apiKey === 'your_key_here') {
+              res.writeHead(500)
+              res.end(JSON.stringify({ error: 'ANTHROPIC_API_KEY is not configured.' }))
+              return
+            }
+
+            const { handleChat } = await import('../mcp/chat-handler.js')
+            const reply = await handleChat(message, apiKey, 'user')
+            res.writeHead(200)
+            res.end(JSON.stringify({ reply }))
+          } catch (err: any) {
+            console.error('[Chat] Error:', err?.message || err)
+            res.writeHead(502)
+            res.end(JSON.stringify({ error: `Chat error: ${err?.message || 'Unknown error'}` }))
+          }
+        })
+      })
+
       // POST /api/summarise-transactions — Claude AI transaction summariser (server-side)
       server.middlewares.use('/api/summarise-transactions', (req: any, res: any) => {
         if (req.method === 'OPTIONS') {
