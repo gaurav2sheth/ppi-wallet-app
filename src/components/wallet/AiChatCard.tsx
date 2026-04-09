@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '../ui/Card';
+import { mockApi } from '../../api/mock';
+import { useAuthStore } from '../../store/auth.store';
+import { useWalletStore } from '../../store/wallet.store';
+import type { LedgerEntry } from '../../types/api.types';
 import axios from 'axios';
 
 interface ChatMessage {
@@ -13,19 +17,72 @@ const SUGGESTED_QUESTIONS = [
   'How much did I spend this week?',
 ];
 
-/** Local fallback responses when Claude API is unavailable (e.g. GitHub Pages) */
-function getLocalResponse(message: string): string {
+function formatPaise(paise: string | number): string {
+  return '₹' + (Number(paise) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function daysAgoLabel(iso: string): string {
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  if (diff === 0) return 'today';
+  if (diff === 1) return '1 day ago';
+  return `${diff} days ago`;
+}
+
+/** Local fallback responses built from real app data */
+function getLocalResponse(message: string, walletId: string, userName: string, balancePaise: string, kycTier: string): string {
   const lower = message.toLowerCase();
+
   if (lower.includes('balance')) {
-    return 'Your wallet balance is approximately ₹23,611.00. Your account status is ACTIVE with Full KYC verified. For the most accurate balance, please check the Balance & History section.';
+    return `Your wallet balance is ${formatPaise(balancePaise)}. Your account status is ACTIVE with ${kycTier} KYC verified.`;
   }
+
   if (lower.includes('transaction') || lower.includes('history') || lower.includes('recent') || lower.includes('spent') || lower.includes('spend')) {
-    return 'Here\'s a quick overview of your recent activity:\n\n• ₹10,000.00 — Wallet top-up via UPI (1 day ago)\n• ₹899.00 — Food delivery - Swiggy (2 days ago)\n• ₹5,000.00 — P2P transfer to Priya Sharma (3 days ago)\n• ₹12,000.00 — Online purchase - Amazon (5 days ago)\n\nYour total spending in the last 7 days is around ₹17,899. For detailed history, visit the Passbook section.';
+    const ledger = mockApi.getLedger(walletId, { limit: 30 });
+    const entries = ledger.entries;
+    if (entries.length === 0) return 'No transactions found in your wallet yet.';
+
+    const debits = entries.filter(e => e.entry_type === 'DEBIT');
+    const credits = entries.filter(e => e.entry_type === 'CREDIT');
+    const totalSpent = debits.reduce((s, e) => s + Number(e.amount_paise), 0);
+    const totalReceived = credits.reduce((s, e) => s + Number(e.amount_paise), 0);
+
+    const recentLines = entries.slice(0, 6).map(e => {
+      const sign = e.entry_type === 'CREDIT' ? '+' : '-';
+      return `• ${sign}${formatPaise(e.amount_paise)} — ${e.description || e.transaction_type} (${daysAgoLabel(e.created_at)})`;
+    });
+
+    const spendingAnalysis = getSpendingAnalysis(debits);
+
+    return `Here's your recent wallet activity, ${userName}:\n\n${recentLines.join('\n')}\n\nSummary: ${debits.length} debits totalling ${formatPaise(totalSpent)} and ${credits.length} credits totalling ${formatPaise(totalReceived)}.${spendingAnalysis}`;
   }
+
   if (lower.includes('help') || lower.includes('what can')) {
-    return 'I can help you with:\n\n• Checking your wallet balance\n• Viewing recent transactions\n• Understanding your spending patterns\n\nTry asking "What is my balance?" or "Show my recent transactions".';
+    return `I can help you with:\n\n• Checking your wallet balance (currently ${formatPaise(balancePaise)})\n• Viewing recent transactions\n• Understanding your spending patterns\n\nTry asking "What is my balance?" or "Show my recent transactions".`;
   }
-  return 'I can help you check your balance, view transactions, and understand your spending. Try asking something like "What is my balance?" or "Show my recent transactions".\n\n(Note: Full AI chat requires a local dev server with an Anthropic API key configured.)';
+
+  // Default: show a summary with real data
+  const ledger = mockApi.getLedger(walletId, { limit: 10 });
+  const lastTxn = ledger.entries[0];
+  const lastTxnInfo = lastTxn
+    ? `\n\nYour last transaction: ${lastTxn.entry_type === 'CREDIT' ? '+' : '-'}${formatPaise(lastTxn.amount_paise)} — ${lastTxn.description || lastTxn.transaction_type} (${daysAgoLabel(lastTxn.created_at)})`
+    : '';
+
+  return `Hi ${userName}! Your current balance is ${formatPaise(balancePaise)}.${lastTxnInfo}\n\nI can help you check your balance, view transactions, and understand your spending. Try asking something specific!`;
+}
+
+function getSpendingAnalysis(debits: LedgerEntry[]): string {
+  if (debits.length === 0) return '';
+  const typeCount: Record<string, { count: number; total: number }> = {};
+  for (const d of debits) {
+    const type = d.transaction_type;
+    if (!typeCount[type]) typeCount[type] = { count: 0, total: 0 };
+    typeCount[type].count++;
+    typeCount[type].total += Number(d.amount_paise);
+  }
+  const sorted = Object.entries(typeCount).sort((a, b) => b[1].total - a[1].total);
+  const topCategory = sorted[0];
+  const label = topCategory[0].replace(/_/g, ' ').toLowerCase();
+  return `\n\nTop spend category: ${label} (${topCategory[1].count} txns, ${formatPaise(topCategory[1].total)}).`;
 }
 
 export function AiChatCard() {
@@ -34,6 +91,9 @@ export function AiChatCard() {
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const walletId = useAuthStore(s => s.walletId);
+  const userName = useAuthStore(s => s.userName);
+  const { balancePaise, kycTier } = useWalletStore();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -50,8 +110,9 @@ export function AiChatCard() {
       const res = await axios.post('/api/chat', { message: text.trim() }, { timeout: 30000 });
       setMessages(prev => [...prev, { role: 'assistant', text: res.data.reply }]);
     } catch {
-      // Fallback: local response for static deployments
-      setMessages(prev => [...prev, { role: 'assistant', text: getLocalResponse(text) }]);
+      // Fallback: use real data from the app's mock layer
+      const reply = getLocalResponse(text, walletId ?? 'demo-wallet', userName ?? 'User', balancePaise ?? '0', kycTier ?? 'FULL');
+      setMessages(prev => [...prev, { role: 'assistant', text: reply }]);
     } finally {
       setLoading(false);
     }
