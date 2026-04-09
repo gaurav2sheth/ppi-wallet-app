@@ -3,6 +3,7 @@ import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
 import { Avatar } from '../components/ui/Avatar';
 import { WalletStrip } from '../components/wallet/WalletStrip';
+import { AiSummaryCard } from '../components/wallet/AiSummaryCard';
 import { useAuthStore } from '../store/auth.store';
 import { useNotificationsStore } from '../store/notifications.store';
 import { useRewardsStore } from '../store/rewards.store';
@@ -113,6 +114,9 @@ export function HomePage() {
             <svg width="14" height="14" fill="none" stroke="#707070" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
           </div>
         </Card>
+
+        {/* AI Spending Insights */}
+        <AiSummaryCard />
 
         {/* Promo Banner */}
         <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
