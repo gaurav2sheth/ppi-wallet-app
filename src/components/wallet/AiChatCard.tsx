@@ -108,7 +108,24 @@ export function AiChatCard() {
 
     try {
       const apiBase = import.meta.env.VITE_API_URL || '';
-      const res = await axios.post(`${apiBase}/api/chat?role=user`, { message: text.trim() }, { timeout: 30000 });
+      // Send app context so AI responses match what the user sees
+      const ledger = mockApi.getLedger(walletId ?? 'demo-wallet', { limit: 15 });
+      const context = {
+        balance_paise: balancePaise ?? '0',
+        balance_formatted: formatPaise(balancePaise ?? '0'),
+        user_name: userName ?? 'User',
+        kyc_tier: kycTier ?? 'FULL',
+        recent_transactions: ledger.entries.map(e => ({
+          entry_type: e.entry_type,
+          amount_paise: e.amount_paise,
+          amount_formatted: formatPaise(e.amount_paise),
+          description: e.description,
+          transaction_type: e.transaction_type,
+          created_at: e.created_at,
+          days_ago: Math.floor((Date.now() - new Date(e.created_at).getTime()) / 86400000),
+        })),
+      };
+      const res = await axios.post(`${apiBase}/api/chat?role=user`, { message: text.trim(), context }, { timeout: 30000 });
       setMessages(prev => [...prev, { role: 'assistant', text: res.data.reply }]);
     } catch {
       // Fallback: use real data from the app's mock layer
