@@ -107,7 +107,8 @@ export function AiChatCard() {
     setLoading(true);
 
     try {
-      const res = await axios.post('/api/chat', { message: text.trim() }, { timeout: 30000 });
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const res = await axios.post(`${apiBase}/api/chat?role=user`, { message: text.trim() }, { timeout: 30000 });
       setMessages(prev => [...prev, { role: 'assistant', text: res.data.reply }]);
     } catch {
       // Fallback: use real data from the app's mock layer

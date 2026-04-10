@@ -63,7 +63,8 @@ export function AiSummaryCard() {
 
       // Try Claude API via server-side middleware first
       try {
-        const res = await axios.post('/api/summarise-transactions', {
+        const apiBase = import.meta.env.VITE_API_URL || '';
+        const res = await axios.post(`${apiBase}/api/summarise-transactions?role=user`, {
           transactions: ledger.entries.map(e => ({
             entry_type: e.entry_type,
             transaction_type: e.transaction_type,
