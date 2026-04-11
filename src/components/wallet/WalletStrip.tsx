@@ -113,7 +113,11 @@ export function WalletStrip() {
                     </div>
                     <div className="text-left">
                       <span className="text-sm font-medium text-paytm-text">{sw.label} Wallet</span>
+                      {sw.is_security_deposit && <span className="ml-1 text-[8px] text-paytm-muted font-normal">(Deposit)</span>}
                       {isExpired && <span className="ml-1.5 text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold">EXPIRED</span>}
+                      {sw.is_security_deposit && (sw.security_deposit_used_paise || 0) > 0 && (
+                        <span className="ml-1.5 text-[8px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-bold">LOW</span>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">

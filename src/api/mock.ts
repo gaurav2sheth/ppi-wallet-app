@@ -137,7 +137,7 @@ export function mockGetMaxLoadRoom(): { max_room: number; current_balance: numbe
 }
 
 // ── Sub-Wallet Mock Data ────────────────────────────────────────────────────
-const STORAGE_KEY_SUB_WALLETS = '__mock_sub_wallets';
+const STORAGE_KEY_SUB_WALLETS = '__mock_sub_wallets_v2'; // v2: NCMC balance cap + FASTag security deposit model
 
 export interface SubWallet {
   sub_wallet_id: string;
@@ -154,6 +154,13 @@ export interface SubWallet {
   expiry_date: string | null;
   eligible_categories: string[];
   transactions: SubWalletTxn[];
+  // NCMC-specific: max balance cap (₹3,000)
+  max_balance_paise?: number;
+  // FASTag-specific: security deposit model
+  is_security_deposit?: boolean;
+  vehicle_count?: number;
+  security_deposit_per_vehicle_paise?: number;
+  security_deposit_used_paise?: number;
 }
 
 export interface SubWalletTxn {
@@ -186,28 +193,34 @@ const DEFAULT_SUB_WALLETS: SubWallet[] = [
   {
     sub_wallet_id: 'SW-demo-NCMC_TRANSIT',
     type: 'NCMC TRANSIT', icon: '🚇', color: '#6366F1', label: 'NCMC Transit',
-    balance_paise: 80000, status: 'ACTIVE',
-    monthly_limit_paise: 200000, monthly_loaded_paise: 200000,
+    balance_paise: 180000, status: 'ACTIVE',
+    monthly_limit_paise: 0, monthly_loaded_paise: 0,
+    max_balance_paise: 300000, // ₹3,000 max balance cap
     loaded_by: 'employer_001', last_loaded_at: ts(5, 9, 0), expiry_date: null,
     eligible_categories: ['Metro', 'Bus', 'Local train', 'Parking', 'Transit', 'Travel'],
     transactions: [
       { txn_id: 'SWTXN-T001', amount_paise: 6000, type: 'debit', merchant: 'Mumbai Metro', merchant_category: 'Transit', description: 'Metro ride - Andheri to BKC', timestamp: ts(0, 9, 0), status: 'success' },
       { txn_id: 'SWTXN-T002', amount_paise: 4000, type: 'debit', merchant: 'BEST Bus', merchant_category: 'Transit', description: 'Bus ticket', timestamp: ts(1, 8, 30), status: 'success' },
       { txn_id: 'SWTXN-T003', amount_paise: 10000, type: 'debit', merchant: 'Mumbai Metro', merchant_category: 'Transit', description: 'Metro monthly pass', timestamp: ts(3, 9, 0), status: 'success' },
-      { txn_id: 'SWTXN-T004', amount_paise: 200000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'NCMC TRANSIT benefit - Monthly Benefits', timestamp: ts(5, 9, 0), status: 'success' },
+      { txn_id: 'SWTXN-T004', amount_paise: 200000, type: 'credit', merchant: 'Self (Main Wallet)', merchant_category: 'Wallet Transfer', description: 'NCMC wallet top-up', timestamp: ts(5, 9, 0), status: 'success' },
     ],
   },
   {
     sub_wallet_id: 'SW-demo-FASTAG',
     type: 'FASTAG', icon: '🛣️', color: '#10B981', label: 'FASTag',
-    balance_paise: 50000, status: 'ACTIVE',
-    monthly_limit_paise: 1000000, monthly_loaded_paise: 100000,
-    loaded_by: 'employer_001', last_loaded_at: ts(10, 9, 0), expiry_date: null,
+    balance_paise: 60000, status: 'ACTIVE', // Security deposit: 2 vehicles × ₹300
+    monthly_limit_paise: 0, monthly_loaded_paise: 0,
+    is_security_deposit: true,
+    vehicle_count: 2,
+    security_deposit_per_vehicle_paise: 30000, // ₹300 per vehicle
+    security_deposit_used_paise: 0, // None used yet
+    loaded_by: 'self', last_loaded_at: ts(10, 9, 0), expiry_date: null,
     eligible_categories: ['NHAI toll plazas', 'FASTag recharge portals', 'Toll', 'FASTag'],
     transactions: [
-      { txn_id: 'SWTXN-FT01', amount_paise: 15000, type: 'debit', merchant: 'NHAI Toll', merchant_category: 'Toll', description: 'Mumbai-Pune Expressway toll', timestamp: ts(1, 11, 0), status: 'success' },
-      { txn_id: 'SWTXN-FT02', amount_paise: 10000, type: 'debit', merchant: 'NHAI Toll', merchant_category: 'Toll', description: 'Bandra-Worli Sea Link toll', timestamp: ts(4, 15, 0), status: 'success' },
-      { txn_id: 'SWTXN-FT03', amount_paise: 100000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'FASTAG benefit load', timestamp: ts(10, 9, 0), status: 'success' },
+      { txn_id: 'SWTXN-FT01', amount_paise: 15000, type: 'debit', merchant: 'NHAI Toll', merchant_category: 'Toll', description: 'Mumbai-Pune Expressway toll (Main Wallet)', timestamp: ts(1, 11, 0), status: 'success' },
+      { txn_id: 'SWTXN-FT02', amount_paise: 10000, type: 'debit', merchant: 'NHAI Toll', merchant_category: 'Toll', description: 'Bandra-Worli Sea Link toll (Main Wallet)', timestamp: ts(4, 15, 0), status: 'success' },
+      { txn_id: 'SWTXN-FT03', amount_paise: 30000, type: 'credit', merchant: 'System', merchant_category: 'Security Deposit', description: 'FASTag security deposit - Vehicle 2 (MH-04-AB-1234)', timestamp: ts(10, 9, 0), status: 'success' },
+      { txn_id: 'SWTXN-FT04', amount_paise: 30000, type: 'credit', merchant: 'System', merchant_category: 'Security Deposit', description: 'FASTag security deposit - Vehicle 1 (MH-02-CD-5678)', timestamp: ts(60, 9, 0), status: 'success' },
     ],
   },
   {
@@ -309,52 +322,159 @@ export function mockFindBestSubWallet(merchantCategory: string): SubWallet | nul
   return null;
 }
 
-/** Add money to a sub-wallet (FASTag, NCMC Transit, Gift) - self-load from main wallet */
-export function mockAddMoneyToSubWallet(type: string, amountPaise: number): { success: boolean; message: string; new_balance?: number } {
+/**
+ * Add money to a sub-wallet — handles 3 different models:
+ *
+ * NCMC TRANSIT: Self-load from main wallet, capped at ₹3,000 balance.
+ *               Only NCMC balance is used for NCMC transactions.
+ *
+ * FASTAG:       "Add Money" loads the MAIN wallet (not FASTag sub-wallet).
+ *               Sub-wallet holds security deposit only (₹300/vehicle).
+ *               If security deposit was partially used, refill it first,
+ *               then add the rest to main wallet.
+ *
+ * GIFT:         Self-load from main wallet, no cap.
+ */
+export function mockAddMoneyToSubWallet(type: string, amountPaise: number): { success: boolean; message: string; new_balance?: number; detail?: string } {
   const sws = loadSubWallets();
   const sw = sws.find(s => s.type === type);
   if (!sw) return { success: false, message: 'Sub-wallet not found' };
   if (sw.status !== 'ACTIVE') return { success: false, message: 'Sub-wallet is not active' };
 
-  // Only allow self-load for FASTag, NCMC Transit, Gift
   const selfLoadTypes = ['FASTAG', 'NCMC TRANSIT', 'GIFT'];
   if (!selfLoadTypes.includes(type)) return { success: false, message: 'Self-load not allowed for this wallet type' };
 
-  // Check main wallet balance
+  const ledger = loadLedger();
   const mainBalancePaise = Number(loadBalance());
-  if (amountPaise > mainBalancePaise) return { success: false, message: 'Insufficient main wallet balance' };
 
-  // Check monthly limit for non-GIFT
-  if (sw.monthly_limit_paise > 0) {
-    const remaining = sw.monthly_limit_paise - sw.monthly_loaded_paise;
-    if (amountPaise > remaining) return { success: false, message: `Exceeds monthly limit. Max ₹${(remaining / 100).toLocaleString('en-IN')} remaining.` };
+  // ─── FASTAG: Add Money goes to main wallet; refill security deposit first ───
+  if (type === 'FASTAG') {
+    // FASTag "Add Money" is a normal wallet top-up (like Add Money from bank)
+    // If security deposit was used, refill it first
+    const depositUsed = sw.security_deposit_used_paise || 0;
+    let depositRefill = 0;
+    let mainWalletAdd = amountPaise;
+
+    if (depositUsed > 0) {
+      depositRefill = Math.min(depositUsed, amountPaise);
+      mainWalletAdd = amountPaise - depositRefill;
+      sw.balance_paise += depositRefill;
+      sw.security_deposit_used_paise = depositUsed - depositRefill;
+    }
+
+    // Add rest to main wallet
+    const newMainBalance = mainBalancePaise + mainWalletAdd;
+    saveBalance(String(newMainBalance));
+
+    // Transaction in FASTag sub-wallet (only if deposit refilled)
+    if (depositRefill > 0) {
+      sw.transactions.unshift({
+        txn_id: `SWTXN-FTREF-${Date.now()}`,
+        amount_paise: depositRefill,
+        type: 'credit',
+        merchant: 'System',
+        merchant_category: 'Security Deposit Refill',
+        description: `Security deposit refilled from top-up`,
+        timestamp: new Date().toISOString(),
+        status: 'success',
+      });
+    }
+    saveSubWallets(sws);
+
+    // Credit entry in main ledger
+    ledger.unshift({
+      id: uuidv4(),
+      entry_type: 'CREDIT',
+      amount_paise: String(mainWalletAdd),
+      balance_after_paise: String(newMainBalance),
+      held_paise_after: '0',
+      transaction_type: 'ADD_MONEY',
+      reference_id: null,
+      description: 'FASTag Wallet Top-up',
+      idempotency_key: uuidv4(),
+      hold_id: null,
+      created_at: new Date().toISOString(),
+      payment_source: 'UPI - HDFC Bank 7125',
+    });
+    saveLedger(ledger);
+
+    const parts: string[] = [];
+    if (depositRefill > 0) parts.push(`₹${(depositRefill / 100).toLocaleString('en-IN')} refilled to security deposit`);
+    if (mainWalletAdd > 0) parts.push(`₹${(mainWalletAdd / 100).toLocaleString('en-IN')} added to main wallet`);
+
+    return {
+      success: true,
+      message: `₹${(amountPaise / 100).toLocaleString('en-IN')} top-up successful`,
+      detail: parts.join(' + '),
+      new_balance: newMainBalance,
+    };
   }
 
-  // Deduct from main wallet
+  // ─── NCMC TRANSIT: Self-load from main wallet, capped at ₹3,000 ────────────
+  if (type === 'NCMC TRANSIT') {
+    if (amountPaise > mainBalancePaise) return { success: false, message: 'Insufficient main wallet balance' };
+
+    const maxBalance = sw.max_balance_paise || 300000; // ₹3,000
+    const headroom = maxBalance - sw.balance_paise;
+    if (headroom <= 0) return { success: false, message: `NCMC wallet is at maximum balance of ₹${(maxBalance / 100).toLocaleString('en-IN')}` };
+    if (amountPaise > headroom) return { success: false, message: `Can only add ₹${(headroom / 100).toLocaleString('en-IN')} more (max balance ₹${(maxBalance / 100).toLocaleString('en-IN')})` };
+
+    // Deduct from main, add to NCMC
+    const newMainBalance = mainBalancePaise - amountPaise;
+    saveBalance(String(newMainBalance));
+    sw.balance_paise += amountPaise;
+    sw.last_loaded_at = new Date().toISOString();
+
+    sw.transactions.unshift({
+      txn_id: `SWTXN-NCMC-${Date.now()}`,
+      amount_paise: amountPaise,
+      type: 'credit',
+      merchant: 'Self (Main Wallet)',
+      merchant_category: 'Wallet Transfer',
+      description: 'Added from main wallet',
+      timestamp: new Date().toISOString(),
+      status: 'success',
+    });
+    saveSubWallets(sws);
+
+    ledger.unshift({
+      id: uuidv4(),
+      entry_type: 'DEBIT',
+      amount_paise: String(amountPaise),
+      balance_after_paise: String(newMainBalance),
+      held_paise_after: '0',
+      transaction_type: 'P2P_TRANSFER',
+      reference_id: null,
+      description: 'NCMC Transit Wallet Top-up',
+      idempotency_key: uuidv4(),
+      hold_id: null,
+      created_at: new Date().toISOString(),
+    });
+    saveLedger(ledger);
+
+    return { success: true, message: `₹${(amountPaise / 100).toLocaleString('en-IN')} added to NCMC Transit Wallet`, new_balance: sw.balance_paise };
+  }
+
+  // ─── GIFT: Self-load from main wallet, no cap ──────────────────────────────
+  if (amountPaise > mainBalancePaise) return { success: false, message: 'Insufficient main wallet balance' };
+
   const newMainBalance = mainBalancePaise - amountPaise;
   saveBalance(String(newMainBalance));
-
-  // Add to sub-wallet
   sw.balance_paise += amountPaise;
-  if (sw.monthly_limit_paise > 0) sw.monthly_loaded_paise += amountPaise;
   sw.last_loaded_at = new Date().toISOString();
 
-  // Add transaction
   sw.transactions.unshift({
     txn_id: `SWTXN-SELF-${Date.now()}`,
     amount_paise: amountPaise,
     type: 'credit',
     merchant: 'Self (Main Wallet)',
     merchant_category: 'Wallet Transfer',
-    description: `Added from main wallet`,
+    description: 'Added from main wallet',
     timestamp: new Date().toISOString(),
     status: 'success',
   });
-
   saveSubWallets(sws);
 
-  // Also add debit entry to main ledger
-  const ledger = loadLedger();
   ledger.unshift({
     id: uuidv4(),
     entry_type: 'DEBIT',
@@ -371,6 +491,136 @@ export function mockAddMoneyToSubWallet(type: string, amountPaise: number): { su
   saveLedger(ledger);
 
   return { success: true, message: `₹${(amountPaise / 100).toLocaleString('en-IN')} added to ${sw.label} Wallet`, new_balance: sw.balance_paise };
+}
+
+/** Simulate a FASTag toll transaction — deducts from main wallet; falls back to security deposit */
+export function mockFastagTransaction(amountPaise: number, tollName: string): { success: boolean; message: string; source: string } {
+  const mainBalancePaise = Number(loadBalance());
+  const sws = loadSubWallets();
+  const fastag = sws.find(s => s.type === 'FASTAG');
+  if (!fastag) return { success: false, message: 'No FASTag wallet found', source: '' };
+
+  const ledger = loadLedger();
+  let source = '';
+
+  if (mainBalancePaise >= amountPaise) {
+    // Deduct entirely from main wallet
+    const newMain = mainBalancePaise - amountPaise;
+    saveBalance(String(newMain));
+    source = 'Main Wallet';
+
+    ledger.unshift({
+      id: uuidv4(),
+      entry_type: 'DEBIT',
+      amount_paise: String(amountPaise),
+      balance_after_paise: String(newMain),
+      held_paise_after: '0',
+      transaction_type: 'MERCHANT_PAY',
+      reference_id: null,
+      description: `FASTag - ${tollName}`,
+      idempotency_key: uuidv4(),
+      hold_id: null,
+      created_at: new Date().toISOString(),
+    });
+    saveLedger(ledger);
+  } else {
+    // Main wallet insufficient — use what's available + dip into security deposit
+    const fromMain = mainBalancePaise;
+    const fromDeposit = amountPaise - fromMain;
+
+    if (fromDeposit > fastag.balance_paise) {
+      return { success: false, message: 'Insufficient balance (main wallet + security deposit)', source: '' };
+    }
+
+    // Drain main wallet
+    saveBalance('0');
+    if (fromMain > 0) {
+      ledger.unshift({
+        id: uuidv4(),
+        entry_type: 'DEBIT',
+        amount_paise: String(fromMain),
+        balance_after_paise: '0',
+        held_paise_after: '0',
+        transaction_type: 'MERCHANT_PAY',
+        reference_id: null,
+        description: `FASTag - ${tollName} (partial)`,
+        idempotency_key: uuidv4(),
+        hold_id: null,
+        created_at: new Date().toISOString(),
+      });
+    }
+    saveLedger(ledger);
+
+    // Deduct from security deposit
+    fastag.balance_paise -= fromDeposit;
+    fastag.security_deposit_used_paise = (fastag.security_deposit_used_paise || 0) + fromDeposit;
+    source = fromMain > 0 ? `Main ₹${(fromMain / 100).toFixed(2)} + Security Deposit ₹${(fromDeposit / 100).toFixed(2)}` : 'Security Deposit';
+  }
+
+  // Add FASTag transaction record
+  fastag.transactions.unshift({
+    txn_id: `SWTXN-FT-${Date.now()}`,
+    amount_paise: amountPaise,
+    type: 'debit',
+    merchant: tollName,
+    merchant_category: 'Toll',
+    description: `${tollName} toll (${source})`,
+    timestamp: new Date().toISOString(),
+    status: 'success',
+  });
+  saveSubWallets(sws);
+
+  return { success: true, message: `₹${(amountPaise / 100).toLocaleString('en-IN')} toll paid via ${source}`, source };
+}
+
+/** Issue a new FASTag for a vehicle — adds ₹300 security deposit to sub-wallet */
+export function mockIssueFastag(vehicleNumber: string): { success: boolean; message: string } {
+  const sws = loadSubWallets();
+  const fastag = sws.find(s => s.type === 'FASTAG');
+  if (!fastag) return { success: false, message: 'No FASTag wallet found' };
+
+  const depositPaise = fastag.security_deposit_per_vehicle_paise || 30000;
+  const mainBalancePaise = Number(loadBalance());
+  if (depositPaise > mainBalancePaise) return { success: false, message: 'Insufficient main wallet balance for security deposit' };
+
+  // Deduct from main
+  const newMain = mainBalancePaise - depositPaise;
+  saveBalance(String(newMain));
+
+  // Add to FASTag security deposit
+  fastag.balance_paise += depositPaise;
+  fastag.vehicle_count = (fastag.vehicle_count || 0) + 1;
+  fastag.last_loaded_at = new Date().toISOString();
+
+  fastag.transactions.unshift({
+    txn_id: `SWTXN-FTNEW-${Date.now()}`,
+    amount_paise: depositPaise,
+    type: 'credit',
+    merchant: 'System',
+    merchant_category: 'Security Deposit',
+    description: `FASTag security deposit - New vehicle (${vehicleNumber})`,
+    timestamp: new Date().toISOString(),
+    status: 'success',
+  });
+  saveSubWallets(sws);
+
+  const ledger = loadLedger();
+  ledger.unshift({
+    id: uuidv4(),
+    entry_type: 'DEBIT',
+    amount_paise: String(depositPaise),
+    balance_after_paise: String(newMain),
+    held_paise_after: '0',
+    transaction_type: 'P2P_TRANSFER',
+    reference_id: null,
+    description: `FASTag security deposit - ${vehicleNumber}`,
+    idempotency_key: uuidv4(),
+    hold_id: null,
+    created_at: new Date().toISOString(),
+  });
+  saveLedger(ledger);
+
+  return { success: true, message: `FASTag issued for ${vehicleNumber}. ₹${(depositPaise / 100).toFixed(0)} security deposit collected.` };
 }
 
 export const mockApi = {
