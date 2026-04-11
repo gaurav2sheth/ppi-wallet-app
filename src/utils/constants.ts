@@ -13,6 +13,7 @@ export const ROUTES = {
   PROFILE: '/profile',
   ANALYTICS: '/analytics',
   WALLET_STATEMENT: '/wallet/statement',
+  SUB_WALLET_DETAIL: '/wallet/sub/:type',
 } as const;
 
 export const STORAGE_KEYS = {

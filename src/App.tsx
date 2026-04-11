@@ -18,6 +18,7 @@ import { TransactionDetailPage } from './pages/TransactionDetailPage';
 import { NotificationsPage } from './pages/NotificationsPage';
 import { BudgetPage } from './pages/BudgetPage';
 import { RewardsPage } from './pages/RewardsPage';
+import { SubWalletDetailPage } from './pages/SubWalletDetailPage';
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
             <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/budget" element={<BudgetPage />} />
             <Route path="/rewards" element={<RewardsPage />} />
+            <Route path="/wallet/sub/:type" element={<SubWalletDetailPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

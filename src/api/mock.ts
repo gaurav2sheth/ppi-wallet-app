@@ -136,6 +136,179 @@ export function mockGetMaxLoadRoom(): { max_room: number; current_balance: numbe
   };
 }
 
+// ── Sub-Wallet Mock Data ────────────────────────────────────────────────────
+const STORAGE_KEY_SUB_WALLETS = '__mock_sub_wallets';
+
+export interface SubWallet {
+  sub_wallet_id: string;
+  type: string;
+  icon: string;
+  color: string;
+  label: string;
+  balance_paise: number;
+  status: string;
+  monthly_limit_paise: number;
+  monthly_loaded_paise: number;
+  loaded_by: string;
+  last_loaded_at: string;
+  expiry_date: string | null;
+  eligible_categories: string[];
+  transactions: SubWalletTxn[];
+}
+
+export interface SubWalletTxn {
+  txn_id: string;
+  amount_paise: number;
+  type: 'credit' | 'debit';
+  merchant: string;
+  merchant_category: string;
+  description: string;
+  timestamp: string;
+  status: string;
+}
+
+const DEFAULT_SUB_WALLETS: SubWallet[] = [
+  {
+    sub_wallet_id: 'SW-demo-FOOD',
+    type: 'FOOD', icon: '🍱', color: '#F97316', label: 'Food',
+    balance_paise: 120000, status: 'ACTIVE',
+    monthly_limit_paise: 300000, monthly_loaded_paise: 300000,
+    loaded_by: 'employer_001', last_loaded_at: ts(2, 9, 0), expiry_date: null,
+    eligible_categories: ['Restaurants', 'Cafes', 'Food delivery', 'Canteen', 'Swiggy', 'Zomato', 'Food & Dining'],
+    transactions: [
+      { txn_id: 'SWTXN-F001', amount_paise: 35000, type: 'debit', merchant: 'Swiggy', merchant_category: 'Food & Dining', description: 'Swiggy lunch order', timestamp: ts(0, 13, 0), status: 'success' },
+      { txn_id: 'SWTXN-F002', amount_paise: 25000, type: 'debit', merchant: 'Zomato', merchant_category: 'Food & Dining', description: 'Zomato dinner order', timestamp: ts(1, 20, 30), status: 'success' },
+      { txn_id: 'SWTXN-F003', amount_paise: 8000, type: 'debit', merchant: 'Starbucks', merchant_category: 'Food & Dining', description: 'Starbucks coffee', timestamp: ts(2, 10, 15), status: 'success' },
+      { txn_id: 'SWTXN-F004', amount_paise: 12000, type: 'debit', merchant: 'Dominos', merchant_category: 'Food & Dining', description: 'Dominos pizza', timestamp: ts(3, 19, 0), status: 'success' },
+      { txn_id: 'SWTXN-F005', amount_paise: 300000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'FOOD benefit - Monthly Benefits', timestamp: ts(5, 9, 0), status: 'success' },
+    ],
+  },
+  {
+    sub_wallet_id: 'SW-demo-NCMC_TRANSIT',
+    type: 'NCMC TRANSIT', icon: '🚇', color: '#6366F1', label: 'NCMC Transit',
+    balance_paise: 80000, status: 'ACTIVE',
+    monthly_limit_paise: 200000, monthly_loaded_paise: 200000,
+    loaded_by: 'employer_001', last_loaded_at: ts(5, 9, 0), expiry_date: null,
+    eligible_categories: ['Metro', 'Bus', 'Local train', 'Parking', 'Transit', 'Travel'],
+    transactions: [
+      { txn_id: 'SWTXN-T001', amount_paise: 6000, type: 'debit', merchant: 'Mumbai Metro', merchant_category: 'Transit', description: 'Metro ride - Andheri to BKC', timestamp: ts(0, 9, 0), status: 'success' },
+      { txn_id: 'SWTXN-T002', amount_paise: 4000, type: 'debit', merchant: 'BEST Bus', merchant_category: 'Transit', description: 'Bus ticket', timestamp: ts(1, 8, 30), status: 'success' },
+      { txn_id: 'SWTXN-T003', amount_paise: 10000, type: 'debit', merchant: 'Mumbai Metro', merchant_category: 'Transit', description: 'Metro monthly pass', timestamp: ts(3, 9, 0), status: 'success' },
+      { txn_id: 'SWTXN-T004', amount_paise: 200000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'NCMC TRANSIT benefit - Monthly Benefits', timestamp: ts(5, 9, 0), status: 'success' },
+    ],
+  },
+  {
+    sub_wallet_id: 'SW-demo-FASTAG',
+    type: 'FASTAG', icon: '🛣️', color: '#10B981', label: 'FASTag',
+    balance_paise: 50000, status: 'ACTIVE',
+    monthly_limit_paise: 1000000, monthly_loaded_paise: 100000,
+    loaded_by: 'employer_001', last_loaded_at: ts(10, 9, 0), expiry_date: null,
+    eligible_categories: ['NHAI toll plazas', 'FASTag recharge portals', 'Toll', 'FASTag'],
+    transactions: [
+      { txn_id: 'SWTXN-FT01', amount_paise: 15000, type: 'debit', merchant: 'NHAI Toll', merchant_category: 'Toll', description: 'Mumbai-Pune Expressway toll', timestamp: ts(1, 11, 0), status: 'success' },
+      { txn_id: 'SWTXN-FT02', amount_paise: 10000, type: 'debit', merchant: 'NHAI Toll', merchant_category: 'Toll', description: 'Bandra-Worli Sea Link toll', timestamp: ts(4, 15, 0), status: 'success' },
+      { txn_id: 'SWTXN-FT03', amount_paise: 100000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'FASTAG benefit load', timestamp: ts(10, 9, 0), status: 'success' },
+    ],
+  },
+  {
+    sub_wallet_id: 'SW-demo-GIFT',
+    type: 'GIFT', icon: '🎁', color: '#EC4899', label: 'Gift',
+    balance_paise: 200000, status: 'ACTIVE',
+    monthly_limit_paise: 0, monthly_loaded_paise: 0,
+    loaded_by: 'employer_001', last_loaded_at: ts(30, 9, 0),
+    expiry_date: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000).toISOString(),
+    eligible_categories: ['All retail merchants', 'Shopping', 'Food & Dining', 'Entertainment', 'Groceries', 'Fuel', 'Travel', 'Health', 'Education', 'Utilities', 'Bill Payment', 'Insurance', 'Other'],
+    transactions: [
+      { txn_id: 'SWTXN-G001', amount_paise: 200000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'GIFT benefit - Diwali Bonus', timestamp: ts(30, 9, 0), status: 'success' },
+    ],
+  },
+  {
+    sub_wallet_id: 'SW-demo-FUEL',
+    type: 'FUEL', icon: '⛽', color: '#EAB308', label: 'Fuel',
+    balance_paise: 150000, status: 'ACTIVE',
+    monthly_limit_paise: 250000, monthly_loaded_paise: 250000,
+    loaded_by: 'employer_001', last_loaded_at: ts(3, 9, 0), expiry_date: null,
+    eligible_categories: ['HP', 'Indian Oil', 'BPCL', 'Shell', 'Fuel', 'HP Petrol', 'IOCL', 'Petroleum'],
+    transactions: [
+      { txn_id: 'SWTXN-FL01', amount_paise: 50000, type: 'debit', merchant: 'HP Petrol', merchant_category: 'Fuel', description: 'HP Petrol - Fuel refill', timestamp: ts(0, 18, 0), status: 'success' },
+      { txn_id: 'SWTXN-FL02', amount_paise: 35000, type: 'debit', merchant: 'IOCL', merchant_category: 'Fuel', description: 'Indian Oil - Diesel', timestamp: ts(2, 17, 0), status: 'success' },
+      { txn_id: 'SWTXN-FL03', amount_paise: 250000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'FUEL benefit - Monthly Benefits', timestamp: ts(3, 9, 0), status: 'success' },
+    ],
+  },
+];
+
+function loadSubWallets(): SubWallet[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_SUB_WALLETS);
+    if (stored) return JSON.parse(stored);
+  } catch { /* ignore */ }
+  const seed = JSON.parse(JSON.stringify(DEFAULT_SUB_WALLETS));
+  localStorage.setItem(STORAGE_KEY_SUB_WALLETS, JSON.stringify(seed));
+  return seed;
+}
+
+export function saveSubWallets(sws: SubWallet[]) {
+  localStorage.setItem(STORAGE_KEY_SUB_WALLETS, JSON.stringify(sws));
+}
+
+export function mockGetSubWallets() {
+  const sws = loadSubWallets();
+  const mainPaise = Number(loadBalance());
+  const benefitsPaise = sws.reduce((s, w) => s + w.balance_paise, 0);
+  return {
+    sub_wallets: sws,
+    main_balance_paise: mainPaise,
+    total_benefits_paise: benefitsPaise,
+    total_balance_paise: mainPaise + benefitsPaise,
+  };
+}
+
+export function mockGetSubWalletDetail(type: string) {
+  const sws = loadSubWallets();
+  return sws.find(s => s.type === type) || null;
+}
+
+/** Check if a merchant category is eligible for a sub-wallet */
+export function mockCheckEligibility(merchantCategory: string, subWalletType: string): { eligible: boolean; wallet: SubWallet | null } {
+  const sws = loadSubWallets();
+  const sw = sws.find(s => s.type === subWalletType);
+  if (!sw) return { eligible: false, wallet: null };
+
+  if (subWalletType === 'GIFT') return { eligible: true, wallet: sw };
+
+  const norm = (merchantCategory || '').toLowerCase();
+  const eligible = sw.eligible_categories.some(cat =>
+    norm.includes(cat.toLowerCase()) || cat.toLowerCase().includes(norm)
+  );
+  return { eligible, wallet: sw };
+}
+
+/** Find the best sub-wallet match for a merchant category */
+export function mockFindBestSubWallet(merchantCategory: string): SubWallet | null {
+  const sws = loadSubWallets();
+  const norm = (merchantCategory || '').toLowerCase();
+
+  // Check specific wallets first (not GIFT), then GIFT as fallback
+  for (const sw of sws) {
+    if (sw.type === 'GIFT' || sw.status !== 'ACTIVE' || sw.balance_paise <= 0) continue;
+    if (sw.eligible_categories.some(cat =>
+      norm.includes(cat.toLowerCase()) || cat.toLowerCase().includes(norm)
+    )) {
+      return sw;
+    }
+  }
+
+  // Gift wallet as fallback if has balance
+  const giftWallet = sws.find(s => s.type === 'GIFT' && s.status === 'ACTIVE' && s.balance_paise > 0);
+  if (giftWallet) {
+    // Check expiry
+    if (giftWallet.expiry_date && new Date(giftWallet.expiry_date) < new Date()) return null;
+    return giftWallet;
+  }
+
+  return null;
+}
+
 export const mockApi = {
   getBalance: (walletId: string): WalletBalanceResponse => {
     const bal = loadBalance();

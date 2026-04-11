@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../ui/Card';
 import { useBalance } from '../../hooks/useBalance';
 import { useAuthStore } from '../../store/auth.store';
 import { formatPaise } from '../../utils/format';
 import { ROUTES } from '../../utils/constants';
+import { mockGetSubWallets } from '../../api/mock';
 
 export function WalletStrip() {
   const navigate = useNavigate();
@@ -12,6 +13,12 @@ export function WalletStrip() {
   const { availablePaise, kycTier, isLoading, refetch } = useBalance(walletId);
   const [autoTopUp, setAutoTopUp] = useState(true);
   const [quickAmount, setQuickAmount] = useState<number | null>(null);
+  const [benefitsPaise, setBenefitsPaise] = useState(0);
+
+  useEffect(() => {
+    const data = mockGetSubWallets();
+    setBenefitsPaise(data.total_benefits_paise);
+  }, [availablePaise]);
 
   const quickAmounts = [
     { value: 100, label: '+ ₹100' },
@@ -31,14 +38,19 @@ export function WalletStrip() {
         <div className="p-4 pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-paytm-muted font-medium">Wallet Balance</p>
+              <p className="text-xs text-paytm-muted font-medium">Total Balance</p>
               <p className="text-3xl font-bold text-paytm-text mt-1">
                 {isLoading ? (
                   <span className="inline-block w-28 h-8 bg-gray-100 rounded animate-pulse" />
                 ) : (
-                  formatPaise(availablePaise)
+                  formatPaise(String(Number(availablePaise || '0') + benefitsPaise))
                 )}
               </p>
+              {!isLoading && benefitsPaise > 0 && (
+                <p className="text-[10px] text-paytm-muted mt-0.5">
+                  Main: {formatPaise(availablePaise)} | Benefits: {formatPaise(String(benefitsPaise))}
+                </p>
+              )}
             </div>
             <div className="w-12 h-12 bg-paytm-navy/10 rounded-xl flex items-center justify-center">
               <svg width="24" height="24" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24">

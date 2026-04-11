@@ -13,6 +13,8 @@ import { RecentPayees } from '../components/wallet/RecentPayees';
 import { sagaApi } from '../api/saga.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
+import { mockFindBestSubWallet } from '../api/mock';
+import { getMccCategory } from '../utils/mcc';
 
 export function MerchantPayPage() {
   const navigate = useNavigate();
@@ -23,8 +25,13 @@ export function MerchantPayPage() {
   const [merchantId, setMerchantId] = useState('');
   const [amount, setAmount] = useState('');
   const [step, setStep] = useState<'input' | 'result'>('input');
+  const [, setUseSubWallet] = useState(false);
 
   const paise = rupeesToPaise(amount);
+
+  // Auto-detect merchant category & suggest sub-wallet
+  const merchantCategory = merchantId ? getMccCategory('MERCHANT_PAY', merchantId, 'DEBIT').label : '';
+  const detectedWallet = merchantId ? mockFindBestSubWallet(merchantCategory) : null;
 
   const handlePay = () => {
     if (!walletId || !merchantId.trim() || paise <= 0) return;
@@ -107,6 +114,45 @@ export function MerchantPayPage() {
               <span className="font-semibold text-paytm-text">{formatPaise(availablePaise)}</span>
             </div>
           </Card>
+
+          {/* Sub-wallet suggestion */}
+          {detectedWallet && paise > 0 && merchantCategory && (
+            <div
+              className="p-3 rounded-xl border-2"
+              style={{ borderColor: detectedWallet.color + '40', backgroundColor: detectedWallet.color + '08' }}
+            >
+              <p className="text-[10px] text-paytm-muted mb-1.5">
+                Merchant: {merchantId} ({merchantCategory})
+              </p>
+              {detectedWallet.balance_paise >= paise ? (
+                <>
+                  <p className="text-xs font-medium text-paytm-text">
+                    Use your {detectedWallet.icon} {detectedWallet.label} Wallet ({formatPaise(String(detectedWallet.balance_paise))} available)?
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={() => setUseSubWallet(true)}
+                      className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold text-white"
+                      style={{ backgroundColor: detectedWallet.color }}
+                    >
+                      Use {detectedWallet.label} Wallet
+                    </button>
+                    <button
+                      onClick={() => setUseSubWallet(false)}
+                      className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-300 text-paytm-text"
+                    >
+                      Use Main Wallet
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <p className="text-xs font-medium text-paytm-text">
+                  {detectedWallet.icon} {detectedWallet.label}: {formatPaise(String(detectedWallet.balance_paise))} + Main: {formatPaise(String(paise - detectedWallet.balance_paise))} = {formatPaise(String(paise))} ✓
+                </p>
+              )}
+            </div>
+          )}
+
           <Button fullWidth loading={isLoading} disabled={!merchantId.trim() || paise <= 0} onClick={handlePay}>
             Pay {paise > 0 ? formatPaise(String(paise)) : ''}
           </Button>
