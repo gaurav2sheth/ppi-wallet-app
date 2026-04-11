@@ -8,9 +8,15 @@ The UI follows Paytm's PODS design language with a navy (#002E6E) / cyan (#00B9F
 
 ## Features
 
-- **Wallet Balance** — Real-time balance display on home dashboard with WalletStrip (UPI Lite-style)
-- **Add Money** — Top-up wallet via Payment Gateway screen (UPI, Card, Net Banking, Pay Later)
-- **Pay Merchant** — QR placeholder + merchant ID payment with split payment support
+- **Wallet Balance** — Collapsible WalletStrip (UPI Lite-style) showing total balance with expandable vertical list of main wallet + all sub-wallets (Food, NCMC Transit, FASTag, Gift, Fuel)
+- **Sub-Wallets (Corporate Benefits)** — 5 benefit wallet types loaded by employers with category-based spending restrictions:
+  - **Food Wallet** 🍱 — Employer-loaded, usable at restaurants, cafes, food delivery (Swiggy, Zomato, etc.)
+  - **NCMC Transit** 🚇 — Own ₹3,000 balance limit; transit payments (Metro, Bus) use only NCMC balance, not main wallet; self-load from main wallet
+  - **FASTag** 🛣️ — Security deposit model (₹300/vehicle); toll transactions deduct from main wallet first; if main wallet is zero, security deposit is used; on next top-up, deposit refilled first; "New Vehicle" issues FASTag + ₹300 deposit
+  - **Gift Wallet** 🎁 — Employer-loaded with expiry date, usable at all retail merchants; self-load allowed
+  - **Fuel Wallet** ⛽ — Employer-loaded, restricted to HP, Indian Oil, BPCL, Shell stations
+- **Add Money** — Top-up wallet via Payment Gateway screen (UPI, Card, Net Banking, Pay Later); sub-wallet self-load for NCMC/FASTag/Gift from main wallet with type-specific limits
+- **Pay Merchant** — QR placeholder + merchant ID payment with auto-detected sub-wallet suggestion based on MCC category, cascade spend (sub-wallet first, then main wallet)
 - **Send Money (P2P)** — Peer-to-peer transfer with UUID validation (Full KYC required per RBI)
 - **Transfer to Bank** — Withdraw to bank with IFSC validation and confirm account number
 - **Bill Payment** — 6 categories (Electricity, Water, Gas, DTH, Broadband, Insurance)
@@ -20,6 +26,7 @@ The UI follows Paytm's PODS design language with a navy (#002E6E) / cyan (#00B9F
 - **Rewards** — Scratch cards with random cashback (2%-10%) and cashback history
 - **Notifications** — In-app notification center with quick action buttons
 - **Wallet Statement** — Download statement via email with date range selection
+- **Wallet Load Guard** — RBI PPI compliance validation: ₹1L balance cap (includes sub-wallet balances), ₹2L monthly load limit, ₹10K min-KYC cap; powered by Claude Haiku AI for contextual suggestions
 - **KYC Verification** — View tier status, upgrade flow with Aadhaar OTP
 - **Profile** — User info, wallet details, navigation menu, logout
 - **Transaction Detail** — Full transaction details with saga lifecycle status
@@ -34,8 +41,8 @@ The UI follows Paytm's PODS design language with a navy (#002E6E) / cyan (#00B9F
 | Routing | React Router v7 (HashRouter for GitHub Pages) |
 | State | Zustand (7 stores with localStorage persistence) |
 | HTTP | Axios |
-| Backend | Render Express API (13 endpoints) — falls back to built-in mock data |
-| AI/MCP | 35 MCP tools via Render backend for AI agent queries |
+| Backend | Render Express API (18 endpoints) — falls back to built-in mock data |
+| AI/MCP | 39 MCP tools via Render backend for AI agent queries |
 
 ## Getting Started
 
@@ -76,7 +83,7 @@ src/
     saga.api.ts       — Transaction saga endpoints
     kyc.api.ts        — KYC endpoints
     limits.api.ts     — Limits check
-    mock.ts           — Complete mock API (localStorage persistence)
+    mock.ts           — Complete mock API (localStorage persistence), sub-wallet engine (NCMC balance cap, FASTag security deposit, self-load)
   store/
     auth.store.ts     — Login, JWT, user profile
     wallet.store.ts   — Balance, KYC tier
@@ -85,11 +92,11 @@ src/
     payees.store.ts   — Recent contacts
     notifications.store.ts — Alerts with action paths
     rewards.store.ts  — Scratch cards, cashback
-  pages/              — 19 page components
+  pages/              — 21 page components (incl. SubWalletDetailPage, SpendAnalyticsPage)
   components/
     layout/           — AppShell, AuthGuard, Header, BottomNav
     ui/               — Button, Card, AmountInput, PinModal, ScratchCard, etc.
-    wallet/           — WalletStrip, RecentPayees
+    wallet/           — WalletStrip (collapsible sub-wallet list), SubWalletCards, RecentPayees, AiSummaryCard, AiChatCard
   hooks/
     useBalance.ts     — Wallet balance fetching
     useLedger.ts      — Passbook transaction history
@@ -133,6 +140,9 @@ The frontend integrates with either the Render Express backend (production) or a
 - **Saga** — add-money, merchant-pay, p2p-transfer, wallet-to-bank, bill-pay
 - **KYC** — initiate, Aadhaar OTP send/verify, status
 - **Limits** — RBI limit checks, usage tracking
+- **Sub-Wallets** — get sub-wallets, load, spend, merchant eligibility check
+- **Load Guard** — validate load amount against RBI PPI rules (₹1L cap incl. sub-wallets, ₹2L monthly, min-KYC ₹10K)
+- **AI** — chat (Claude), transaction summarisation, KYC alerts, benefits insights
 
 All monetary values use **BigInt in paise** (1 INR = 100 paise) per RBI compliance.
 
@@ -143,7 +153,7 @@ All monetary values use **BigInt in paise** (1 INR = 100 paise) per RBI complian
 | Wallet App | [gaurav2sheth.github.io/paytm-wallet-app](https://gaurav2sheth.github.io/paytm-wallet-app) |
 | Admin Dashboard | [gaurav2sheth.github.io/ppi-wallet-admin](https://gaurav2sheth.github.io/ppi-wallet-admin) |
 | Backend API | [ppi-wallet-api.onrender.com](https://ppi-wallet-api.onrender.com/health) |
-| MCP Server | Local via Claude Desktop (40 tools) |
+| MCP Server | Local via Claude Desktop (39 tools incl. sub-wallet & load guard) |
 
 ## License
 
