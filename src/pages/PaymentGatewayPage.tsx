@@ -136,8 +136,8 @@ export function PaymentGatewayPage() {
             <p className="text-xl font-bold text-paytm-text">{success ? 'Money Added!' : 'Transaction Failed'}</p>
             <p className="text-2xl font-bold mt-2">{formatPaise(String(paise))}</p>
             <p className="text-xs text-paytm-muted mt-1">via {paymentMethods.find(m => m.id === selectedMethod)?.label}</p>
-            {success && result?.result?.balance_after_paise && (
-              <p className="text-sm text-green-600 mt-2 font-medium">New balance: {formatPaise(String(result.result.balance_after_paise))}</p>
+            {success && Boolean(result?.result?.balance_after_paise) && (
+              <p className="text-sm text-green-600 mt-2 font-medium">New balance: {formatPaise(String(result!.result!.balance_after_paise as string))}</p>
             )}
             {!success && <p className="text-sm text-paytm-red mt-2">{error?.message ?? result?.error}</p>}
           </div>

@@ -86,7 +86,7 @@ export interface LoadGuardResult {
 export function mockValidateLoad(amountRupees: number): LoadGuardResult {
   const amountPaise = Math.round(amountRupees * 100);
   const currentBalancePaise = Number(loadBalance());
-  const kycTier = 'FULL'; // mock user is always FULL KYC
+  const kycTier: string = 'FULL'; // mock user is always FULL KYC
   const monthlyLoadedPaise = getMonthlyLoadedPaise();
 
   const violations: { rule: string; max_allowed: number }[] = [];
