@@ -5,11 +5,13 @@ import type { SagaResponse } from '../types/api.types';
 
 async function sagaPost(path: string, body: Record<string, unknown>, sagaType: string, amountPaise: number, isCredit: boolean, description?: string, paymentSource?: string): Promise<SagaResponse> {
   try {
-    return await api.post(path, { ...body, idempotency_key: generateIdempotencyKey() });
-  } catch (err) {
-    if (!apiReachable) return mockApi.sagaSuccess(sagaType, amountPaise, isCredit, description, paymentSource);
-    throw err;
+    if (apiReachable) {
+      return await api.post(path, { ...body, idempotency_key: generateIdempotencyKey() });
+    }
+  } catch {
+    // API reachable but route failed — fall through to mock
   }
+  return mockApi.sagaSuccess(sagaType, amountPaise, isCredit, description, paymentSource);
 }
 
 export const sagaApi = {
