@@ -3,7 +3,6 @@ import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
 import { Avatar } from '../components/ui/Avatar';
 import { WalletStrip } from '../components/wallet/WalletStrip';
-import { SubWalletCards } from '../components/wallet/SubWalletCards';
 import { AiSummaryCard } from '../components/wallet/AiSummaryCard';
 import { AiChatCard } from '../components/wallet/AiChatCard';
 import { useAuthStore } from '../store/auth.store';
@@ -65,9 +64,6 @@ export function HomePage() {
       <div className="px-4 pt-4 space-y-4">
         {/* Wallet Strip (UPI Lite style) */}
         <WalletStrip />
-
-        {/* Benefits Sub-Wallets */}
-        <SubWalletCards />
 
         {/* UPI Money Transfer */}
         <Card>

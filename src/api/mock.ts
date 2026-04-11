@@ -309,6 +309,70 @@ export function mockFindBestSubWallet(merchantCategory: string): SubWallet | nul
   return null;
 }
 
+/** Add money to a sub-wallet (FASTag, NCMC Transit, Gift) - self-load from main wallet */
+export function mockAddMoneyToSubWallet(type: string, amountPaise: number): { success: boolean; message: string; new_balance?: number } {
+  const sws = loadSubWallets();
+  const sw = sws.find(s => s.type === type);
+  if (!sw) return { success: false, message: 'Sub-wallet not found' };
+  if (sw.status !== 'ACTIVE') return { success: false, message: 'Sub-wallet is not active' };
+
+  // Only allow self-load for FASTag, NCMC Transit, Gift
+  const selfLoadTypes = ['FASTAG', 'NCMC TRANSIT', 'GIFT'];
+  if (!selfLoadTypes.includes(type)) return { success: false, message: 'Self-load not allowed for this wallet type' };
+
+  // Check main wallet balance
+  const mainBalancePaise = Number(loadBalance());
+  if (amountPaise > mainBalancePaise) return { success: false, message: 'Insufficient main wallet balance' };
+
+  // Check monthly limit for non-GIFT
+  if (sw.monthly_limit_paise > 0) {
+    const remaining = sw.monthly_limit_paise - sw.monthly_loaded_paise;
+    if (amountPaise > remaining) return { success: false, message: `Exceeds monthly limit. Max ₹${(remaining / 100).toLocaleString('en-IN')} remaining.` };
+  }
+
+  // Deduct from main wallet
+  const newMainBalance = mainBalancePaise - amountPaise;
+  saveBalance(String(newMainBalance));
+
+  // Add to sub-wallet
+  sw.balance_paise += amountPaise;
+  if (sw.monthly_limit_paise > 0) sw.monthly_loaded_paise += amountPaise;
+  sw.last_loaded_at = new Date().toISOString();
+
+  // Add transaction
+  sw.transactions.unshift({
+    txn_id: `SWTXN-SELF-${Date.now()}`,
+    amount_paise: amountPaise,
+    type: 'credit',
+    merchant: 'Self (Main Wallet)',
+    merchant_category: 'Wallet Transfer',
+    description: `Added from main wallet`,
+    timestamp: new Date().toISOString(),
+    status: 'success',
+  });
+
+  saveSubWallets(sws);
+
+  // Also add debit entry to main ledger
+  const ledger = loadLedger();
+  ledger.unshift({
+    id: uuidv4(),
+    entry_type: 'DEBIT',
+    amount_paise: String(amountPaise),
+    balance_after_paise: String(newMainBalance),
+    held_paise_after: '0',
+    transaction_type: 'P2P_TRANSFER',
+    reference_id: null,
+    description: `${sw.label} Wallet Top-up`,
+    idempotency_key: uuidv4(),
+    hold_id: null,
+    created_at: new Date().toISOString(),
+  });
+  saveLedger(ledger);
+
+  return { success: true, message: `₹${(amountPaise / 100).toLocaleString('en-IN')} added to ${sw.label} Wallet`, new_balance: sw.balance_paise };
+}
+
 export const mockApi = {
   getBalance: (walletId: string): WalletBalanceResponse => {
     const bal = loadBalance();
