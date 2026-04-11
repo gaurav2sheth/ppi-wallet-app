@@ -1,5 +1,6 @@
 // Sync wallet events to the admin dashboard via shared data bridge
 const SYNC_URL = 'http://localhost:5173/api/sync';
+const RENDER_URL = import.meta.env.VITE_API_URL || '';
 
 function postSync(event: { type: string; data: Record<string, unknown> }) {
   fetch(SYNC_URL, {
@@ -7,6 +8,23 @@ function postSync(event: { type: string; data: Record<string, unknown> }) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(event),
   }).catch(() => { /* silent - admin may not be running */ });
+}
+
+// Also sync to Render backend so MCP mock-data.js stays updated for AI queries
+function syncToBackend(txnData: {
+  wallet_id: string;
+  saga_type: string;
+  amount_paise: string;
+  description: string;
+  counterparty?: string;
+  bill_number?: string;
+}) {
+  if (!RENDER_URL) return;
+  fetch(`${RENDER_URL}/api/wallet/transact`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(txnData),
+  }).catch(() => { /* silent - backend may be cold */ });
 }
 
 export function syncUserLogin(user: {
@@ -53,6 +71,15 @@ export function syncTransaction(txn: {
       counterparty: txn.counterparty ?? '',
       created_at: new Date().toISOString(),
     },
+  });
+
+  // Sync to Render backend so MCP data stays updated for AI agent
+  syncToBackend({
+    wallet_id: txn.wallet_id,
+    saga_type: txn.saga_type,
+    amount_paise: txn.amount_paise,
+    description: txn.description,
+    counterparty: txn.counterparty,
   });
 }
 
