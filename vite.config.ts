@@ -128,6 +128,77 @@ function walletSyncPlugin() {
         })
       })
 
+      // POST /api/wallet/validate-load — Wallet Load Guard (RBI PPI limit validation)
+      server.middlewares.use('/api/wallet/validate-load', (req: any, res: any) => {
+        if (req.method === 'OPTIONS') {
+          res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'Content-Type' })
+          res.end()
+          return
+        }
+        if (req.method !== 'POST') {
+          res.writeHead(405, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ error: 'Method not allowed' }))
+          return
+        }
+
+        let body = ''
+        req.on('data', (chunk: Buffer) => { body += chunk.toString() })
+        req.on('end', async () => {
+          res.setHeader('Content-Type', 'application/json')
+          try {
+            const { user_id, amount } = JSON.parse(body)
+
+            if (!user_id || typeof user_id !== 'string') {
+              res.writeHead(400)
+              res.end(JSON.stringify({ error: 'Invalid user_id' }))
+              return
+            }
+
+            const amountNum = Number(amount)
+            if (!amount || isNaN(amountNum) || amountNum < 1 || amountNum > 100000) {
+              res.writeHead(400)
+              res.end(JSON.stringify({ error: 'Invalid amount', message: 'Amount must be between ₹1 and ₹1,00,000' }))
+              return
+            }
+
+            const amountPaise = Math.round(amountNum * 100)
+            const env = loadEnvFile()
+            const apiKey = process.env.ANTHROPIC_API_KEY || env['ANTHROPIC_API_KEY'] || ''
+
+            const mod = await import(path.resolve(__dirname, '../mcp/services/wallet-load-guard.js'))
+            const result = await mod.validateLoadAmount(user_id, amountPaise, (apiKey && apiKey !== 'your_key_here') ? apiKey : undefined)
+
+            if (result.allowed) {
+              res.writeHead(200)
+              res.end(JSON.stringify({ allowed: true, message: `You can add ₹${amountNum.toLocaleString('en-IN')} to your wallet`, new_balance: result.new_balance }))
+            } else if (result.error) {
+              res.writeHead(404)
+              res.end(JSON.stringify(result))
+            } else {
+              res.writeHead(200)
+              res.end(JSON.stringify({ allowed: false, blocked_by: result.blocked_by, user_message: result.user_message, suggestion: result.suggestion, max_allowed: result.max_allowed }))
+            }
+          } catch (err: any) {
+            console.error('[Load Guard] Error:', err?.message || err)
+            res.writeHead(500)
+            res.end(JSON.stringify({ error: `Validation error: ${err?.message || 'Unknown error'}` }))
+          }
+        })
+      })
+
+      // GET /api/wallet/load-guard-log — Blocked attempts log
+      server.middlewares.use('/api/wallet/load-guard-log', async (_req: any, res: any) => {
+        res.setHeader('Content-Type', 'application/json')
+        try {
+          const mod = await import(path.resolve(__dirname, '../mcp/services/wallet-load-guard.js'))
+          res.writeHead(200)
+          res.end(JSON.stringify({ attempts: mod.getBlockedAttempts() }))
+        } catch (err: any) {
+          res.writeHead(500)
+          res.end(JSON.stringify({ error: err?.message || 'Unknown error' }))
+        }
+      })
+
       // POST /api/summarise-transactions — Claude AI transaction summariser (server-side)
       server.middlewares.use('/api/summarise-transactions', (req: any, res: any) => {
         if (req.method === 'OPTIONS') {

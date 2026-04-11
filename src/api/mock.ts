@@ -54,6 +54,88 @@ function saveBalance(paise: string) {
   localStorage.setItem(STORAGE_KEY_BALANCE, paise);
 }
 
+// ── Load Guard: client-side RBI PPI limit validation (mock fallback) ────────
+const BALANCE_CAP_PAISE = 10000000;       // ₹1,00,000
+const MONTHLY_LOAD_LIMIT_PAISE = 20000000; // ₹2,00,000
+const MIN_KYC_BALANCE_CAP_PAISE = 1000000; // ₹10,000
+
+function paiseToRupeesInt(paise: number): number {
+  return Math.floor(paise / 100);
+}
+
+function getMonthlyLoadedPaise(): number {
+  const ledger = loadLedger();
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  return ledger
+    .filter(e => e.transaction_type === 'ADD_MONEY' && e.entry_type === 'CREDIT' && new Date(e.created_at) >= monthStart)
+    .reduce((sum, e) => sum + Number(e.amount_paise), 0);
+}
+
+export interface LoadGuardResult {
+  allowed: boolean;
+  message?: string;
+  new_balance?: number;
+  blocked_by?: string;
+  user_message?: string;
+  suggestion?: string;
+  max_allowed?: number;
+  error?: string;
+}
+
+export function mockValidateLoad(amountRupees: number): LoadGuardResult {
+  const amountPaise = Math.round(amountRupees * 100);
+  const currentBalancePaise = Number(loadBalance());
+  const kycTier = 'FULL'; // mock user is always FULL KYC
+  const monthlyLoadedPaise = getMonthlyLoadedPaise();
+
+  const violations: { rule: string; max_allowed: number }[] = [];
+
+  // Rule 1: BALANCE_CAP
+  const newBalance = currentBalancePaise + amountPaise;
+  if (newBalance > BALANCE_CAP_PAISE) {
+    violations.push({ rule: 'BALANCE_CAP', max_allowed: paiseToRupeesInt(Math.max(0, BALANCE_CAP_PAISE - currentBalancePaise)) });
+  }
+
+  // Rule 2: MONTHLY_LOAD
+  if (monthlyLoadedPaise + amountPaise > MONTHLY_LOAD_LIMIT_PAISE) {
+    violations.push({ rule: 'MONTHLY_LOAD', max_allowed: paiseToRupeesInt(Math.max(0, MONTHLY_LOAD_LIMIT_PAISE - monthlyLoadedPaise)) });
+  }
+
+  // Rule 3: MIN_KYC_CAP
+  if (kycTier === 'MINIMUM' && newBalance > MIN_KYC_BALANCE_CAP_PAISE) {
+    violations.push({ rule: 'MIN_KYC_CAP', max_allowed: paiseToRupeesInt(Math.max(0, MIN_KYC_BALANCE_CAP_PAISE - currentBalancePaise)) });
+  }
+
+  if (violations.length === 0) {
+    return { allowed: true, message: `You can add ₹${amountRupees.toLocaleString('en-IN')} to your wallet`, new_balance: paiseToRupeesInt(newBalance) };
+  }
+
+  violations.sort((a, b) => a.max_allowed - b.max_allowed);
+  const blocking = violations[0];
+
+  return {
+    allowed: false,
+    blocked_by: blocking.rule,
+    user_message: `This transaction exceeds your wallet limit. You can add up to ₹${blocking.max_allowed.toLocaleString('en-IN')} right now.`,
+    suggestion: blocking.max_allowed > 0 ? `You can add up to ₹${blocking.max_allowed.toLocaleString('en-IN')} right now` : 'You cannot add money at this time',
+    max_allowed: blocking.max_allowed,
+  };
+}
+
+export function mockGetMaxLoadRoom(): { max_room: number; current_balance: number; monthly_loaded: number; kyc_tier: string } {
+  const currentBalancePaise = Number(loadBalance());
+  const monthlyLoadedPaise = getMonthlyLoadedPaise();
+  const balanceRoom = Math.max(0, BALANCE_CAP_PAISE - currentBalancePaise);
+  const monthlyRoom = Math.max(0, MONTHLY_LOAD_LIMIT_PAISE - monthlyLoadedPaise);
+  return {
+    max_room: paiseToRupeesInt(Math.min(balanceRoom, monthlyRoom)),
+    current_balance: paiseToRupeesInt(currentBalancePaise),
+    monthly_loaded: paiseToRupeesInt(monthlyLoadedPaise),
+    kyc_tier: 'FULL',
+  };
+}
+
 export const mockApi = {
   getBalance: (walletId: string): WalletBalanceResponse => {
     const bal = loadBalance();

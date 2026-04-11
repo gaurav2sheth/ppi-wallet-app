@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
@@ -9,6 +9,7 @@ import { useBalance } from '../hooks/useBalance';
 import { useTransaction } from '../hooks/useTransaction';
 import { PinModal } from '../components/ui/PinModal';
 import { sagaApi } from '../api/saga.api';
+import { validateLoad, getMaxLoadRoom } from '../api/loadguard.api';
 import { formatPaise, rupeesToPaise } from '../utils/format';
 import { ROUTES } from '../utils/constants';
 
@@ -22,19 +23,39 @@ interface PayMethod {
   available: boolean;
 }
 
+interface LoadGuardBlock {
+  blocked_by: string;
+  user_message: string;
+  suggestion: string;
+  max_allowed: number;
+}
+
 export function PaymentGatewayPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const presetAmount = searchParams.get('amount');
-  const { walletId } = useAuthStore();
-  const { availablePaise } = useBalance(walletId);
+  const { walletId, userId } = useAuthStore();
+  const { availablePaise, kycTier } = useBalance(walletId);
   const { executeWithPin, onPinVerified, cancelPin, isPinPending, isLoading, result, error, reset } = useTransaction();
 
   const [amount, setAmount] = useState(presetAmount ?? '');
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('upi');
   const [step, setStep] = useState<'amount' | 'method' | 'result'>(presetAmount ? 'method' : 'amount');
 
+  // Load Guard state
+  const [isValidating, setIsValidating] = useState(false);
+  const [guardBlock, setGuardBlock] = useState<LoadGuardBlock | null>(null);
+
   const paise = rupeesToPaise(amount);
+
+  // Calculate max room available for loading
+  const loadRoom = useMemo(() => {
+    try {
+      return getMaxLoadRoom();
+    } catch {
+      return { max_room: 100000, current_balance: 0, monthly_loaded: 0, kyc_tier: 'FULL' };
+    }
+  }, [availablePaise]);
 
   const paymentMethods: PayMethod[] = [
     { id: 'upi', label: 'UPI', subtitle: 'HDFC Bank - 7125', icon: '🏧', available: true },
@@ -50,6 +71,34 @@ export function PaymentGatewayPage() {
     return method.label;
   };
 
+  // Validate load amount before proceeding to payment method selection
+  const handleContinue = async () => {
+    if (paise <= 0) return;
+    setGuardBlock(null);
+    setIsValidating(true);
+
+    try {
+      const amountRupees = paise / 100;
+      const guardResult = await validateLoad(userId || 'user_001', amountRupees);
+
+      if (guardResult.allowed) {
+        setStep('method');
+      } else {
+        setGuardBlock({
+          blocked_by: guardResult.blocked_by || 'UNKNOWN',
+          user_message: guardResult.user_message || 'This transaction exceeds your wallet limit.',
+          suggestion: guardResult.suggestion || '',
+          max_allowed: guardResult.max_allowed ?? 0,
+        });
+      }
+    } catch {
+      // If validation fails entirely, allow proceeding (fail-open for UX, backend will still validate)
+      setStep('method');
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
   const handlePay = () => {
     if (!walletId || paise <= 0) return;
     executeWithPin(() => sagaApi.addMoney(walletId, paise, getSourceLabel()));
@@ -60,6 +109,14 @@ export function PaymentGatewayPage() {
       await onPinVerified();
       setStep('result');
     } catch { setStep('result'); }
+  };
+
+  // "Add max amount instead" button handler
+  const handleAddMaxInstead = () => {
+    if (guardBlock && guardBlock.max_allowed > 0) {
+      setAmount(guardBlock.max_allowed.toString());
+      setGuardBlock(null);
+    }
   };
 
   if (step === 'result') {
@@ -79,6 +136,9 @@ export function PaymentGatewayPage() {
             <p className="text-xl font-bold text-paytm-text">{success ? 'Money Added!' : 'Transaction Failed'}</p>
             <p className="text-2xl font-bold mt-2">{formatPaise(String(paise))}</p>
             <p className="text-xs text-paytm-muted mt-1">via {paymentMethods.find(m => m.id === selectedMethod)?.label}</p>
+            {success && result?.result?.balance_after_paise && (
+              <p className="text-sm text-green-600 mt-2 font-medium">New balance: {formatPaise(String(result.result.balance_after_paise))}</p>
+            )}
             {!success && <p className="text-sm text-paytm-red mt-2">{error?.message ?? result?.error}</p>}
           </div>
           <div className="space-y-3">
@@ -101,10 +161,61 @@ export function PaymentGatewayPage() {
               <p className="text-xs text-paytm-muted font-medium mb-1">Current Wallet Balance</p>
               <p className="text-lg font-bold text-paytm-text">{formatPaise(availablePaise)}</p>
             </Card>
-            <AmountInput value={amount} onChange={setAmount} label="Enter amount to add" />
-            <p className="text-[11px] text-paytm-muted text-center">Wallet can hold maximum ₹2,00,000 (Full KYC)</p>
-            <Button fullWidth disabled={paise <= 0} onClick={() => setStep('method')}>
-              Continue
+            <AmountInput value={amount} onChange={(v) => { setAmount(v); setGuardBlock(null); }} label="Enter amount to add" />
+
+            {/* Live helper text — remaining room */}
+            <div className="space-y-1">
+              <p className="text-[11px] text-paytm-muted text-center">
+                Max wallet balance: ₹1,00,000{kycTier === 'MINIMUM' ? ' (₹10,000 for Min KYC)' : ''}
+              </p>
+              {loadRoom.max_room > 0 ? (
+                <p className="text-[11px] text-center text-green-600 font-medium">
+                  You can add up to ₹{loadRoom.max_room.toLocaleString('en-IN')} right now
+                </p>
+              ) : (
+                <p className="text-[11px] text-center text-red-500 font-medium">
+                  Wallet is at capacity — you cannot add money right now
+                </p>
+              )}
+            </div>
+
+            {/* Load Guard Block Message */}
+            {guardBlock && (
+              <div className="rounded-xl border-2 border-red-200 bg-red-50 p-4 space-y-3">
+                <div className="flex items-start gap-2">
+                  <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg width="14" height="14" fill="none" stroke="#DC2626" strokeWidth="2" viewBox="0 0 24 24">
+                      <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <p className="text-sm text-red-800">{guardBlock.user_message}</p>
+                </div>
+                {guardBlock.suggestion && (
+                  <p className="text-sm font-semibold text-red-700">{guardBlock.suggestion}</p>
+                )}
+                <div className="flex gap-2">
+                  {guardBlock.max_allowed > 0 && (
+                    <button
+                      onClick={handleAddMaxInstead}
+                      className="flex-1 py-2.5 px-4 rounded-lg bg-paytm-cyan text-white text-sm font-medium hover:bg-paytm-cyan/90 transition-colors"
+                    >
+                      Add ₹{guardBlock.max_allowed.toLocaleString('en-IN')} instead
+                    </button>
+                  )}
+                  {guardBlock.max_allowed === 0 && guardBlock.blocked_by === 'MIN_KYC_CAP' && (
+                    <button
+                      onClick={() => navigate('/kyc')}
+                      className="flex-1 py-2.5 px-4 rounded-lg bg-paytm-navy text-white text-sm font-medium hover:bg-paytm-navy/90 transition-colors"
+                    >
+                      Upgrade to Full KYC
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <Button fullWidth disabled={paise <= 0 || isValidating} loading={isValidating} onClick={handleContinue}>
+              {isValidating ? 'Checking limits...' : 'Continue'}
             </Button>
           </>
         )}
@@ -118,7 +229,7 @@ export function PaymentGatewayPage() {
                   <p className="text-xs text-white/70">Adding to Wallet</p>
                   <p className="text-2xl font-bold mt-0.5">{formatPaise(String(paise))}</p>
                 </div>
-                <button onClick={() => setStep('amount')} className="text-xs text-white/80 underline">Change</button>
+                <button onClick={() => { setStep('amount'); setGuardBlock(null); }} className="text-xs text-white/80 underline">Change</button>
               </div>
             </Card>
 
