@@ -187,7 +187,7 @@ const DEFAULT_SUB_WALLETS: SubWallet[] = [
       { txn_id: 'SWTXN-F002', amount_paise: 25000, type: 'debit', merchant: 'Zomato', merchant_category: 'Food & Dining', description: 'Zomato dinner order', timestamp: ts(1, 20, 30), status: 'success' },
       { txn_id: 'SWTXN-F003', amount_paise: 8000, type: 'debit', merchant: 'Starbucks', merchant_category: 'Food & Dining', description: 'Starbucks coffee', timestamp: ts(2, 10, 15), status: 'success' },
       { txn_id: 'SWTXN-F004', amount_paise: 12000, type: 'debit', merchant: 'Dominos', merchant_category: 'Food & Dining', description: 'Dominos pizza', timestamp: ts(3, 19, 0), status: 'success' },
-      { txn_id: 'SWTXN-F005', amount_paise: 300000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'FOOD benefit - Monthly Benefits', timestamp: ts(5, 9, 0), status: 'success' },
+      { txn_id: 'SWTXN-F005', amount_paise: 300000, type: 'credit', merchant: 'Acme Payments Corp (Employer)', merchant_category: 'Employer Benefit Load', description: 'FOOD benefit - Monthly Benefits', timestamp: ts(5, 9, 0), status: 'success' },
     ],
   },
   {
@@ -232,7 +232,7 @@ const DEFAULT_SUB_WALLETS: SubWallet[] = [
     expiry_date: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000).toISOString(),
     eligible_categories: ['All retail merchants', 'Shopping', 'Food & Dining', 'Entertainment', 'Groceries', 'Fuel', 'Travel', 'Health', 'Education', 'Utilities', 'Bill Payment', 'Insurance', 'Other'],
     transactions: [
-      { txn_id: 'SWTXN-G001', amount_paise: 200000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'GIFT benefit - Diwali Bonus', timestamp: ts(30, 9, 0), status: 'success' },
+      { txn_id: 'SWTXN-G001', amount_paise: 200000, type: 'credit', merchant: 'Acme Payments Corp (Employer)', merchant_category: 'Employer Benefit Load', description: 'GIFT benefit - Diwali Bonus', timestamp: ts(30, 9, 0), status: 'success' },
     ],
   },
   {
@@ -245,7 +245,7 @@ const DEFAULT_SUB_WALLETS: SubWallet[] = [
     transactions: [
       { txn_id: 'SWTXN-FL01', amount_paise: 50000, type: 'debit', merchant: 'HP Petrol', merchant_category: 'Fuel', description: 'HP Petrol - Fuel refill', timestamp: ts(0, 18, 0), status: 'success' },
       { txn_id: 'SWTXN-FL02', amount_paise: 35000, type: 'debit', merchant: 'IOCL', merchant_category: 'Fuel', description: 'Indian Oil - Diesel', timestamp: ts(2, 17, 0), status: 'success' },
-      { txn_id: 'SWTXN-FL03', amount_paise: 250000, type: 'credit', merchant: 'Paytm (Employer)', merchant_category: 'Employer Benefit Load', description: 'FUEL benefit - Monthly Benefits', timestamp: ts(3, 9, 0), status: 'success' },
+      { txn_id: 'SWTXN-FL03', amount_paise: 250000, type: 'credit', merchant: 'Acme Payments Corp (Employer)', merchant_category: 'Employer Benefit Load', description: 'FUEL benefit - Monthly Benefits', timestamp: ts(3, 9, 0), status: 'success' },
     ],
   },
 ];
@@ -335,7 +335,7 @@ export function mockFindBestSubWallet(merchantCategory: string): SubWallet | nul
  *
  * GIFT:         Self-load from main wallet, no cap.
  */
-export function mockAddMoneyToSubWallet(type: string, amountPaise: number): { success: boolean; message: string; new_balance?: number; detail?: string } {
+export function mockAddMoneyToSubWallet(type: string, amountPaise: number, paymentSource?: string): { success: boolean; message: string; new_balance?: number; detail?: string } {
   const sws = loadSubWallets();
   const sw = sws.find(s => s.type === type);
   if (!sw) return { success: false, message: 'Sub-wallet not found' };
@@ -394,7 +394,7 @@ export function mockAddMoneyToSubWallet(type: string, amountPaise: number): { su
       idempotency_key: uuidv4(),
       hold_id: null,
       created_at: new Date().toISOString(),
-      payment_source: 'UPI - HDFC Bank 7125',
+      payment_source: paymentSource || 'UPI - HDFC Bank 7125',
     });
     saveLedger(ledger);
 
@@ -491,6 +491,63 @@ export function mockAddMoneyToSubWallet(type: string, amountPaise: number): { su
   saveLedger(ledger);
 
   return { success: true, message: `₹${(amountPaise / 100).toLocaleString('en-IN')} added to ${sw.label} Wallet`, new_balance: sw.balance_paise };
+}
+
+/**
+ * Direct external load to NCMC wallet — money comes from UPI/Debit Card/Net Banking
+ * bypassing the main wallet entirely.
+ * - NCMC ₹3,000 balance cap is enforced
+ * - Main wallet balance is NOT affected
+ * - A CREDIT ledger entry is created for audit trail
+ */
+export function mockDirectLoadNcmc(amountPaise: number, paymentSource: string): { success: boolean; message: string; new_balance?: number; detail?: string } {
+  const sws = loadSubWallets();
+  const sw = sws.find(s => s.type === 'NCMC TRANSIT');
+  if (!sw) return { success: false, message: 'NCMC wallet not found' };
+  if (sw.status !== 'ACTIVE') return { success: false, message: 'NCMC wallet is not active' };
+
+  const maxBalance = sw.max_balance_paise || 300000; // ₹3,000
+  const headroom = maxBalance - sw.balance_paise;
+  if (headroom <= 0) return { success: false, message: `NCMC wallet is at maximum balance of ₹${(maxBalance / 100).toLocaleString('en-IN')}` };
+  if (amountPaise > headroom) return { success: false, message: `Can only add ₹${(headroom / 100).toLocaleString('en-IN')} more (max balance ₹${(maxBalance / 100).toLocaleString('en-IN')})` };
+
+  // Add directly to NCMC balance
+  sw.balance_paise += amountPaise;
+  sw.last_loaded_at = new Date().toISOString();
+  sw.loaded_by = 'self';
+
+  sw.transactions.unshift({
+    txn_id: `SWTXN-NCMC-${Date.now()}`,
+    amount_paise: amountPaise,
+    type: 'credit',
+    merchant: paymentSource,
+    merchant_category: 'Direct Load',
+    description: `Direct load via ${paymentSource}`,
+    timestamp: new Date().toISOString(),
+    status: 'success',
+  });
+  saveSubWallets(sws);
+
+  // Ledger entry for audit (main balance unchanged)
+  const ledger = loadLedger();
+  const mainBalance = Number(loadBalance());
+  ledger.unshift({
+    id: uuidv4(),
+    entry_type: 'CREDIT',
+    amount_paise: String(amountPaise),
+    balance_after_paise: String(mainBalance), // main balance stays the same
+    held_paise_after: '0',
+    transaction_type: 'ADD_MONEY',
+    reference_id: null,
+    description: `NCMC Transit Direct Load via ${paymentSource}`,
+    idempotency_key: uuidv4(),
+    hold_id: null,
+    created_at: new Date().toISOString(),
+    payment_source: paymentSource,
+  });
+  saveLedger(ledger);
+
+  return { success: true, message: `₹${(amountPaise / 100).toLocaleString('en-IN')} loaded to NCMC Transit`, new_balance: sw.balance_paise };
 }
 
 /** Simulate a FASTag toll transaction — deducts from main wallet; falls back to security deposit */
