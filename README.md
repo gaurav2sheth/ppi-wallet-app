@@ -42,7 +42,7 @@ The UI follows Paytm's PODS design language with a navy (#002E6E) / cyan (#00B9F
 | State | Zustand (7 stores with localStorage persistence) |
 | HTTP | Axios |
 | Backend | Render Express API (18 endpoints) — falls back to built-in mock data |
-| AI/MCP | 39 MCP tools via Render backend for AI agent queries |
+| AI/MCP | 49 MCP tools via Render backend for AI agent queries |
 
 ## Getting Started
 
@@ -153,7 +153,7 @@ All monetary values use **BigInt in paise** (1 INR = 100 paise) per RBI complian
 | Wallet App | [gaurav2sheth.github.io/paytm-wallet-app](https://gaurav2sheth.github.io/paytm-wallet-app) |
 | Admin Dashboard | [gaurav2sheth.github.io/ppi-wallet-admin](https://gaurav2sheth.github.io/ppi-wallet-admin) |
 | Backend API | [ppi-wallet-api.onrender.com](https://ppi-wallet-api.onrender.com/health) |
-| MCP Server | Local via Claude Desktop (39 tools incl. sub-wallet & load guard) |
+| MCP Server | Local via Claude Desktop (49 tools incl. sub-wallet, support agent, KYC agent & load guard) |
 
 ## License
 
