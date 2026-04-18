@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   mockApi,
   mockGetSubWallets,
@@ -9,7 +9,6 @@ import {
   mockValidateLoad,
   mockCheckEligibility,
   mockFindBestSubWallet,
-  type SubWallet,
 } from '../mock';
 
 // We need to mock the sync module since it uses import.meta.env
