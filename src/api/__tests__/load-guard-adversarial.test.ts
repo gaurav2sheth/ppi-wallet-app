@@ -71,22 +71,10 @@ describe('Load Guard — adversarial / boundary (testable today)', () => {
   });
 });
 
-describe.skip('Load Guard — concurrency and idempotency (gaps, see scope-and-limitations.md)', () => {
-  // SKIPPED: these tests require an atomic `processLoad` function that
-  // validates AND commits in one locked step. The current codebase only
-  // has `mockValidateLoad` (read-only validation) and a saga-level commit
-  // without idempotency-key-backed dedupe.
-  //
-  // Expected production behaviour documented in:
-  //   docs/scope-and-limitations.md §Adversarial test findings (#1)
-  //   docs/edge-cases.md §1. Load Guard — Concurrency & Idempotency
-
-  it('rejects the second of two concurrent loads that together exceed the cap', async () => {
-    // Would require Promise.all([processLoad(...), processLoad(...)])
-    // with row-level lock or optimistic concurrency. Not implemented.
-  });
-
-  it('returns the cached result on idempotency-key replay rather than double-crediting', async () => {
-    // Would require an idempotency-key store with TTL. Not implemented.
-  });
-});
+// The two previously-skipped concurrency / idempotency tests have been
+// unblocked and moved to the MCP repo where processLoad is implemented:
+//   mcp/agents/__tests__/process-load-concurrency.test.js (10 tests)
+//
+// They live there rather than here because processLoad is a server-side
+// function; the wallet app's mock layer intentionally does not reimplement
+// the atomic commit/idempotency machinery.

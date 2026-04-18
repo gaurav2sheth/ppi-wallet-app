@@ -115,20 +115,8 @@ describe('Cascade spend — eligibility rejections', () => {
   });
 });
 
-describe.todo(
-  'Cascade spend — atomic split with clean decline on shortfall (blocked on pure function extraction)',
-  () => {
-    // See docs/scope-and-limitations.md §Adversarial test findings #2.
-    // Expected test shape once `calculateCascadeSpend` is factored out:
-    //
-    //   const result = calculateCascadeSpend({
-    //     amount: 50000,
-    //     category: 'FOOD',
-    //     subWallets: { food: 40000 },
-    //     mainBalance: 9900, // short by ₹1
-    //   });
-    //   expect(result.status).toBe('DECLINED');
-    //   expect(result.reason).toBe('INSUFFICIENT_FUNDS');
-    //   expect(result.splits).toEqual([]); // crucially: no partial debit
-  }
-);
+// The `describe.todo` for 'atomic split with clean decline' has been unblocked.
+// Implementation: src/services/cascade-spend.ts
+// Tests: src/services/__tests__/cascade-spend.test.ts (13 tests covering the
+// invariants that were previously only documented, including the critical
+// 'no partial debit on shortfall' assertion).

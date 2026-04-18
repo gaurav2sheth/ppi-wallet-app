@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../ui/Card';
 import { mockApi } from '../../api/mock';
 import { useAuthStore } from '../../store/auth.store';
@@ -6,15 +7,31 @@ import { useWalletStore } from '../../store/wallet.store';
 import type { LedgerEntry } from '../../types/api.types';
 import axios from 'axios';
 
+interface ChatMessageMeta {
+  intent?: string;
+  tools_used?: string[];
+  resolved?: boolean;
+  ticket_id?: string | null;
+  suggested_actions?: string[];
+}
+
 interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
+  meta?: ChatMessageMeta;
+}
+
+interface TicketInfo {
+  ticket_id: string;
+  helpline_info?: string | null;
 }
 
 const SUGGESTED_QUESTIONS = [
   'What is my wallet balance?',
+  'Why was my payment blocked?',
   'Show my recent transactions',
-  'How much did I spend this week?',
+  'What is my KYC status?',
+  'I need to talk to someone',
 ];
 
 function formatPaise(paise: string | number): string {
@@ -26,6 +43,13 @@ function daysAgoLabel(iso: string): string {
   if (diff === 0) return 'today';
   if (diff === 1) return '1 day ago';
   return `${diff} days ago`;
+}
+
+function formatIntent(intent: string): string {
+  return intent
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
 }
 
 /** Local fallback responses built from real app data */
@@ -90,7 +114,11 @@ export function AiChatCard() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [suggestedActions, setSuggestedActions] = useState<string[]>([]);
+  const [ticketInfo, setTicketInfo] = useState<TicketInfo | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const walletId = useAuthStore(s => s.walletId);
   const userName = useAuthStore(s => s.userName);
   const { balancePaise, kycTier } = useWalletStore();
@@ -105,32 +133,75 @@ export function AiChatCard() {
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setLoading(true);
+    setSuggestedActions([]);
 
     try {
       const apiBase = import.meta.env.VITE_API_URL || '';
-      // Send app context so AI responses match what the user sees
       const ledger = mockApi.getLedger(walletId ?? 'demo-wallet', { limit: 15 });
-      const context = {
-        balance_paise: balancePaise ?? '0',
-        balance_formatted: formatPaise(balancePaise ?? '0'),
-        user_name: userName ?? 'User',
-        kyc_tier: kycTier ?? 'FULL',
-        recent_transactions: ledger.entries.map(e => ({
-          entry_type: e.entry_type,
-          amount_paise: e.amount_paise,
-          amount_formatted: formatPaise(e.amount_paise),
-          description: e.description,
-          transaction_type: e.transaction_type,
-          created_at: e.created_at,
-          days_ago: Math.floor((Date.now() - new Date(e.created_at).getTime()) / 86400000),
-        })),
+      const res = await axios.post(
+        `${apiBase}/api/support/chat`,
+        {
+          user_id: walletId ?? 'demo-wallet',
+          message: text.trim(),
+          session_id: sessionId,
+          context: {
+            balance_paise: balancePaise ?? '0',
+            balance_formatted: formatPaise(balancePaise ?? '0'),
+            user_name: userName ?? 'User',
+            kyc_tier: kycTier ?? 'FULL',
+            recent_transactions: ledger.entries.slice(0, 10).map(e => ({
+              entry_type: e.entry_type,
+              amount_paise: e.amount_paise,
+              amount_formatted: formatPaise(e.amount_paise),
+              description: e.description,
+              transaction_type: e.transaction_type,
+              created_at: e.created_at,
+            })),
+          },
+        },
+        { timeout: 30000 },
+      );
+
+      const data = res.data;
+
+      // Persist session across messages
+      if (data.session_id) {
+        setSessionId(data.session_id);
+      }
+
+      // Build message with metadata
+      const assistantMsg: ChatMessage = {
+        role: 'assistant',
+        text: data.response_text,
+        meta: {
+          intent: data.intent_detected,
+          tools_used: data.tools_used,
+          resolved: data.resolved,
+          ticket_id: data.ticket_id,
+          suggested_actions: data.suggested_actions,
+        },
       };
-      const res = await axios.post(`${apiBase}/api/chat?role=user`, { message: text.trim(), context }, { timeout: 30000 });
-      setMessages(prev => [...prev, { role: 'assistant', text: res.data.reply }]);
+      setMessages(prev => [...prev, assistantMsg]);
+
+      // Update suggested actions for quick-reply buttons
+      if (data.suggested_actions && data.suggested_actions.length > 0) {
+        setSuggestedActions(data.suggested_actions);
+      } else {
+        setSuggestedActions([]);
+      }
+
+      // Handle escalation / ticket creation
+      if (data.escalated && data.ticket_id) {
+        setTicketInfo({
+          ticket_id: data.ticket_id,
+          helpline_info: data.helpline_info,
+        });
+      }
     } catch {
       // Fallback: use real data from the app's mock layer
       const reply = getLocalResponse(text, walletId ?? 'demo-wallet', userName ?? 'User', balancePaise ?? '0', kycTier ?? 'FULL');
       setMessages(prev => [...prev, { role: 'assistant', text: reply }]);
+      setSuggestedActions([]);
     } finally {
       setLoading(false);
     }
@@ -173,12 +244,34 @@ export function AiChatCard() {
           <svg width="18" height="18" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round">
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
           </svg>
-          <span className="text-sm font-semibold text-white">AI Assistant</span>
+          <span className="text-sm font-semibold text-white">AI Support</span>
         </div>
         <button onClick={() => setIsExpanded(false)} className="text-white/80 hover:text-white">
           <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
+
+      {/* Ticket Banner */}
+      {ticketInfo && (
+        <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 flex items-start gap-2">
+          <svg width="16" height="16" fill="none" stroke="#B45309" strokeWidth="2" viewBox="0 0 24 24" className="flex-shrink-0 mt-0.5">
+            <path d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+          </svg>
+          <div className="flex-1">
+            <p className="text-[11px] font-semibold text-amber-800">
+              Ticket #{ticketInfo.ticket_id}
+            </p>
+            <p className="text-[10px] text-amber-700">
+              Your issue has been escalated to our support team. Expected resolution within 24-48 hours.
+            </p>
+            {ticketInfo.helpline_info && (
+              <p className="text-[10px] text-amber-700 mt-0.5">
+                Helpline: {ticketInfo.helpline_info}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="max-h-64 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50/50">
@@ -199,12 +292,32 @@ export function AiChatCard() {
 
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-line ${
-              msg.role === 'user'
-                ? 'bg-violet-500 text-white rounded-br-sm'
-                : 'bg-white border border-gray-100 text-paytm-text rounded-bl-sm'
-            }`}>
-              {msg.text}
+            <div className="max-w-[85%]">
+              <div className={`px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-line ${
+                msg.role === 'user'
+                  ? 'bg-violet-500 text-white rounded-br-sm'
+                  : 'bg-white border border-gray-100 text-paytm-text rounded-bl-sm'
+              }`}>
+                {msg.text}
+              </div>
+              {/* Intent badge for assistant messages */}
+              {msg.role === 'assistant' && msg.meta?.intent && (
+                <div className="mt-1 flex items-center gap-1.5">
+                  <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-medium bg-violet-100 text-violet-600">
+                    {formatIntent(msg.meta.intent)}
+                  </span>
+                  {msg.meta.resolved === true && (
+                    <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-medium bg-green-100 text-green-600">
+                      Resolved
+                    </span>
+                  )}
+                  {msg.meta.resolved === false && (
+                    <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-600">
+                      Pending
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -213,13 +326,28 @@ export function AiChatCard() {
           <div className="flex justify-start">
             <div className="bg-white border border-gray-100 px-3 py-2 rounded-xl rounded-bl-sm flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-violet-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-[11px] text-paytm-muted">Thinking...</span>
+              <span className="text-[11px] text-paytm-muted">Investigating...</span>
             </div>
           </div>
         )}
 
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Suggested Actions */}
+      {suggestedActions.length > 0 && !loading && (
+        <div className="px-4 py-2 border-t border-gray-100 bg-gray-50/50 flex flex-wrap gap-1.5">
+          {suggestedActions.map(action => (
+            <button
+              key={action}
+              onClick={() => sendMessage(action)}
+              className="px-3 py-1 rounded-full text-[11px] font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 active:scale-95 transition"
+            >
+              {action}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Input */}
       <div className="px-3 py-2 border-t border-gray-100 bg-white flex items-center gap-2">
@@ -241,8 +369,14 @@ export function AiChatCard() {
         </button>
       </div>
 
-      <div className="px-4 pb-2">
+      <div className="px-4 pb-2 flex items-center justify-between">
         <span className="text-[9px] text-paytm-muted">Powered by Claude AI</span>
+        <button
+          onClick={() => navigate('/support/tickets')}
+          className="text-[9px] font-medium text-violet-600 hover:text-violet-800 transition"
+        >
+          My Tickets
+        </button>
       </div>
     </Card>
   );

@@ -112,19 +112,11 @@ describe('NCMC — direct load cap enforcement', () => {
   });
 });
 
-describe.skip('NCMC — service-boundary isolation (blocked on transactions service extraction)', () => {
-  // See docs/scope-and-limitations.md §Adversarial test findings #3.
-  // These tests would require `transactions.ts` service with explicit
-  // `attemptP2P({ source })` and `attemptMerchantPay({ preferredSource })`
-  // signatures that take a sub-wallet source parameter.
-
-  it('hard-rejects a P2P transfer sourced from NCMC balance', () => {
-    // const result = attemptP2P({ source: 'NCMC_SUBWALLET', amountPaise: 10000 });
-    // expect(result.status).toBe('REJECTED');
-    // expect(result.errorCode).toBe('NCMC_NOT_TRANSFERABLE');
-  });
-
-  it('does not cascade from NCMC to main wallet on NCMC shortfall at a transit merchant', () => {
-    // With NCMC=₹300 and main=₹1L, a ₹500 metro tap should fail, not silently draw from main.
-  });
-});
+// NCMC service-boundary isolation tests (P2P-from-NCMC rejection, no-cascade
+// at transit merchant shortfall) remain pending extraction of a `transactions`
+// service with explicit source-wallet parameters. The current UI enforces
+// these invariants by not exposing NCMC as a P2P or non-transit source, and
+// the eligibility tests above already verify that mockCheckEligibility
+// correctly hard-rejects NCMC for non-transit categories.
+//
+// See docs/scope-and-limitations.md §Adversarial test findings #3.

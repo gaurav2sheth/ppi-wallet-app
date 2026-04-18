@@ -4,7 +4,7 @@ import { Header } from '../components/layout/Header';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { AmountInput } from '../components/ui/AmountInput';
-import { mockGetSubWalletDetail, mockAddMoneyToSubWallet, mockIssueFastag, type SubWallet } from '../api/mock';
+import { mockGetSubWalletDetail, mockAddMoneyToSubWallet, mockDirectLoadNcmc, mockIssueFastag, type SubWallet } from '../api/mock';
 import { useBalance } from '../hooks/useBalance';
 import { useAuthStore } from '../store/auth.store';
 import { formatPaise } from '../utils/format';
@@ -25,6 +25,7 @@ export function SubWalletDetailPage() {
   const [showNewVehicle, setShowNewVehicle] = useState(false);
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [vehicleResult, setVehicleResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [paymentSource, setPaymentSource] = useState<'main' | 'upi' | 'debit_card' | 'net_banking'>('main');
 
   const reloadWallet = () => {
     if (type) {
@@ -65,13 +66,31 @@ export function SubWalletDetailPage() {
   const totalDeposit = isFastag ? (wallet.vehicle_count || 0) * (wallet.security_deposit_per_vehicle_paise || 30000) : 0;
   const depositUsed = isFastag ? (wallet.security_deposit_used_paise || 0) : 0;
 
+  const PAYMENT_SOURCE_LABELS: Record<string, string> = {
+    upi: 'UPI - HDFC Bank 7125',
+    debit_card: 'Debit Card - SBI 4521',
+    net_banking: 'Net Banking - ICICI',
+  };
+
   const handleAddMoney = async () => {
     if (addPaise <= 0) return;
     setIsAdding(true);
     setAddResult(null);
     await new Promise(r => setTimeout(r, 600));
 
-    const result = mockAddMoneyToSubWallet(wallet.type, addPaise);
+    let result: { success: boolean; message: string; new_balance?: number; detail?: string };
+
+    if (isNcmc && paymentSource !== 'main') {
+      // NCMC direct external load — bypasses main wallet
+      result = mockDirectLoadNcmc(addPaise, PAYMENT_SOURCE_LABELS[paymentSource] || paymentSource);
+    } else if (isFastag) {
+      // FASTag top-up with selected payment source
+      result = mockAddMoneyToSubWallet(wallet.type, addPaise, PAYMENT_SOURCE_LABELS[paymentSource] || paymentSource);
+    } else {
+      // Default: load from main wallet (NCMC main, Gift, etc.)
+      result = mockAddMoneyToSubWallet(wallet.type, addPaise);
+    }
+
     setAddResult(result);
     setIsAdding(false);
 
@@ -82,6 +101,7 @@ export function SubWalletDetailPage() {
       setTimeout(() => {
         setShowAddMoney(false);
         setAddResult(null);
+        setPaymentSource('main');
       }, 2500);
     }
   };
@@ -188,12 +208,17 @@ export function SubWalletDetailPage() {
             {canSelfLoad && !isExpired && (
               <div className="mt-4 flex justify-center gap-2">
                 <button
-                  onClick={() => { setShowAddMoney(!showAddMoney); setShowNewVehicle(false); }}
+                  onClick={() => {
+                    setShowAddMoney(!showAddMoney);
+                    setShowNewVehicle(false);
+                    if (isFastag) setPaymentSource('upi');
+                    else if (isNcmc) setPaymentSource('main');
+                  }}
                   className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-semibold text-white transition-transform active:scale-95"
                   style={{ backgroundColor: wallet.color }}
                 >
                   <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
-                  {isFastag ? 'Top Up Wallet' : 'Add Money'}
+                  {isFastag ? 'Add Money to Wallet' : 'Add Money'}
                 </button>
                 {isFastag && (
                   <button
@@ -228,7 +253,7 @@ export function SubWalletDetailPage() {
               <div className="space-y-1">
                 <p className="text-[10px] text-paytm-muted">• NCMC has its own <b>₹3,000 balance limit</b></p>
                 <p className="text-[10px] text-paytm-muted">• Transit payments (Metro, Bus, etc.) use <b>only NCMC balance</b></p>
-                <p className="text-[10px] text-paytm-muted">• Top up anytime from your main wallet</p>
+                <p className="text-[10px] text-paytm-muted">• Top up from <b>Main Wallet, UPI, Debit Card, or Net Banking</b></p>
               </div>
             </div>
           )}
@@ -236,18 +261,67 @@ export function SubWalletDetailPage() {
           {/* Add Money Panel */}
           {showAddMoney && canSelfLoad && (
             <div className="px-4 py-4 border-t border-gray-100 bg-gray-50/50 space-y-3">
+              {/* Payment Source Selector for NCMC and FASTag */}
+              {(isNcmc || isFastag) && (
+                <div>
+                  <p className="text-[10px] font-medium text-paytm-muted mb-2">Payment Method</p>
+                  <div className="flex gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                    {isNcmc && (
+                      <button
+                        onClick={() => setPaymentSource('main')}
+                        className={`shrink-0 text-[10px] font-semibold px-3 py-1.5 rounded-full border-2 transition-all ${
+                          paymentSource === 'main'
+                            ? 'text-white border-transparent'
+                            : 'bg-white text-paytm-text border-gray-200'
+                        }`}
+                        style={paymentSource === 'main' ? { backgroundColor: wallet.color, borderColor: wallet.color } : {}}
+                      >
+                        Main Wallet
+                      </button>
+                    )}
+                    {['upi', 'debit_card', 'net_banking'].map(src => (
+                      <button
+                        key={src}
+                        onClick={() => setPaymentSource(src as typeof paymentSource)}
+                        className={`shrink-0 text-[10px] font-semibold px-3 py-1.5 rounded-full border-2 transition-all ${
+                          paymentSource === src
+                            ? 'text-white border-transparent'
+                            : 'bg-white text-paytm-text border-gray-200'
+                        }`}
+                        style={paymentSource === src ? { backgroundColor: wallet.color, borderColor: wallet.color } : {}}
+                      >
+                        {src === 'upi' ? 'UPI' : src === 'debit_card' ? 'Debit Card' : 'Net Banking'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold text-paytm-text">
-                  {isFastag ? 'Top Up (loads main wallet)' : 'Add from Main Wallet'}
+                  {isFastag
+                    ? 'Top Up (loads main wallet)'
+                    : isNcmc && paymentSource !== 'main'
+                      ? `Load via ${paymentSource === 'upi' ? 'UPI' : paymentSource === 'debit_card' ? 'Debit Card' : 'Net Banking'}`
+                      : 'Add from Main Wallet'
+                  }
                 </p>
-                <p className="text-[10px] text-paytm-muted">
-                  {isFastag ? `Main: ${formatPaise(availablePaise)}` : `Available: ${formatPaise(availablePaise)}`}
-                </p>
+                {(paymentSource === 'main' || !isNcmc) && (
+                  <p className="text-[10px] text-paytm-muted">
+                    {isFastag ? `Main: ${formatPaise(availablePaise)}` : `Available: ${formatPaise(availablePaise)}`}
+                  </p>
+                )}
               </div>
+
+              {isNcmc && paymentSource !== 'main' && (
+                <div className="text-[10px] p-2 rounded-lg bg-blue-50 text-blue-700 font-medium">
+                  Money will be loaded directly to NCMC from your bank account. Main wallet balance will not be affected.
+                </div>
+              )}
 
               {isFastag && depositUsed > 0 && (
                 <div className="text-[10px] p-2 rounded-lg bg-amber-50 text-amber-700 font-medium">
-                  ⚠️ Security deposit shortfall: {formatPaise(String(depositUsed))}. This will be refilled first from your top-up.
+                  Security deposit shortfall: {formatPaise(String(depositUsed))}. This will be refilled first from your top-up.
                 </div>
               )}
 
@@ -272,7 +346,7 @@ export function SubWalletDetailPage() {
               <Button
                 fullWidth
                 loading={isAdding}
-                disabled={addPaise <= 0 || (!isFastag && addPaise > mainBalancePaise) || (isNcmc && addPaise > ncmcHeadroom)}
+                disabled={addPaise <= 0 || (isNcmc && paymentSource === 'main' && addPaise > mainBalancePaise) || (!isNcmc && !isFastag && addPaise > mainBalancePaise) || (isNcmc && addPaise > ncmcHeadroom)}
                 onClick={handleAddMoney}
               >
                 {isFastag
