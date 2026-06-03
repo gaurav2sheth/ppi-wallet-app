@@ -61,20 +61,20 @@ export function HomePage() {
         }
       />
 
-      <div className="px-4 pt-4 space-y-4">
+      <div className="px-3 sm:px-4 md:px-5 lg:px-6 pt-3 sm:pt-4 md:pt-5 space-y-3 sm:space-y-4 md:space-y-5">
         {/* Wallet Strip (UPI Lite style) */}
         <WalletStrip />
 
         {/* UPI Money Transfer */}
         <Card>
           <p className="text-xs font-semibold text-paytm-muted mb-4 tracking-wide">MONEY TRANSFER</p>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {primaryActions.map(a => (
               <button key={a.label} onClick={() => navigate(a.path)} className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
-                <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${a.color} flex items-center justify-center shadow-md`}>
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br ${a.color} flex items-center justify-center shadow-md`}>
                   {a.icon}
                 </div>
-                <span className="text-[11px] font-medium text-paytm-text text-center leading-tight">{a.label}</span>
+                <span className="text-[10px] sm:text-[11px] font-medium text-paytm-text text-center leading-tight">{a.label}</span>
               </button>
             ))}
           </div>
@@ -86,11 +86,11 @@ export function HomePage() {
             <p className="text-xs font-semibold text-paytm-muted tracking-wide">RECHARGE & BILLS</p>
             <button onClick={() => navigate(ROUTES.BILL_PAY)} className="text-xs font-semibold text-paytm-cyan">View More</button>
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {billActions.map(a => (
               <button key={a.label} onClick={() => navigate(ROUTES.BILL_PAY)} className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
-                <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-xl">{a.icon}</div>
-                <span className="text-[11px] font-medium text-paytm-text text-center leading-tight">{a.label}</span>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-50 flex items-center justify-center text-xl">{a.icon}</div>
+                <span className="text-[10px] sm:text-[11px] font-medium text-paytm-text text-center leading-tight">{a.label}</span>
               </button>
             ))}
           </div>

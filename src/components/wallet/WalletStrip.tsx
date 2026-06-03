@@ -42,18 +42,18 @@ export function WalletStrip() {
         {/* Balance Strip — tappable to expand */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full p-4 pb-3 text-left"
+          className="w-full p-3 sm:p-4 pb-2.5 sm:pb-3 text-left"
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-paytm-navy/10 rounded-xl flex items-center justify-center">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-paytm-navy/10 rounded-xl flex items-center justify-center">
                 <svg width="22" height="22" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24">
                   <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
                 </svg>
               </div>
               <div>
-                <p className="text-xs text-paytm-muted font-medium">Wallet Balance</p>
-                <p className="text-2xl font-bold text-paytm-text">
+                <p className="text-[11px] sm:text-xs text-paytm-muted font-medium">Wallet Balance</p>
+                <p className="text-xl sm:text-2xl font-bold text-paytm-text">
                   {isLoading ? (
                     <span className="inline-block w-24 h-7 bg-gray-100 rounded animate-pulse" />
                   ) : (
@@ -144,10 +144,10 @@ export function WalletStrip() {
         <div className="h-px bg-gray-100" />
 
         {/* Add Money Section */}
-        <div className="p-4 pt-3">
+        <div className="p-3 sm:p-4 pt-2.5 sm:pt-3">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-semibold text-paytm-text">Add Money to Wallet</p>
-            <p className="text-[10px] text-paytm-muted">Withdraw anytime</p>
+            <p className="text-[12px] sm:text-xs font-semibold text-paytm-text">Add Money to Wallet</p>
+            <p className="text-[9px] sm:text-[10px] text-paytm-muted">Withdraw anytime</p>
           </div>
 
           {/* Quick Add Buttons */}

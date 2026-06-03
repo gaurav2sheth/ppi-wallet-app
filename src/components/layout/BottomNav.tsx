@@ -31,18 +31,18 @@ export function BottomNav() {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white border-t border-paytm-border/50 z-50">
-      <div className="flex items-center justify-around h-14 px-2">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:border-t-0 md:border-l md:w-auto w-full max-w-[430px] sm:max-w-2xl md:max-w-none bg-white border-t border-paytm-border/50 z-50 md:hidden">
+      <div className="flex md:flex-col items-center justify-around md:justify-start h-14 md:h-auto px-2 md:px-0">
         {tabs.map(tab => {
           const active = tab.path === '/' ? location.pathname === '/' : location.pathname.startsWith(tab.path);
           return (
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              className="flex flex-col items-center gap-0.5 py-1.5 px-4 transition-colors"
+              className="flex flex-col md:flex-row md:items-center md:gap-3 items-center gap-0.5 py-1.5 px-4 md:px-3 md:py-2 transition-colors"
             >
               {tab.icon(active)}
-              <span className={cn('text-[10px] font-medium', active ? 'text-paytm-cyan' : 'text-paytm-muted')}>{tab.label}</span>
+              <span className={cn('text-[10px] md:text-xs font-medium', active ? 'text-paytm-cyan' : 'text-paytm-muted')}>{tab.label}</span>
             </button>
           );
         })}
