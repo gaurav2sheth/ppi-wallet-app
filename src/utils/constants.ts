@@ -17,10 +17,10 @@ export const ROUTES = {
 } as const;
 
 export const STORAGE_KEYS = {
-  WALLET_ID: 'ppsl_wallet_id',
-  USER_ID: 'ppsl_user_id',
-  USER_NAME: 'ppsl_user_name',
-  PHONE: 'ppsl_phone',
+  WALLET_ID: 'wallet_id',
+  USER_ID: 'user_id',
+  USER_NAME: 'user_name',
+  PHONE: 'phone',
 } as const;
 
 export const AVATAR_COLORS = [

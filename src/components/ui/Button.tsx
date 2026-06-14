@@ -10,11 +10,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({ variant = 'primary', size = 'md', loading, fullWidth, className, children, disabled, ...props }: ButtonProps) {
   const base = 'inline-flex items-center justify-center font-semibold rounded-full transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none';
   const variants = {
-    primary: 'bg-paytm-cyan text-white hover:brightness-110 shadow-sm',
-    secondary: 'bg-paytm-navy text-white hover:bg-paytm-navy-dark',
-    outline: 'border-2 border-paytm-cyan text-paytm-cyan hover:bg-paytm-cyan-light',
-    danger: 'bg-paytm-red text-white hover:opacity-90',
-    ghost: 'text-paytm-cyan hover:bg-paytm-cyan-light',
+    primary: 'bg-primary-cyan text-white hover:brightness-110 shadow-sm',
+    secondary: 'bg-primary-navy text-white hover:bg-primary-navy-dark',
+    outline: 'border-2 border-primary-cyan text-primary-cyan hover:bg-primary-cyan-light',
+    danger: 'bg-primary-red text-white hover:opacity-90',
+    ghost: 'text-primary-cyan hover:bg-primary-cyan-light',
   };
   const sizes = {
     sm: 'px-5 py-2 text-sm',

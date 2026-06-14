@@ -33,10 +33,10 @@ describe('Auth Store', () => {
     expect(state.userId).toBe('user-123');
 
     // Check localStorage
-    expect(localStorage.getItem('ppsl_phone')).toBe('9876543210');
-    expect(localStorage.getItem('ppsl_user_name')).toBe('Gaurav Sheth');
-    expect(localStorage.getItem('ppsl_wallet_id')).toBe('wallet-123');
-    expect(localStorage.getItem('ppsl_user_id')).toBe('user-123');
+    expect(localStorage.getItem('phone')).toBe('9876543210');
+    expect(localStorage.getItem('user_name')).toBe('Gaurav Sheth');
+    expect(localStorage.getItem('wallet_id')).toBe('wallet-123');
+    expect(localStorage.getItem('user_id')).toBe('user-123');
   });
 
   it('logout clears all fields and localStorage', () => {
@@ -46,14 +46,14 @@ describe('Auth Store', () => {
     expect(state.isAuthenticated).toBe(false);
     expect(state.phone).toBeNull();
     expect(state.walletId).toBeNull();
-    expect(localStorage.getItem('ppsl_wallet_id')).toBeNull();
+    expect(localStorage.getItem('wallet_id')).toBeNull();
   });
 
   it('hydrate restores state from localStorage', () => {
-    localStorage.setItem('ppsl_wallet_id', 'hydrated-wallet');
-    localStorage.setItem('ppsl_user_id', 'hydrated-user');
-    localStorage.setItem('ppsl_user_name', 'Hydrated');
-    localStorage.setItem('ppsl_phone', '1111111111');
+    localStorage.setItem('wallet_id', 'hydrated-wallet');
+    localStorage.setItem('user_id', 'hydrated-user');
+    localStorage.setItem('user_name', 'Hydrated');
+    localStorage.setItem('phone', '1111111111');
 
     useAuthStore.getState().hydrate();
     const state = useAuthStore.getState();

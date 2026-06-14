@@ -47,19 +47,19 @@ export function WalletOverviewPage() {
 
         {/* Balance Card */}
         <Card className="text-center" onClick={() => navigate(ROUTES.WALLET_DETAIL)}>
-          <p className="text-xs text-paytm-muted font-medium">Total Wallet Balance</p>
+          <p className="text-xs text-primary-muted font-medium">Total Wallet Balance</p>
           <div className="flex items-center justify-center gap-2 mt-2">
             <svg width="20" height="20" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24">
               <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
             </svg>
-            <span className="text-4xl font-bold text-paytm-text">
+            <span className="text-4xl font-bold text-primary-text">
               {isLoading ? <span className="inline-block w-36 h-10 bg-gray-100 rounded animate-pulse" /> : formatPaise(availablePaise)}
             </span>
             <svg width="16" height="16" fill="none" stroke="#8b949e" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
           </div>
           {kycTier && (
             <span className={`inline-block mt-2 text-xs font-semibold px-3 py-1 rounded-full ${
-              kycTier === 'FULL' ? 'bg-green-50 text-paytm-green' : 'bg-orange-50 text-paytm-orange'
+              kycTier === 'FULL' ? 'bg-green-50 text-primary-green' : 'bg-orange-50 text-primary-orange'
             }`}>
               {kycTier === 'FULL' ? 'Full KYC Verified' : 'Minimum KYC'}
             </span>
@@ -74,7 +74,7 @@ export function WalletOverviewPage() {
                 <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
                   {a.icon}
                 </div>
-                <span className="text-[11px] font-medium text-paytm-text text-center leading-tight">{a.label}</span>
+                <span className="text-[11px] font-medium text-primary-text text-center leading-tight">{a.label}</span>
               </button>
             ))}
           </div>
@@ -83,15 +83,15 @@ export function WalletOverviewPage() {
         {/* Customer Rights Card */}
         <Card className="bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-100">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-paytm-navy/10 rounded-full flex items-center justify-center shrink-0 mt-1">
+            <div className="w-10 h-10 bg-primary-navy/10 rounded-full flex items-center justify-center shrink-0 mt-1">
               <svg width="20" height="20" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
             </div>
             <div className="flex-1">
-              <p className="font-bold text-sm text-paytm-text">Charter of Customer Rights</p>
-              <p className="text-xs text-paytm-muted mt-1">Your Rights. Our Promise.</p>
+              <p className="font-bold text-sm text-primary-text">Charter of Customer Rights</p>
+              <p className="text-xs text-primary-muted mt-1">Your Rights. Our Promise.</p>
               <div className="flex flex-wrap gap-1 mt-2">
                 {['Fair Treatment', 'Transparency', 'Grievance Redress'].map(r => (
-                  <span key={r} className="text-[10px] bg-white px-2 py-0.5 rounded-full text-paytm-navy font-medium">{r}</span>
+                  <span key={r} className="text-[10px] bg-white px-2 py-0.5 rounded-full text-primary-navy font-medium">{r}</span>
                 ))}
               </div>
             </div>
@@ -101,10 +101,10 @@ export function WalletOverviewPage() {
         {/* Wallet Card Info */}
         <Card>
           <div className="flex justify-between items-center mb-3">
-            <p className="text-xs font-semibold text-paytm-muted tracking-wide">WALLET & NCMC CARD</p>
-            <button className="text-xs font-semibold text-paytm-cyan">Manage</button>
+            <p className="text-xs font-semibold text-primary-muted tracking-wide">WALLET & NCMC CARD</p>
+            <button className="text-xs font-semibold text-primary-cyan">Manage</button>
           </div>
-          <div className="bg-gradient-to-r from-paytm-navy to-[#004A8F] rounded-xl p-4 text-white">
+          <div className="bg-gradient-to-r from-primary-navy to-[#004A8F] rounded-xl p-4 text-white">
             <p className="text-[10px] text-white/60 mb-1">Card Holder</p>
             <p className="font-semibold text-sm">{userName?.toUpperCase() ?? 'WALLET USER'}</p>
             <p className="text-xs text-white/60 mt-3 font-mono tracking-widest">•••• •••• •••• {walletId?.slice(-4) ?? '0000'}</p>

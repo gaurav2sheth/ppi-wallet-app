@@ -28,33 +28,33 @@ export function RewardsPage() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           <Card className="text-center !p-3">
-            <p className="text-xl font-bold text-paytm-cyan">{scratchCards.length}</p>
-            <p className="text-[10px] text-paytm-muted mt-0.5">Total Cards</p>
+            <p className="text-xl font-bold text-primary-cyan">{scratchCards.length}</p>
+            <p className="text-[10px] text-primary-muted mt-0.5">Total Cards</p>
           </Card>
           <Card className="text-center !p-3">
-            <p className="text-xl font-bold text-paytm-green">{wonCards.length}</p>
-            <p className="text-[10px] text-paytm-muted mt-0.5">Won</p>
+            <p className="text-xl font-bold text-primary-green">{wonCards.length}</p>
+            <p className="text-[10px] text-primary-muted mt-0.5">Won</p>
           </Card>
           <Card className="text-center !p-3">
-            <p className="text-xl font-bold text-paytm-muted">{unscratchedCards.length}</p>
-            <p className="text-[10px] text-paytm-muted mt-0.5">Unscratched</p>
+            <p className="text-xl font-bold text-primary-muted">{unscratchedCards.length}</p>
+            <p className="text-[10px] text-primary-muted mt-0.5">Unscratched</p>
           </Card>
         </div>
 
         {/* Unscratched Cards */}
         {unscratchedCards.length > 0 && (
           <div>
-            <p className="text-xs font-semibold text-paytm-muted mb-2 tracking-wide">PENDING SCRATCH CARDS</p>
+            <p className="text-xs font-semibold text-primary-muted mb-2 tracking-wide">PENDING SCRATCH CARDS</p>
             <div className="space-y-2">
               {unscratchedCards.map(card => (
                 <Card key={card.id} className="!p-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center text-lg">🎁</div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-paytm-text">Scratch Card</p>
-                      <p className="text-[10px] text-paytm-muted">{formatDate(card.createdAt)}</p>
+                      <p className="text-sm font-medium text-primary-text">Scratch Card</p>
+                      <p className="text-[10px] text-primary-muted">{formatDate(card.createdAt)}</p>
                     </div>
-                    <span className="text-xs font-semibold text-paytm-orange bg-orange-50 px-3 py-1 rounded-full">Unscratched</span>
+                    <span className="text-xs font-semibold text-primary-orange bg-orange-50 px-3 py-1 rounded-full">Unscratched</span>
                   </div>
                 </Card>
               ))}
@@ -64,12 +64,12 @@ export function RewardsPage() {
 
         {/* Cashback History */}
         <div>
-          <p className="text-xs font-semibold text-paytm-muted mb-2 tracking-wide">CASHBACK HISTORY</p>
+          <p className="text-xs font-semibold text-primary-muted mb-2 tracking-wide">CASHBACK HISTORY</p>
           {wonCards.length === 0 && missedCards.length === 0 ? (
             <Card className="text-center py-8">
               <p className="text-3xl mb-2">🎰</p>
-              <p className="text-sm text-paytm-muted">No rewards yet</p>
-              <p className="text-xs text-paytm-muted mt-1">Make transactions to earn scratch cards!</p>
+              <p className="text-sm text-primary-muted">No rewards yet</p>
+              <p className="text-xs text-primary-muted mt-1">Make transactions to earn scratch cards!</p>
             </Card>
           ) : (
             <div className="space-y-2">
@@ -80,11 +80,11 @@ export function RewardsPage() {
                       {card.amount > 0 ? '🎉' : '😊'}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-paytm-text">{card.label}</p>
-                      <p className="text-[10px] text-paytm-muted">{formatDate(card.createdAt)}</p>
+                      <p className="text-sm font-medium text-primary-text">{card.label}</p>
+                      <p className="text-[10px] text-primary-muted">{formatDate(card.createdAt)}</p>
                     </div>
                     {card.amount > 0 && (
-                      <span className="text-sm font-bold text-paytm-green">
+                      <span className="text-sm font-bold text-primary-green">
                         +₹{(card.amount / 100).toFixed(card.amount % 100 === 0 ? 0 : 2)}
                       </span>
                     )}

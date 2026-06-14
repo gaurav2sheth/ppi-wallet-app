@@ -79,7 +79,7 @@ export function PassbookPage() {
                 placeholder="Search transactions..."
                 className="flex-1 text-sm outline-none bg-gray-100 rounded-full px-4 py-2"
               />
-              <button onClick={() => { setShowSearch(false); setSearchQuery(''); }} className="text-xs font-semibold text-paytm-cyan">Cancel</button>
+              <button onClick={() => { setShowSearch(false); setSearchQuery(''); }} className="text-xs font-semibold text-primary-cyan">Cancel</button>
             </div>
           ) : (
             <button onClick={() => setShowSearch(true)} className="p-2 rounded-full hover:bg-gray-100">
@@ -96,7 +96,7 @@ export function PassbookPage() {
         ) : filteredGroups.size === 0 ? (
           <Card className="text-center py-8">
             <p className="text-3xl mb-2">{searchQuery ? '🔍' : '📋'}</p>
-            <p className="text-sm text-paytm-muted">{searchQuery ? `No results for "${searchQuery}"` : 'No transactions found'}</p>
+            <p className="text-sm text-primary-muted">{searchQuery ? `No results for "${searchQuery}"` : 'No transactions found'}</p>
           </Card>
         ) : (
           Array.from(filteredGroups.entries()).map(([month, entries]) => {
@@ -107,10 +107,10 @@ export function PassbookPage() {
             return (
               <div key={month}>
                 <div className="flex justify-between items-center mb-2">
-                  <p className="text-sm font-bold text-paytm-text">{month}</p>
+                  <p className="text-sm font-bold text-primary-text">{month}</p>
                   {monthDebitTotal > 0n && (
-                    <p className="text-[11px] text-paytm-muted">
-                      Spent <span className="font-semibold text-paytm-text">{formatPaise(monthDebitTotal.toString())}</span>
+                    <p className="text-[11px] text-primary-muted">
+                      Spent <span className="font-semibold text-primary-text">{formatPaise(monthDebitTotal.toString())}</span>
                     </p>
                   )}
                 </div>
@@ -127,21 +127,21 @@ export function PassbookPage() {
                           <Avatar name={name} size="md" mcc={mcc} />
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start">
-                              <p className="text-sm font-medium text-paytm-text truncate pr-2">{name}</p>
-                              <p className={`text-sm font-bold shrink-0 ${isCredit ? 'text-paytm-green' : 'text-paytm-text'}`}>
+                              <p className="text-sm font-medium text-primary-text truncate pr-2">{name}</p>
+                              <p className={`text-sm font-bold shrink-0 ${isCredit ? 'text-primary-green' : 'text-primary-text'}`}>
                                 {isCredit ? '+' : '-'}{formatPaise(e.amount_paise)}
                               </p>
                             </div>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[11px] text-paytm-muted">{formatDate(e.created_at)}</span>
+                              <span className="text-[11px] text-primary-muted">{formatDate(e.created_at)}</span>
                               <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${mcc.bgColor} ${mcc.textColor}`}>
                                 {mcc.label}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 mt-1">
-                              <p className="text-[10px] text-paytm-muted">Balance: {formatPaise(e.balance_after_paise)}</p>
+                              <p className="text-[10px] text-primary-muted">Balance: {formatPaise(e.balance_after_paise)}</p>
                               {e.payment_source && (
-                                <span className="text-[9px] text-paytm-cyan font-medium">via {e.payment_source}</span>
+                                <span className="text-[9px] text-primary-cyan font-medium">via {e.payment_source}</span>
                               )}
                             </div>
                           </div>

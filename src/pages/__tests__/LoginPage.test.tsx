@@ -27,10 +27,10 @@ describe('LoginPage', () => {
     expect(screen.getByText('+91')).toBeInTheDocument();
   });
 
-  it('renders the Paytm branding', () => {
+  it('renders the app branding', () => {
     renderLoginPage();
-    expect(screen.getByText('Paytm')).toBeInTheDocument();
-    expect(screen.getByText('PPI Wallet')).toBeInTheDocument();
+    expect(screen.getByText('Wallet')).toBeInTheDocument();
+    expect(screen.getByText('PPI Service')).toBeInTheDocument();
   });
 
   it('Get OTP button is disabled when phone is empty', () => {

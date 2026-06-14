@@ -46,14 +46,14 @@ export function WalletStrip() {
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-paytm-navy/10 rounded-xl flex items-center justify-center">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary-navy/10 rounded-xl flex items-center justify-center">
                 <svg width="22" height="22" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24">
                   <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
                 </svg>
               </div>
               <div>
-                <p className="text-[11px] sm:text-xs text-paytm-muted font-medium">Wallet Balance</p>
-                <p className="text-xl sm:text-2xl font-bold text-paytm-text">
+                <p className="text-[11px] sm:text-xs text-primary-muted font-medium">Wallet Balance</p>
+                <p className="text-xl sm:text-2xl font-bold text-primary-text">
                   {isLoading ? (
                     <span className="inline-block w-24 h-7 bg-gray-100 rounded animate-pulse" />
                   ) : (
@@ -65,7 +65,7 @@ export function WalletStrip() {
             <div className="flex items-center gap-2">
               {kycTier && (
                 <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full ${
-                  kycTier === 'FULL' ? 'bg-green-50 text-paytm-green' : 'bg-orange-50 text-paytm-orange'
+                  kycTier === 'FULL' ? 'bg-green-50 text-primary-green' : 'bg-orange-50 text-primary-orange'
                 }`}>
                   {kycTier === 'FULL' ? 'Full KYC' : 'Min KYC'}
                 </span>
@@ -80,20 +80,20 @@ export function WalletStrip() {
           </div>
         </button>
 
-        {/* Wallet breakdown list — Paytm style vertical list */}
+        {/* Wallet breakdown list — vertical collapsible list */}
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expanded ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="border-t border-gray-100">
             {/* Main Wallet */}
             <div className="flex items-center justify-between px-4 py-3 bg-gray-50/50">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-paytm-navy/10 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-primary-navy/10 flex items-center justify-center">
                   <svg width="16" height="16" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24">
                     <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
                   </svg>
                 </div>
-                <span className="text-sm font-medium text-paytm-text">Wallet</span>
+                <span className="text-sm font-medium text-primary-text">Wallet</span>
               </div>
-              <span className="text-sm font-bold text-paytm-text">{formatPaise(availablePaise)}</span>
+              <span className="text-sm font-bold text-primary-text">{formatPaise(availablePaise)}</span>
             </div>
 
             {/* Sub-Wallets */}
@@ -112,8 +112,8 @@ export function WalletStrip() {
                       {sw.icon}
                     </div>
                     <div className="text-left">
-                      <span className="text-sm font-medium text-paytm-text">{sw.label} Wallet</span>
-                      {sw.is_security_deposit && <span className="ml-1 text-[8px] text-paytm-muted font-normal">(Deposit)</span>}
+                      <span className="text-sm font-medium text-primary-text">{sw.label} Wallet</span>
+                      {sw.is_security_deposit && <span className="ml-1 text-[8px] text-primary-muted font-normal">(Deposit)</span>}
                       {isExpired && <span className="ml-1.5 text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold">EXPIRED</span>}
                       {sw.is_security_deposit && (sw.security_deposit_used_paise || 0) > 0 && (
                         <span className="ml-1.5 text-[8px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-bold">LOW</span>
@@ -133,7 +133,7 @@ export function WalletStrip() {
 
           {/* Refresh button */}
           <div className="px-4 py-2 border-t border-gray-100 flex justify-center">
-            <button onClick={(e) => { e.stopPropagation(); refetch(); }} className="text-[11px] text-paytm-cyan font-medium flex items-center gap-1">
+            <button onClick={(e) => { e.stopPropagation(); refetch(); }} className="text-[11px] text-primary-cyan font-medium flex items-center gap-1">
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>
               Refresh Balance
             </button>
@@ -146,8 +146,8 @@ export function WalletStrip() {
         {/* Add Money Section */}
         <div className="p-3 sm:p-4 pt-2.5 sm:pt-3">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[12px] sm:text-xs font-semibold text-paytm-text">Add Money to Wallet</p>
-            <p className="text-[9px] sm:text-[10px] text-paytm-muted">Withdraw anytime</p>
+            <p className="text-[12px] sm:text-xs font-semibold text-primary-text">Add Money to Wallet</p>
+            <p className="text-[9px] sm:text-[10px] text-primary-muted">Withdraw anytime</p>
           </div>
 
           {/* Quick Add Buttons */}
@@ -158,13 +158,13 @@ export function WalletStrip() {
                 onClick={() => handleQuickAdd(a.value)}
                 className={`relative flex-1 py-2 rounded-lg border text-xs font-semibold transition-colors ${
                   quickAmount === a.value
-                    ? 'border-paytm-navy bg-paytm-navy/5 text-paytm-navy'
-                    : 'border-gray-200 text-paytm-text hover:border-paytm-navy/30'
+                    ? 'border-primary-navy bg-primary-navy/5 text-primary-navy'
+                    : 'border-gray-200 text-primary-text hover:border-primary-navy/30'
                 }`}
               >
                 {a.label}
                 {a.popular && (
-                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] bg-paytm-green text-white px-1.5 py-0.5 rounded-full font-bold">
+                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] bg-primary-green text-white px-1.5 py-0.5 rounded-full font-bold">
                     Popular
                   </span>
                 )}
@@ -172,7 +172,7 @@ export function WalletStrip() {
             ))}
             <button
               onClick={() => navigate(ROUTES.ADD_MONEY)}
-              className="flex-1 py-2 rounded-lg border border-gray-200 text-xs font-medium text-paytm-cyan hover:border-paytm-cyan/30 transition-colors"
+              className="flex-1 py-2 rounded-lg border border-gray-200 text-xs font-medium text-primary-cyan hover:border-primary-cyan/30 transition-colors"
             >
               Custom
             </button>
@@ -182,14 +182,14 @@ export function WalletStrip() {
           <div className="flex items-center gap-2 mb-3 bg-gray-50 rounded-lg p-2.5">
             <button
               onClick={() => setAutoTopUp(!autoTopUp)}
-              className={`w-9 h-5 rounded-full transition-colors flex items-center shrink-0 ${autoTopUp ? 'bg-paytm-green' : 'bg-gray-300'}`}
+              className={`w-9 h-5 rounded-full transition-colors flex items-center shrink-0 ${autoTopUp ? 'bg-primary-green' : 'bg-gray-300'}`}
             >
               <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${autoTopUp ? 'translate-x-[18px]' : 'translate-x-[2px]'}`} />
             </button>
-            <p className="text-[11px] text-paytm-text leading-tight">
+            <p className="text-[11px] text-primary-text leading-tight">
               Auto add <span className="font-semibold">₹2,000</span> when balance below <span className="font-semibold">₹200</span>
             </p>
-            <button className="text-[10px] text-paytm-cyan font-semibold ml-auto shrink-0">Edit</button>
+            <button className="text-[10px] text-primary-cyan font-semibold ml-auto shrink-0">Edit</button>
           </div>
 
           {/* Payment Source */}
@@ -198,8 +198,8 @@ export function WalletStrip() {
               <svg width="14" height="14" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3" /></svg>
             </div>
             <div className="flex-1">
-              <p className="text-[10px] text-paytm-muted">From</p>
-              <p className="text-xs font-medium text-paytm-text">HDFC Bank - 7125</p>
+              <p className="text-[10px] text-primary-muted">From</p>
+              <p className="text-xs font-medium text-primary-text">HDFC Bank - 7125</p>
             </div>
             <svg width="14" height="14" fill="none" stroke="#8b949e" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
           </div>

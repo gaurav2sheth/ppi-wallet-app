@@ -12,7 +12,7 @@ export function AuthGuard() {
 
 export function AppShell() {
   return (
-    <div className="w-full max-w-[430px] sm:max-w-2xl md:max-w-3xl lg:max-w-5xl mx-auto min-h-screen bg-paytm-bg relative">
+    <div className="w-full max-w-[430px] sm:max-w-2xl md:max-w-3xl lg:max-w-5xl mx-auto min-h-screen bg-primary-bg relative">
       <ToastContainer />
       <ScratchCardOverlay />
       <div className="pb-20 md:pb-0">

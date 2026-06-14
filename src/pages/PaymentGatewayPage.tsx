@@ -61,7 +61,7 @@ export function PaymentGatewayPage() {
     { id: 'upi', label: 'UPI', subtitle: 'HDFC Bank - 7125', icon: '🏧', available: true },
     { id: 'card', label: 'Debit / Credit Card', subtitle: 'Visa, Mastercard, RuPay', icon: '💎', available: true },
     { id: 'netbanking', label: 'Net Banking', subtitle: '50+ banks supported', icon: '🏦', available: true },
-    { id: 'paylater', label: 'Paytm Postpaid', subtitle: 'Pay next month', icon: '📅', available: false },
+    { id: 'paylater', label: 'Buy Now Pay Later', subtitle: 'Pay next month', icon: '📅', available: false },
   ];
 
   const getSourceLabel = () => {
@@ -133,13 +133,13 @@ export function PaymentGatewayPage() {
             )}
           </div>
           <div>
-            <p className="text-xl font-bold text-paytm-text">{success ? 'Money Added!' : 'Transaction Failed'}</p>
+            <p className="text-xl font-bold text-primary-text">{success ? 'Money Added!' : 'Transaction Failed'}</p>
             <p className="text-2xl font-bold mt-2">{formatPaise(String(paise))}</p>
-            <p className="text-xs text-paytm-muted mt-1">via {paymentMethods.find(m => m.id === selectedMethod)?.label}</p>
+            <p className="text-xs text-primary-muted mt-1">via {paymentMethods.find(m => m.id === selectedMethod)?.label}</p>
             {success && Boolean(result?.result?.balance_after_paise) && (
               <p className="text-sm text-green-600 mt-2 font-medium">New balance: {formatPaise(String(result!.result!.balance_after_paise as string))}</p>
             )}
-            {!success && <p className="text-sm text-paytm-red mt-2">{error?.message ?? result?.error}</p>}
+            {!success && <p className="text-sm text-primary-red mt-2">{error?.message ?? result?.error}</p>}
           </div>
           <div className="space-y-3">
             <Button fullWidth onClick={() => navigate(ROUTES.HOME)}>Done</Button>
@@ -158,14 +158,14 @@ export function PaymentGatewayPage() {
         {step === 'amount' && (
           <>
             <Card>
-              <p className="text-xs text-paytm-muted font-medium mb-1">Current Wallet Balance</p>
-              <p className="text-lg font-bold text-paytm-text">{formatPaise(availablePaise)}</p>
+              <p className="text-xs text-primary-muted font-medium mb-1">Current Wallet Balance</p>
+              <p className="text-lg font-bold text-primary-text">{formatPaise(availablePaise)}</p>
             </Card>
             <AmountInput value={amount} onChange={(v) => { setAmount(v); setGuardBlock(null); }} label="Enter amount to add" />
 
             {/* Live helper text — remaining room */}
             <div className="space-y-1">
-              <p className="text-[11px] text-paytm-muted text-center">
+              <p className="text-[11px] text-primary-muted text-center">
                 Max wallet balance: ₹1,00,000{kycTier === 'MINIMUM' ? ' (₹10,000 for Min KYC)' : ''}
               </p>
               {loadRoom.max_room > 0 ? (
@@ -197,7 +197,7 @@ export function PaymentGatewayPage() {
                   {guardBlock.max_allowed > 0 && (
                     <button
                       onClick={handleAddMaxInstead}
-                      className="flex-1 py-2.5 px-4 rounded-lg bg-paytm-cyan text-white text-sm font-medium hover:bg-paytm-cyan/90 transition-colors"
+                      className="flex-1 py-2.5 px-4 rounded-lg bg-primary-cyan text-white text-sm font-medium hover:bg-primary-cyan/90 transition-colors"
                     >
                       Add ₹{guardBlock.max_allowed.toLocaleString('en-IN')} instead
                     </button>
@@ -205,7 +205,7 @@ export function PaymentGatewayPage() {
                   {guardBlock.max_allowed === 0 && guardBlock.blocked_by === 'MIN_KYC_CAP' && (
                     <button
                       onClick={() => navigate('/kyc')}
-                      className="flex-1 py-2.5 px-4 rounded-lg bg-paytm-navy text-white text-sm font-medium hover:bg-paytm-navy/90 transition-colors"
+                      className="flex-1 py-2.5 px-4 rounded-lg bg-primary-navy text-white text-sm font-medium hover:bg-primary-navy/90 transition-colors"
                     >
                       Upgrade to Full KYC
                     </button>
@@ -223,7 +223,7 @@ export function PaymentGatewayPage() {
         {step === 'method' && (
           <>
             {/* Amount Summary */}
-            <Card className="bg-gradient-to-r from-paytm-navy to-[#004A8F] text-white">
+            <Card className="bg-gradient-to-r from-primary-navy to-[#004A8F] text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-white/70">Adding to Wallet</p>
@@ -235,13 +235,13 @@ export function PaymentGatewayPage() {
 
             {/* Payment Methods */}
             <div>
-              <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">SELECT PAYMENT METHOD</p>
+              <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">SELECT PAYMENT METHOD</p>
               <div className="space-y-2">
                 {paymentMethods.map(m => (
                   <Card
                     key={m.id}
                     className={`!p-3 border-2 transition-colors ${
-                      selectedMethod === m.id ? 'border-paytm-navy' : 'border-transparent'
+                      selectedMethod === m.id ? 'border-primary-navy' : 'border-transparent'
                     } ${!m.available ? 'opacity-50' : ''}`}
                     onClick={() => m.available && setSelectedMethod(m.id)}
                   >
@@ -250,13 +250,13 @@ export function PaymentGatewayPage() {
                         {m.icon}
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-paytm-text">{m.label}</p>
-                        <p className="text-[11px] text-paytm-muted">{m.subtitle}</p>
+                        <p className="text-sm font-medium text-primary-text">{m.label}</p>
+                        <p className="text-[11px] text-primary-muted">{m.subtitle}</p>
                       </div>
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        selectedMethod === m.id ? 'border-paytm-navy' : 'border-gray-300'
+                        selectedMethod === m.id ? 'border-primary-navy' : 'border-gray-300'
                       }`}>
-                        {selectedMethod === m.id && <div className="w-2.5 h-2.5 rounded-full bg-paytm-navy" />}
+                        {selectedMethod === m.id && <div className="w-2.5 h-2.5 rounded-full bg-primary-navy" />}
                       </div>
                     </div>
                   </Card>
@@ -267,7 +267,7 @@ export function PaymentGatewayPage() {
             {/* Secure Badge */}
             <div className="flex items-center justify-center gap-2 py-2">
               <svg width="14" height="14" fill="none" stroke="#4CAF50" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-              <p className="text-[10px] text-paytm-muted">100% Secure Payment · RBI Regulated</p>
+              <p className="text-[10px] text-primary-muted">100% Secure Payment · RBI Regulated</p>
             </div>
 
             <Button fullWidth loading={isLoading} onClick={handlePay}>

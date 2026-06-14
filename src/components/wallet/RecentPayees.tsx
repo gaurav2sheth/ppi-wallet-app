@@ -16,7 +16,7 @@ export function RecentPayees({ type, onSelect }: RecentPayeesProps) {
 
   return (
     <div>
-      <p className="text-xs font-semibold text-paytm-muted mb-2 tracking-wide">RECENT</p>
+      <p className="text-xs font-semibold text-primary-muted mb-2 tracking-wide">RECENT</p>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
         {filtered.slice(0, 6).map(p => (
           <button
@@ -25,10 +25,10 @@ export function RecentPayees({ type, onSelect }: RecentPayeesProps) {
             className="flex flex-col items-center gap-1.5 min-w-[60px] active:scale-95 transition-transform"
           >
             <Avatar name={p.name} size="md" />
-            <span className="text-[10px] font-medium text-paytm-text text-center leading-tight w-16 truncate">
+            <span className="text-[10px] font-medium text-primary-text text-center leading-tight w-16 truncate">
               {p.name}
             </span>
-            <span className="text-[8px] text-paytm-muted font-mono truncate w-16 text-center">
+            <span className="text-[8px] text-primary-muted font-mono truncate w-16 text-center">
               {truncateId(p.detail, 8)}
             </span>
           </button>

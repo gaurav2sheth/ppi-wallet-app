@@ -25,7 +25,7 @@ export function TransactionDetailPage() {
         <Header showBack title="Transaction Details" />
         <div className="px-4 pt-16 text-center">
           <p className="text-3xl mb-2">🔍</p>
-          <p className="text-sm text-paytm-muted">Transaction not found</p>
+          <p className="text-sm text-primary-muted">Transaction not found</p>
           <Button variant="ghost" className="mt-4" onClick={() => navigate(-1)}>Go Back</Button>
         </div>
       </div>
@@ -36,9 +36,9 @@ export function TransactionDetailPage() {
   const mcc = getMccCategory(txn.transaction_type, txn.description, txn.entry_type);
 
   const handleShare = () => {
-    const text = `Paytm Wallet Receipt\n${isCredit ? 'Received' : 'Paid'}: ${formatPaise(txn.amount_paise)}\n${txn.description ?? mcc.label}\nDate: ${formatDate(txn.created_at)}\nTxn ID: ${txn.id}\nBalance: ${formatPaise(txn.balance_after_paise)}`;
+    const text = `PPI Wallet Receipt\n${isCredit ? 'Received' : 'Paid'}: ${formatPaise(txn.amount_paise)}\n${txn.description ?? mcc.label}\nDate: ${formatDate(txn.created_at)}\nTxn ID: ${txn.id}\nBalance: ${formatPaise(txn.balance_after_paise)}`;
     if (navigator.share) {
-      navigator.share({ title: 'Paytm Receipt', text }).catch(() => {});
+      navigator.share({ title: 'PPI Wallet Receipt', text }).catch(() => {});
     } else {
       navigator.clipboard.writeText(text);
       toast.show('Receipt copied to clipboard', 'success');
@@ -58,29 +58,29 @@ export function TransactionDetailPage() {
         {/* Amount Card */}
         <Card className="text-center py-6">
           <Avatar name={txn.description ?? mcc.label} size="lg" mcc={mcc} />
-          <p className="text-sm font-medium text-paytm-text mt-3">{txn.description ?? mcc.label}</p>
-          <p className={`text-3xl font-bold mt-2 ${isCredit ? 'text-paytm-green' : 'text-paytm-text'}`}>
+          <p className="text-sm font-medium text-primary-text mt-3">{txn.description ?? mcc.label}</p>
+          <p className={`text-3xl font-bold mt-2 ${isCredit ? 'text-primary-green' : 'text-primary-text'}`}>
             {isCredit ? '+' : '-'}{formatPaise(txn.amount_paise)}
           </p>
           <div className="flex items-center justify-center gap-1.5 mt-2">
-            <span className={`w-2 h-2 rounded-full bg-paytm-green`} />
-            <span className="text-xs font-medium text-paytm-green">Completed</span>
+            <span className={`w-2 h-2 rounded-full bg-primary-green`} />
+            <span className="text-xs font-medium text-primary-green">Completed</span>
           </div>
         </Card>
 
         {/* Status Timeline */}
         <Card>
-          <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">STATUS</p>
+          <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">STATUS</p>
           <div className="space-y-0">
             {statusSteps.map((s, i) => (
               <div key={s.label} className="flex gap-3">
                 <div className="flex flex-col items-center">
-                  <div className={`w-3 h-3 rounded-full ${s.done ? 'bg-paytm-green' : 'bg-gray-200'}`} />
-                  {i < statusSteps.length - 1 && <div className={`w-0.5 h-8 ${s.done ? 'bg-paytm-green' : 'bg-gray-200'}`} />}
+                  <div className={`w-3 h-3 rounded-full ${s.done ? 'bg-primary-green' : 'bg-gray-200'}`} />
+                  {i < statusSteps.length - 1 && <div className={`w-0.5 h-8 ${s.done ? 'bg-primary-green' : 'bg-gray-200'}`} />}
                 </div>
                 <div className="pb-3">
-                  <p className="text-xs font-medium text-paytm-text">{s.label}</p>
-                  {s.time && <p className="text-[10px] text-paytm-muted">{s.time}</p>}
+                  <p className="text-xs font-medium text-primary-text">{s.label}</p>
+                  {s.time && <p className="text-[10px] text-primary-muted">{s.time}</p>}
                 </div>
               </div>
             ))}
@@ -89,7 +89,7 @@ export function TransactionDetailPage() {
 
         {/* Details */}
         <Card>
-          <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">DETAILS</p>
+          <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">DETAILS</p>
           <div className="space-y-3">
             <DetailRow label="Transaction ID" value={truncateId(txn.id, 20)} mono />
             <DetailRow label="Type" value={isCredit ? 'Credit' : 'Debit'} />
@@ -118,8 +118,8 @@ export function TransactionDetailPage() {
 function DetailRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="flex justify-between items-start">
-      <span className="text-xs text-paytm-muted">{label}</span>
-      <span className={`text-xs font-medium text-paytm-text text-right max-w-[60%] ${mono ? 'font-mono text-[11px]' : ''}`}>{value}</span>
+      <span className="text-xs text-primary-muted">{label}</span>
+      <span className={`text-xs font-medium text-primary-text text-right max-w-[60%] ${mono ? 'font-mono text-[11px]' : ''}`}>{value}</span>
     </div>
   );
 }

@@ -19,9 +19,9 @@ export const useToast = create<ToastState>((set) => ({
 }));
 
 const variantStyles = {
-  success: 'bg-paytm-green',
-  error: 'bg-paytm-red',
-  info: 'bg-paytm-navy',
+  success: 'bg-primary-green',
+  error: 'bg-primary-red',
+  info: 'bg-primary-navy',
 };
 
 export function ToastContainer() {

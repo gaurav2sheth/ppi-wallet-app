@@ -52,13 +52,13 @@ export function PinModal({ isOpen, onVerified, onCancel, title }: PinModalProps)
         <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5" />
 
         <div className="text-center mb-6">
-          <div className="w-14 h-14 bg-paytm-navy/10 rounded-full flex items-center justify-center mx-auto mb-3">
+          <div className="w-14 h-14 bg-primary-navy/10 rounded-full flex items-center justify-center mx-auto mb-3">
             <svg width="24" height="24" fill="none" stroke="#002E6E" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
           </div>
-          <p className="text-base font-bold text-paytm-text">
+          <p className="text-base font-bold text-primary-text">
             {step === 'setup' ? 'Set Transaction PIN' : step === 'confirm' ? 'Confirm PIN' : (title ?? 'Enter Transaction PIN')}
           </p>
-          <p className="text-xs text-paytm-muted mt-1">
+          <p className="text-xs text-primary-muted mt-1">
             {step === 'setup' ? 'Create a 4-digit PIN to secure your payments'
               : step === 'confirm' ? 'Re-enter your PIN to confirm'
               : 'Enter your 4-digit PIN to authorize'}

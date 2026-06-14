@@ -51,12 +51,12 @@ export function OtpInput({ length = 6, onComplete, error }: OtpInputProps) {
             onChange={e => handleChange(i, e.target.value)}
             onKeyDown={e => handleKeyDown(i, e)}
             className={`w-12 h-14 text-center text-xl font-bold border-2 rounded-xl outline-none transition-colors ${
-              error ? 'border-paytm-red' : v ? 'border-paytm-navy' : 'border-gray-200 focus:border-paytm-navy'
+              error ? 'border-primary-red' : v ? 'border-primary-navy' : 'border-gray-200 focus:border-primary-navy'
             }`}
           />
         ))}
       </div>
-      {error && <p className="text-sm text-paytm-red text-center">{error}</p>}
+      {error && <p className="text-sm text-primary-red text-center">{error}</p>}
     </div>
   );
 }

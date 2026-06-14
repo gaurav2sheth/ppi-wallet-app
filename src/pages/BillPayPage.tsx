@@ -62,7 +62,7 @@ export function BillPayPage() {
           <div>
             <p className="text-xl font-bold">{success ? 'Bill Paid!' : 'Payment Failed'}</p>
             <p className="text-2xl font-bold mt-2">{formatPaise(String(paise))}</p>
-            {!success && <p className="text-sm text-paytm-red mt-2">{error?.message ?? result?.error}</p>}
+            {!success && <p className="text-sm text-primary-red mt-2">{error?.message ?? result?.error}</p>}
           </div>
           <Button fullWidth onClick={() => navigate(ROUTES.HOME)}>Done</Button>
           {!success && <Button fullWidth variant="outline" onClick={() => { reset(); setStep('input'); }}>Retry</Button>}
@@ -78,45 +78,45 @@ export function BillPayPage() {
       <div className="px-4 pt-6 space-y-5">
         {/* Categories */}
         <div>
-          <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">SELECT CATEGORY</p>
+          <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">SELECT CATEGORY</p>
           <div className="grid grid-cols-3 gap-3">
             {categories.map(c => (
               <button
                 key={c.id}
                 onClick={() => { setCategory(c.id); setBillerId(`${c.id}-provider`); }}
                 className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-colors ${
-                  category === c.id ? 'border-paytm-navy bg-blue-50' : 'border-gray-100 hover:border-gray-200'
+                  category === c.id ? 'border-primary-navy bg-blue-50' : 'border-gray-100 hover:border-gray-200'
                 }`}
               >
                 <span className="text-2xl">{c.icon}</span>
-                <span className="text-xs font-medium text-paytm-text">{c.label}</span>
+                <span className="text-xs font-medium text-primary-text">{c.label}</span>
               </button>
             ))}
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-paytm-muted mb-1 block">Biller / Provider ID</label>
+          <label className="text-xs font-medium text-primary-muted mb-1 block">Biller / Provider ID</label>
           <input
             value={billerId}
             onChange={e => setBillerId(e.target.value)}
             placeholder="e.g. MSEDC-Mumbai"
-            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors"
+            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-primary-navy transition-colors"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-paytm-muted mb-1 block">Consumer / Reference Number</label>
+          <label className="text-xs font-medium text-primary-muted mb-1 block">Consumer / Reference Number</label>
           <input
             value={billerRef}
             onChange={e => setBillerRef(e.target.value)}
             placeholder="e.g. 1234567890"
-            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors"
+            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-primary-navy transition-colors"
           />
         </div>
         <AmountInput value={amount} onChange={setAmount} label="Bill Amount" presets={[200, 500, 1000, 2000]} />
         <Card className="!p-3 bg-gray-50">
           <div className="flex justify-between text-xs">
-            <span className="text-paytm-muted">Available Balance</span>
+            <span className="text-primary-muted">Available Balance</span>
             <span className="font-semibold">{formatPaise(availablePaise)}</span>
           </div>
         </Card>

@@ -1,10 +1,10 @@
-# Paytm PPI Wallet App
+# PPI Wallet App
 
 A mobile-first React frontend for an RBI-regulated Prepaid Payment Instrument (PPI) Wallet, built with **React 19 + TypeScript + Vite + Tailwind CSS**.
 
-The UI follows Paytm's PODS design language with a navy (#002E6E) / cyan (#00B9F1) color scheme, card-based layouts, pill-shaped buttons, and bottom navigation.
+The UI uses a clean design language with a navy (#002E6E) / cyan (#00B9F1) color scheme, card-based layouts, pill-shaped buttons, and bottom navigation.
 
-**Live Demo:** [gaurav2sheth.github.io/paytm-wallet-app](https://gaurav2sheth.github.io/paytm-wallet-app)
+**Live Demo:** [gaurav2sheth.github.io/ppi-wallet-app](https://gaurav2sheth.github.io/ppi-wallet-app)
 
 ## Features
 
@@ -37,7 +37,7 @@ The UI follows Paytm's PODS design language with a navy (#002E6E) / cyan (#00B9F
 |-------|-----------|
 | Framework | React 19 + TypeScript |
 | Bundler | Vite 8 |
-| Styling | Tailwind CSS v4 (Paytm PODS design tokens) |
+| Styling | Tailwind CSS v4 (custom design tokens) |
 | Routing | React Router v7 (HashRouter for GitHub Pages) |
 | State | Zustand (7 stores with localStorage persistence) |
 | HTTP | Axios |
@@ -150,7 +150,7 @@ All monetary values use **BigInt in paise** (1 INR = 100 paise) per RBI complian
 
 | Target | URL |
 |--------|-----|
-| Wallet App | [gaurav2sheth.github.io/paytm-wallet-app](https://gaurav2sheth.github.io/paytm-wallet-app) |
+| Wallet App | [gaurav2sheth.github.io/ppi-wallet-app](https://gaurav2sheth.github.io/ppi-wallet-app) |
 | Admin Dashboard | [gaurav2sheth.github.io/ppi-wallet-admin](https://gaurav2sheth.github.io/ppi-wallet-admin) |
 | Backend API | [ppi-wallet-api.onrender.com](https://ppi-wallet-api.onrender.com/health) |
 | MCP Server | Local via Claude Desktop (49 tools incl. sub-wallet, support agent, KYC agent & load guard) |

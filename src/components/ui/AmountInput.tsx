@@ -16,19 +16,19 @@ export function AmountInput({ value, onChange, presets = [100, 500, 1000, 2000],
 
   return (
     <div className="space-y-3">
-      {label && <p className="text-sm text-paytm-muted font-medium">{label}</p>}
-      <div className="flex items-center gap-2 border-b-2 border-paytm-border focus-within:border-paytm-cyan pb-2 transition-colors">
-        <span className="text-2xl text-paytm-muted font-light">₹</span>
+      {label && <p className="text-sm text-primary-muted font-medium">{label}</p>}
+      <div className="flex items-center gap-2 border-b-2 border-primary-border focus-within:border-primary-cyan pb-2 transition-colors">
+        <span className="text-2xl text-primary-muted font-light">₹</span>
         <input
           type="text"
           inputMode="decimal"
           value={value}
           onChange={handleChange}
           placeholder="0"
-          className="flex-1 text-3xl font-bold text-paytm-text outline-none bg-transparent placeholder:text-gray-300"
+          className="flex-1 text-3xl font-bold text-primary-text outline-none bg-transparent placeholder:text-gray-300"
         />
       </div>
-      {error && <p className="text-sm text-paytm-red">{error}</p>}
+      {error && <p className="text-sm text-primary-red">{error}</p>}
       <div className="flex gap-2 flex-wrap">
         {presets.map(p => (
           <button
@@ -37,8 +37,8 @@ export function AmountInput({ value, onChange, presets = [100, 500, 1000, 2000],
             className={cn(
               'px-4 py-2 rounded-full text-sm font-medium border transition-colors',
               value === p.toString()
-                ? 'bg-paytm-cyan-light border-paytm-cyan text-paytm-cyan'
-                : 'border-paytm-border text-paytm-text hover:border-paytm-cyan/40'
+                ? 'bg-primary-cyan-light border-primary-cyan text-primary-cyan'
+                : 'border-primary-border text-primary-text hover:border-primary-cyan/40'
             )}
           >
             ₹{p.toLocaleString('en-IN')}

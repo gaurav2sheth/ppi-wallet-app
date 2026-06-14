@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paytm PODS Design System Colors (Nov 2025 redesign) */
-  --color-paytm-navy: #002E6E;
-  --color-paytm-navy-dark: #001F4D;
-  --color-paytm-cyan: #00B9F1;
-  --color-paytm-cyan-light: #E6F7FE;
-  --color-paytm-green: #28A745;
-  --color-paytm-red: #E53935;
-  --color-paytm-orange: #FF9800;
-  --color-paytm-bg: #F8F9FA;
-  --color-paytm-surface: #FFFFFF;
-  --color-paytm-text: #1A1A1A;
-  --color-paytm-muted: #707070;
-  --color-paytm-border: #E0E0E0;
+  /* Primary Design System Colors */
+  --color-primary-navy: #002E6E;
+  --color-primary-navy-dark: #001F4D;
+  --color-primary-cyan: #00B9F1;
+  --color-primary-cyan-light: #E6F7FE;
+  --color-primary-green: #28A745;
+  --color-primary-red: #E53935;
+  --color-primary-orange: #FF9800;
+  --color-primary-bg: #F8F9FA;
+  --color-primary-surface: #FFFFFF;
+  --color-primary-text: #1A1A1A;
+  --color-primary-muted: #707070;
+  --color-primary-border: #E0E0E0;
   --font-family-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 html, body, #root {
   height: 100%;
   margin: 0;
-  background: var(--color-paytm-bg);
+  background: var(--color-primary-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

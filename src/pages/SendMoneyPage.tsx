@@ -35,8 +35,8 @@ export function SendMoneyPage() {
             <svg width="40" height="40" fill="none" stroke="#FF9800" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" /></svg>
           </div>
           <div>
-            <p className="text-xl font-bold text-paytm-text">Full KYC Required</p>
-            <p className="text-sm text-paytm-muted mt-2">P2P money transfers require Full KYC verification as per RBI guidelines.</p>
+            <p className="text-xl font-bold text-primary-text">Full KYC Required</p>
+            <p className="text-sm text-primary-muted mt-2">P2P money transfers require Full KYC verification as per RBI guidelines.</p>
           </div>
           <Button fullWidth onClick={() => navigate(ROUTES.KYC)}>Upgrade KYC</Button>
           <Button fullWidth variant="ghost" onClick={() => navigate(-1)}>Go Back</Button>
@@ -76,7 +76,7 @@ export function SendMoneyPage() {
           <div>
             <p className="text-xl font-bold">{success ? 'Money Sent!' : 'Transfer Failed'}</p>
             <p className="text-2xl font-bold mt-2">{formatPaise(String(paise))}</p>
-            {!success && <p className="text-sm text-paytm-red mt-2">{error?.message ?? result?.error}</p>}
+            {!success && <p className="text-sm text-primary-red mt-2">{error?.message ?? result?.error}</p>}
           </div>
           <Button fullWidth onClick={() => navigate(ROUTES.HOME)}>Done</Button>
           {!success && <Button fullWidth variant="outline" onClick={() => { reset(); setStep('input'); }}>Retry</Button>}
@@ -94,18 +94,18 @@ export function SendMoneyPage() {
         <RecentPayees type="p2p" onSelect={(p) => setBeneficiaryId(p.detail)} />
 
         <div>
-          <label className="text-xs font-medium text-paytm-muted mb-1 block">Beneficiary Wallet ID</label>
+          <label className="text-xs font-medium text-primary-muted mb-1 block">Beneficiary Wallet ID</label>
           <input
             value={beneficiaryId}
             onChange={e => setBeneficiaryId(e.target.value)}
             placeholder="Enter wallet UUID"
-            className="w-full border-2 border-paytm-border rounded-xl px-4 py-3 outline-none focus:border-paytm-cyan transition-colors font-mono text-sm"
+            className="w-full border-2 border-primary-border rounded-xl px-4 py-3 outline-none focus:border-primary-cyan transition-colors font-mono text-sm"
           />
         </div>
         <AmountInput value={amount} onChange={setAmount} label="Amount" />
         <Card className="!p-3 bg-gray-50">
           <div className="flex justify-between text-xs">
-            <span className="text-paytm-muted">Available Balance</span>
+            <span className="text-primary-muted">Available Balance</span>
             <span className="font-semibold">{formatPaise(availablePaise)}</span>
           </div>
         </Card>

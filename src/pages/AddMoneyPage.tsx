@@ -45,9 +45,9 @@ export function AddMoneyPage() {
             )}
           </div>
           <div>
-            <p className="text-xl font-bold text-paytm-text">{success ? 'Money Added!' : 'Transaction Failed'}</p>
-            <p className="text-2xl font-bold mt-2 text-paytm-text">{formatPaise(String(paise))}</p>
-            {!success && <p className="text-sm text-paytm-red mt-2">{error?.message ?? result?.error ?? 'Something went wrong'}</p>}
+            <p className="text-xl font-bold text-primary-text">{success ? 'Money Added!' : 'Transaction Failed'}</p>
+            <p className="text-2xl font-bold mt-2 text-primary-text">{formatPaise(String(paise))}</p>
+            {!success && <p className="text-sm text-primary-red mt-2">{error?.message ?? result?.error ?? 'Something went wrong'}</p>}
           </div>
           <div className="space-y-3">
             <Button fullWidth onClick={() => navigate(ROUTES.WALLET)}>Go to Wallet</Button>
@@ -63,8 +63,8 @@ export function AddMoneyPage() {
       <Header showBack title="Add Money" />
       <div className="px-4 pt-6 space-y-6">
         <Card>
-          <p className="text-xs text-paytm-muted font-medium mb-1">Current Balance</p>
-          <p className="text-lg font-bold text-paytm-text">{formatPaise(availablePaise)}</p>
+          <p className="text-xs text-primary-muted font-medium mb-1">Current Balance</p>
+          <p className="text-lg font-bold text-primary-text">{formatPaise(availablePaise)}</p>
         </Card>
 
         {step === 'input' && (
@@ -81,16 +81,16 @@ export function AddMoneyPage() {
             <Card>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-paytm-muted">Amount</span>
-                  <span className="font-semibold text-paytm-text">{formatPaise(String(paise))}</span>
+                  <span className="text-primary-muted">Amount</span>
+                  <span className="font-semibold text-primary-text">{formatPaise(String(paise))}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-paytm-muted">Current Balance</span>
-                  <span className="text-paytm-text">{formatPaise(availablePaise)}</span>
+                  <span className="text-primary-muted">Current Balance</span>
+                  <span className="text-primary-text">{formatPaise(availablePaise)}</span>
                 </div>
                 <div className="border-t pt-3 flex justify-between text-sm">
-                  <span className="text-paytm-muted">New Balance</span>
-                  <span className="font-bold text-paytm-green">
+                  <span className="text-primary-muted">New Balance</span>
+                  <span className="font-bold text-primary-green">
                     {formatPaise(String(BigInt(availablePaise ?? '0') + BigInt(paise)))}
                   </span>
                 </div>

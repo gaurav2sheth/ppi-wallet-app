@@ -18,7 +18,7 @@ export function ScratchCardOverlay() {
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 animate-[fadeIn_0.2s_ease-out]">
       <div className="bg-white rounded-2xl w-[300px] overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="bg-gradient-to-r from-paytm-cyan to-blue-400 p-4 text-center">
+        <div className="bg-gradient-to-r from-primary-cyan to-blue-400 p-4 text-center">
           <p className="text-white text-xs font-medium">You earned a</p>
           <p className="text-white text-lg font-bold">Scratch Card! 🎉</p>
         </div>
@@ -40,14 +40,14 @@ export function ScratchCardOverlay() {
               {pendingCard.amount > 0 ? (
                 <div className="text-center">
                   <p className="text-3xl mb-1">🎊</p>
-                  <p className="text-xl font-bold text-paytm-green">{pendingCard.label}</p>
-                  <p className="text-[10px] text-paytm-muted mt-1">Added to your wallet</p>
+                  <p className="text-xl font-bold text-primary-green">{pendingCard.label}</p>
+                  <p className="text-[10px] text-primary-muted mt-1">Added to your wallet</p>
                 </div>
               ) : (
                 <div className="text-center">
                   <p className="text-3xl mb-1">😊</p>
-                  <p className="text-sm font-semibold text-paytm-muted">{pendingCard.label}</p>
-                  <p className="text-[10px] text-paytm-muted mt-1">Keep transacting for rewards</p>
+                  <p className="text-sm font-semibold text-primary-muted">{pendingCard.label}</p>
+                  <p className="text-[10px] text-primary-muted mt-1">Keep transacting for rewards</p>
                 </div>
               )}
             </div>

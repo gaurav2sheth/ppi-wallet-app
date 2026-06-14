@@ -92,11 +92,11 @@ export function AiSummaryCard() {
     <Card>
       <div className="flex items-center gap-2 mb-2">
         <span className="text-base">🤖</span>
-        <p className="text-xs font-semibold text-paytm-muted tracking-wide">AI SPENDING INSIGHTS</p>
+        <p className="text-xs font-semibold text-primary-muted tracking-wide">AI SPENDING INSIGHTS</p>
       </div>
 
       {!summary && !loading && !error && (
-        <p className="text-[11px] text-paytm-muted mb-3">
+        <p className="text-[11px] text-primary-muted mb-3">
           Get a personalised summary of your recent transactions powered by Claude AI.
         </p>
       )}
@@ -105,7 +105,7 @@ export function AiSummaryCard() {
         <button
           onClick={handleGenerate}
           disabled={loading}
-          className="w-full py-2.5 rounded-xl bg-gradient-to-r from-paytm-cyan to-blue-500 text-white text-sm font-semibold active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
+          className="w-full py-2.5 rounded-xl bg-gradient-to-r from-primary-cyan to-blue-500 text-white text-sm font-semibold active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
         >
           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
@@ -116,17 +116,17 @@ export function AiSummaryCard() {
 
       {loading && (
         <div className="flex items-center gap-3 py-3">
-          <div className="w-5 h-5 border-2 border-paytm-cyan border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs text-paytm-muted">Analysing your transactions...</span>
+          <div className="w-5 h-5 border-2 border-primary-cyan border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs text-primary-muted">Analysing your transactions...</span>
         </div>
       )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
-          <p className="text-xs text-paytm-red">{error}</p>
+          <p className="text-xs text-primary-red">{error}</p>
           <button
             onClick={handleGenerate}
-            className="text-xs font-semibold text-paytm-cyan mt-2"
+            className="text-xs font-semibold text-primary-cyan mt-2"
           >
             Try Again
           </button>
@@ -136,11 +136,11 @@ export function AiSummaryCard() {
       {summary && !loading && (
         <>
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-            <p className="text-xs text-paytm-text leading-relaxed whitespace-pre-line">{summary}</p>
+            <p className="text-xs text-primary-text leading-relaxed whitespace-pre-line">{summary}</p>
           </div>
           <button
             onClick={handleGenerate}
-            className="text-xs font-semibold text-paytm-cyan mt-2"
+            className="text-xs font-semibold text-primary-cyan mt-2"
           >
             Regenerate
           </button>
@@ -148,7 +148,7 @@ export function AiSummaryCard() {
       )}
 
       <div className="flex justify-end mt-2">
-        <span className="text-[9px] text-paytm-muted">{isAiSummary ? 'Powered by Claude' : 'Smart Summary'}</span>
+        <span className="text-[9px] text-primary-muted">{isAiSummary ? 'Powered by Claude' : 'Smart Summary'}</span>
       </div>
     </Card>
   );

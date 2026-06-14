@@ -118,7 +118,7 @@ export function SupportTicketsPage() {
         rightActions={
           <button
             onClick={fetchTickets}
-            className="text-xs font-semibold text-paytm-cyan"
+            className="text-xs font-semibold text-primary-cyan"
           >
             Refresh
           </button>
@@ -128,19 +128,19 @@ export function SupportTicketsPage() {
       <div className="px-4 pt-4 pb-24 space-y-3">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-6 h-6 border-2 border-paytm-cyan border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-primary-cyan border-t-transparent rounded-full animate-spin" />
           </div>
         ) : tickets.length === 0 ? (
           <Card className="text-center py-12">
-            <p className="text-sm font-medium text-paytm-text mb-1">
+            <p className="text-sm font-medium text-primary-text mb-1">
               No support tickets yet
             </p>
-            <p className="text-xs text-paytm-muted mb-4">
+            <p className="text-xs text-primary-muted mb-4">
               Chat with our AI assistant if you need help!
             </p>
             <button
               onClick={() => navigate('/')}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-paytm-cyan hover:bg-[#00a5d8] px-5 py-2 rounded-full transition"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-primary-cyan hover:bg-[#00a5d8] px-5 py-2 rounded-full transition"
             >
               Chat with AI
             </button>
@@ -161,30 +161,30 @@ export function SupportTicketsPage() {
                   >
                     {ticket.priority}
                   </span>
-                  <span className="ml-auto text-[10px] font-mono text-paytm-muted truncate max-w-[100px]">
+                  <span className="ml-auto text-[10px] font-mono text-primary-muted truncate max-w-[100px]">
                     {ticket.ticket_id}
                   </span>
                 </div>
 
                 {/* Issue type */}
-                <p className="text-sm font-semibold text-paytm-text mb-0.5">
+                <p className="text-sm font-semibold text-primary-text mb-0.5">
                   {formatIssueType(ticket.issue_type)}
                 </p>
 
                 {/* Summary */}
-                <p className="text-xs text-paytm-muted leading-relaxed line-clamp-2 mb-2">
+                <p className="text-xs text-primary-muted leading-relaxed line-clamp-2 mb-2">
                   {ticket.issue_summary}
                 </p>
 
                 {/* Footer: dates */}
-                <div className="flex items-center justify-between text-[10px] text-paytm-muted">
+                <div className="flex items-center justify-between text-[10px] text-primary-muted">
                   <span>Created {formatTicketDate(ticket.created_at)}</span>
                   {ticket.status !== 'RESOLVED' && ticket.sla_resolve_by && (
                     <span
                       className={
                         new Date(ticket.sla_resolve_by).getTime() < Date.now()
                           ? 'text-red-600 font-semibold'
-                          : 'text-paytm-muted'
+                          : 'text-primary-muted'
                       }
                     >
                       {formatTimeRemaining(ticket.sla_resolve_by)}

@@ -17,8 +17,8 @@ export function Header({ title, showBack, showBranding, rightActions, variant = 
     <header className={cn(
       'sticky top-0 z-40 h-14 flex items-center justify-between px-3 sm:px-4 md:px-6 shrink-0',
       isGradient
-        ? 'bg-gradient-to-r from-paytm-navy to-[#004A8F] text-white'
-        : 'bg-white border-b border-paytm-border/50 text-paytm-text'
+        ? 'bg-gradient-to-r from-primary-navy to-[#004A8F] text-white'
+        : 'bg-white border-b border-primary-border/50 text-primary-text'
     )}>
       <div className="flex items-center gap-2 sm:gap-3">
         {showBack && (
@@ -37,7 +37,7 @@ export function Header({ title, showBack, showBranding, rightActions, variant = 
               <rect width="28" height="20" rx="4" fill={isGradient ? 'white' : '#002E6E'} />
               <text x="14" y="14" textAnchor="middle" fontSize="10" fontWeight="800" fill={isGradient ? '#002E6E' : 'white'} fontFamily="Inter, sans-serif">P</text>
             </svg>
-            <span className={cn('font-bold text-[15px] sm:text-[17px] tracking-tight', isGradient ? 'text-white' : 'text-paytm-navy')}>Paytm</span>
+            <span className={cn('font-bold text-[15px] sm:text-[17px] tracking-tight', isGradient ? 'text-white' : 'text-primary-navy')}>PPI</span>
           </div>
         )}
         {title && <h1 className="font-semibold text-[13px] sm:text-[15px]">{title}</h1>}

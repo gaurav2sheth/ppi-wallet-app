@@ -41,7 +41,7 @@ export function SubWalletDetailPage() {
       <div className="page-enter">
         <Header showBack title="Sub-Wallet" />
         <div className="px-4 pt-12 text-center">
-          <p className="text-paytm-muted">Sub-wallet not found</p>
+          <p className="text-primary-muted">Sub-wallet not found</p>
         </div>
       </div>
     );
@@ -149,23 +149,23 @@ export function SubWalletDetailPage() {
                 <p className="text-3xl font-bold mt-2" style={{ color: wallet.color }}>
                   {formatPaise(String(wallet.balance_paise))}
                 </p>
-                <p className="text-xs text-paytm-muted mt-1">Security Deposit</p>
+                <p className="text-xs text-primary-muted mt-1">Security Deposit</p>
                 <div className="flex justify-center gap-4 mt-2">
                   <div className="text-center">
-                    <p className="text-lg font-bold text-paytm-text">{wallet.vehicle_count || 0}</p>
-                    <p className="text-[10px] text-paytm-muted">Vehicles</p>
+                    <p className="text-lg font-bold text-primary-text">{wallet.vehicle_count || 0}</p>
+                    <p className="text-[10px] text-primary-muted">Vehicles</p>
                   </div>
                   <div className="w-px h-8 bg-gray-200" />
                   <div className="text-center">
-                    <p className="text-lg font-bold text-paytm-text">₹300</p>
-                    <p className="text-[10px] text-paytm-muted">Per Vehicle</p>
+                    <p className="text-lg font-bold text-primary-text">₹300</p>
+                    <p className="text-[10px] text-primary-muted">Per Vehicle</p>
                   </div>
                   {depositUsed > 0 && (
                     <>
                       <div className="w-px h-8 bg-gray-200" />
                       <div className="text-center">
                         <p className="text-lg font-bold text-red-500">{formatPaise(String(depositUsed))}</p>
-                        <p className="text-[10px] text-paytm-muted">Deposit Used</p>
+                        <p className="text-[10px] text-primary-muted">Deposit Used</p>
                       </div>
                     </>
                   )}
@@ -177,8 +177,8 @@ export function SubWalletDetailPage() {
                 <p className="text-3xl font-bold mt-2" style={{ color: wallet.color }}>
                   {formatPaise(String(wallet.balance_paise))}
                 </p>
-                <p className="text-xs text-paytm-muted mt-1">NCMC Transit Balance</p>
-                <p className="text-[10px] text-paytm-muted mt-1">
+                <p className="text-xs text-primary-muted mt-1">NCMC Transit Balance</p>
+                <p className="text-[10px] text-primary-muted mt-1">
                   Max balance: {formatPaise(String(ncmcMaxBalance))}
                 </p>
               </>
@@ -188,7 +188,7 @@ export function SubWalletDetailPage() {
                 <p className="text-3xl font-bold mt-2" style={{ color: wallet.color }}>
                   {formatPaise(String(wallet.balance_paise))}
                 </p>
-                <p className="text-xs text-paytm-muted mt-1">{wallet.label} Wallet Balance</p>
+                <p className="text-xs text-primary-muted mt-1">{wallet.label} Wallet Balance</p>
               </>
             )}
 
@@ -199,7 +199,7 @@ export function SubWalletDetailPage() {
             )}
 
             {wallet.type === 'GIFT' && !isExpired && expiryStr && (
-              <p className="text-[10px] text-paytm-muted mt-2">
+              <p className="text-[10px] text-primary-muted mt-2">
                 Expires: {expiryStr}
               </p>
             )}
@@ -236,12 +236,12 @@ export function SubWalletDetailPage() {
           {/* FASTag: How it works info box */}
           {isFastag && (
             <div className="px-4 py-3 border-t border-gray-100 bg-green-50/50">
-              <p className="text-[10px] font-semibold text-paytm-text mb-1.5">How FASTag works</p>
+              <p className="text-[10px] font-semibold text-primary-text mb-1.5">How FASTag works</p>
               <div className="space-y-1">
-                <p className="text-[10px] text-paytm-muted">• Toll payments deduct from your <b>main wallet</b></p>
-                <p className="text-[10px] text-paytm-muted">• If main wallet is zero, <b>security deposit</b> is used</p>
-                <p className="text-[10px] text-paytm-muted">• On next top-up, security deposit is <b>refilled first</b> (₹300)</p>
-                <p className="text-[10px] text-paytm-muted">• New vehicle = additional ₹300 security deposit</p>
+                <p className="text-[10px] text-primary-muted">• Toll payments deduct from your <b>main wallet</b></p>
+                <p className="text-[10px] text-primary-muted">• If main wallet is zero, <b>security deposit</b> is used</p>
+                <p className="text-[10px] text-primary-muted">• On next top-up, security deposit is <b>refilled first</b> (₹300)</p>
+                <p className="text-[10px] text-primary-muted">• New vehicle = additional ₹300 security deposit</p>
               </div>
             </div>
           )}
@@ -249,11 +249,11 @@ export function SubWalletDetailPage() {
           {/* NCMC: How it works */}
           {isNcmc && (
             <div className="px-4 py-3 border-t border-gray-100 bg-indigo-50/50">
-              <p className="text-[10px] font-semibold text-paytm-text mb-1.5">How NCMC Transit works</p>
+              <p className="text-[10px] font-semibold text-primary-text mb-1.5">How NCMC Transit works</p>
               <div className="space-y-1">
-                <p className="text-[10px] text-paytm-muted">• NCMC has its own <b>₹3,000 balance limit</b></p>
-                <p className="text-[10px] text-paytm-muted">• Transit payments (Metro, Bus, etc.) use <b>only NCMC balance</b></p>
-                <p className="text-[10px] text-paytm-muted">• Top up from <b>Main Wallet, UPI, Debit Card, or Net Banking</b></p>
+                <p className="text-[10px] text-primary-muted">• NCMC has its own <b>₹3,000 balance limit</b></p>
+                <p className="text-[10px] text-primary-muted">• Transit payments (Metro, Bus, etc.) use <b>only NCMC balance</b></p>
+                <p className="text-[10px] text-primary-muted">• Top up from <b>Main Wallet, UPI, Debit Card, or Net Banking</b></p>
               </div>
             </div>
           )}
@@ -264,7 +264,7 @@ export function SubWalletDetailPage() {
               {/* Payment Source Selector for NCMC and FASTag */}
               {(isNcmc || isFastag) && (
                 <div>
-                  <p className="text-[10px] font-medium text-paytm-muted mb-2">Payment Method</p>
+                  <p className="text-[10px] font-medium text-primary-muted mb-2">Payment Method</p>
                   <div className="flex gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                     {isNcmc && (
                       <button
@@ -272,7 +272,7 @@ export function SubWalletDetailPage() {
                         className={`shrink-0 text-[10px] font-semibold px-3 py-1.5 rounded-full border-2 transition-all ${
                           paymentSource === 'main'
                             ? 'text-white border-transparent'
-                            : 'bg-white text-paytm-text border-gray-200'
+                            : 'bg-white text-primary-text border-gray-200'
                         }`}
                         style={paymentSource === 'main' ? { backgroundColor: wallet.color, borderColor: wallet.color } : {}}
                       >
@@ -286,7 +286,7 @@ export function SubWalletDetailPage() {
                         className={`shrink-0 text-[10px] font-semibold px-3 py-1.5 rounded-full border-2 transition-all ${
                           paymentSource === src
                             ? 'text-white border-transparent'
-                            : 'bg-white text-paytm-text border-gray-200'
+                            : 'bg-white text-primary-text border-gray-200'
                         }`}
                         style={paymentSource === src ? { backgroundColor: wallet.color, borderColor: wallet.color } : {}}
                       >
@@ -298,7 +298,7 @@ export function SubWalletDetailPage() {
               )}
 
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-paytm-text">
+                <p className="text-xs font-semibold text-primary-text">
                   {isFastag
                     ? 'Top Up (loads main wallet)'
                     : isNcmc && paymentSource !== 'main'
@@ -307,7 +307,7 @@ export function SubWalletDetailPage() {
                   }
                 </p>
                 {(paymentSource === 'main' || !isNcmc) && (
-                  <p className="text-[10px] text-paytm-muted">
+                  <p className="text-[10px] text-primary-muted">
                     {isFastag ? `Main: ${formatPaise(availablePaise)}` : `Available: ${formatPaise(availablePaise)}`}
                   </p>
                 )}
@@ -329,7 +329,7 @@ export function SubWalletDetailPage() {
 
               {/* NCMC balance cap info */}
               {isNcmc && (
-                <p className="text-[10px] text-paytm-muted">
+                <p className="text-[10px] text-primary-muted">
                   Can add up to: {formatPaise(String(Math.max(0, ncmcHeadroom)))} (max ₹3,000 balance)
                 </p>
               )}
@@ -360,11 +360,11 @@ export function SubWalletDetailPage() {
           {/* FASTag: Issue New Vehicle Panel */}
           {showNewVehicle && isFastag && (
             <div className="px-4 py-4 border-t border-gray-100 bg-gray-50/50 space-y-3">
-              <p className="text-xs font-semibold text-paytm-text">Issue FASTag for New Vehicle</p>
-              <p className="text-[10px] text-paytm-muted">₹300 security deposit will be deducted from main wallet</p>
+              <p className="text-xs font-semibold text-primary-text">Issue FASTag for New Vehicle</p>
+              <p className="text-[10px] text-primary-muted">₹300 security deposit will be deducted from main wallet</p>
 
               <div>
-                <label className="text-[10px] font-medium text-paytm-muted mb-1 block">Vehicle Number</label>
+                <label className="text-[10px] font-medium text-primary-muted mb-1 block">Vehicle Number</label>
                 <input
                   value={vehicleNumber}
                   onChange={e => setVehicleNumber(e.target.value.toUpperCase())}
@@ -395,7 +395,7 @@ export function SubWalletDetailPage() {
           {/* NCMC: Balance progress toward cap */}
           {isNcmc && (
             <div className="px-5 py-3 border-t border-gray-100">
-              <div className="flex items-center justify-between text-xs text-paytm-muted mb-1.5">
+              <div className="flex items-center justify-between text-xs text-primary-muted mb-1.5">
                 <span>Balance</span>
                 <span>{formatPaise(String(wallet.balance_paise))} / {formatPaise(String(ncmcMaxBalance))}</span>
               </div>
@@ -414,7 +414,7 @@ export function SubWalletDetailPage() {
           {/* FASTag: Security deposit status */}
           {isFastag && (
             <div className="px-5 py-3 border-t border-gray-100">
-              <div className="flex items-center justify-between text-xs text-paytm-muted mb-1.5">
+              <div className="flex items-center justify-between text-xs text-primary-muted mb-1.5">
                 <span>Security Deposit</span>
                 <span>{formatPaise(String(wallet.balance_paise))} / {formatPaise(String(totalDeposit))}</span>
               </div>
@@ -438,7 +438,7 @@ export function SubWalletDetailPage() {
           {/* Monthly limit progress (for Food, Fuel) */}
           {!isFastag && !isNcmc && wallet.monthly_limit_paise > 0 && (
             <div className="px-5 py-3 border-t border-gray-100">
-              <div className="flex items-center justify-between text-xs text-paytm-muted mb-1.5">
+              <div className="flex items-center justify-between text-xs text-primary-muted mb-1.5">
                 <span>Monthly Loaded</span>
                 <span>{formatPaise(String(wallet.monthly_loaded_paise))} / {formatPaise(String(wallet.monthly_limit_paise))}</span>
               </div>
@@ -457,15 +457,15 @@ export function SubWalletDetailPage() {
           {/* Loaded by (hide for FASTag since it's self-loaded) */}
           {!isFastag && (
             <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-              <span className="text-xs text-paytm-muted">Loaded by</span>
-              <span className="text-xs font-medium text-paytm-text">{wallet.loaded_by === 'employer_001' ? 'Paytm' : wallet.loaded_by === 'self' ? 'Self' : wallet.loaded_by}</span>
+              <span className="text-xs text-primary-muted">Loaded by</span>
+              <span className="text-xs font-medium text-primary-text">{wallet.loaded_by === 'employer_001' ? 'Paytm' : wallet.loaded_by === 'self' ? 'Self' : wallet.loaded_by}</span>
             </div>
           )}
         </Card>
 
         {/* Where can I use this? */}
         <Card>
-          <p className="text-xs font-semibold text-paytm-text mb-3">
+          <p className="text-xs font-semibold text-primary-text mb-3">
             {isFastag ? 'Accepted at' : isNcmc ? 'Use NCMC balance at' : 'Where can I use this?'}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -477,12 +477,12 @@ export function SubWalletDetailPage() {
             ))}
           </div>
           {isFastag && (
-            <p className="text-[10px] text-paytm-muted mt-2 italic">
+            <p className="text-[10px] text-primary-muted mt-2 italic">
               Toll charges are deducted from your main wallet. Security deposit is used only when main wallet balance is zero.
             </p>
           )}
           {isNcmc && (
-            <p className="text-[10px] text-paytm-muted mt-2 italic">
+            <p className="text-[10px] text-primary-muted mt-2 italic">
               Transit charges are deducted only from NCMC balance — not from your main wallet.
             </p>
           )}
@@ -491,13 +491,13 @@ export function SubWalletDetailPage() {
         {/* Transaction History */}
         <Card>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-semibold text-paytm-text">Transaction History</p>
-            <span className="text-[10px] text-paytm-muted">{wallet.transactions.length} transactions</span>
+            <p className="text-xs font-semibold text-primary-text">Transaction History</p>
+            <span className="text-[10px] text-primary-muted">{wallet.transactions.length} transactions</span>
           </div>
           {wallet.transactions.length === 0 ? (
             <div className="text-center py-8">
               <span className="text-3xl">{wallet.icon}</span>
-              <p className="text-xs text-paytm-muted mt-2">No transactions yet</p>
+              <p className="text-xs text-primary-muted mt-2">No transactions yet</p>
               {canSelfLoad && (
                 <button
                   onClick={() => setShowAddMoney(true)}
@@ -525,16 +525,16 @@ export function SubWalletDetailPage() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-medium text-paytm-text truncate">{txn.merchant}</p>
-                      <p className="text-[10px] text-paytm-muted truncate">{txn.description}</p>
-                      <p className="text-[9px] text-paytm-muted mt-0.5">
+                      <p className="text-xs font-medium text-primary-text truncate">{txn.merchant}</p>
+                      <p className="text-[10px] text-primary-muted truncate">{txn.description}</p>
+                      <p className="text-[9px] text-primary-muted mt-0.5">
                         {new Date(txn.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         {' '}{new Date(txn.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                   </div>
                   <div className="text-right shrink-0 ml-3">
-                    <p className={`text-sm font-bold ${txn.type === 'credit' ? 'text-green-600' : 'text-paytm-text'}`}>
+                    <p className={`text-sm font-bold ${txn.type === 'credit' ? 'text-green-600' : 'text-primary-text'}`}>
                       {txn.type === 'credit' ? '+' : '-'}{formatPaise(String(txn.amount_paise))}
                     </p>
                     <span className={`text-[8px] font-semibold px-1.5 py-0.5 rounded-full ${
@@ -578,8 +578,8 @@ export function SubWalletDetailPage() {
               </svg>
             </div>
             <div className="text-left flex-1">
-              <p className="text-xs font-semibold text-paytm-text">Ask AI about {wallet.label} Wallet</p>
-              <p className="text-[10px] text-paytm-muted mt-0.5">Get balance info, spending insights & eligible merchants</p>
+              <p className="text-xs font-semibold text-primary-text">Ask AI about {wallet.label} Wallet</p>
+              <p className="text-[10px] text-primary-muted mt-0.5">Get balance info, spending insights & eligible merchants</p>
             </div>
             <svg width="16" height="16" fill="none" stroke="#C0C0C0" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
           </button>
@@ -593,7 +593,7 @@ export function SubWalletDetailPage() {
               <button
                 key={q}
                 onClick={() => navigate(`/?ai=${encodeURIComponent(q + ' Use the get_sub_wallets tool.')}`)}
-                className="shrink-0 text-[10px] px-3 py-1.5 rounded-full border border-gray-200 text-paytm-muted hover:border-gray-300 transition-colors"
+                className="shrink-0 text-[10px] px-3 py-1.5 rounded-full border border-gray-200 text-primary-muted hover:border-gray-300 transition-colors"
               >
                 {q}
               </button>

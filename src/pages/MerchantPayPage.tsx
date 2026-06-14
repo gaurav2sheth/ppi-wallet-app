@@ -64,8 +64,8 @@ export function MerchantPayPage() {
           <div>
             <p className="text-xl font-bold">{success ? 'Payment Successful!' : 'Payment Failed'}</p>
             <p className="text-2xl font-bold mt-2">{formatPaise(String(paise))}</p>
-            <p className="text-sm text-paytm-muted mt-1">to {merchantId}</p>
-            {!success && <p className="text-sm text-paytm-red mt-2">{error?.message ?? result?.error}</p>}
+            <p className="text-sm text-primary-muted mt-1">to {merchantId}</p>
+            {!success && <p className="text-sm text-primary-red mt-2">{error?.message ?? result?.error}</p>}
           </div>
           <div className="space-y-3">
             <Button fullWidth onClick={() => navigate(ROUTES.HOME)}>Done</Button>
@@ -86,32 +86,32 @@ export function MerchantPayPage() {
           <div className="w-24 h-24 mx-auto border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center mb-3">
             <svg width="40" height="40" fill="none" stroke="#8b949e" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
           </div>
-          <p className="text-sm text-paytm-muted">Scan QR Code</p>
-          <p className="text-xs text-paytm-muted mt-1">Camera not available in web preview</p>
+          <p className="text-sm text-primary-muted">Scan QR Code</p>
+          <p className="text-xs text-primary-muted mt-1">Camera not available in web preview</p>
         </Card>
 
         {/* Recent Merchants */}
         <RecentPayees type="merchant" onSelect={(p) => setMerchantId(p.detail)} />
 
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-paytm-muted">Or pay using details</span><div className="flex-1 h-px bg-gray-200" />
+          <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-primary-muted">Or pay using details</span><div className="flex-1 h-px bg-gray-200" />
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="text-xs font-medium text-paytm-muted mb-1 block">Merchant ID</label>
+            <label className="text-xs font-medium text-primary-muted mb-1 block">Merchant ID</label>
             <input
               value={merchantId}
               onChange={e => setMerchantId(e.target.value)}
               placeholder="Enter merchant ID"
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-primary-navy transition-colors"
             />
           </div>
           <AmountInput value={amount} onChange={setAmount} label="Amount" presets={[50, 100, 200, 500]} />
           <Card className="!p-3 bg-gray-50">
             <div className="flex justify-between text-xs">
-              <span className="text-paytm-muted">Available Balance</span>
-              <span className="font-semibold text-paytm-text">{formatPaise(availablePaise)}</span>
+              <span className="text-primary-muted">Available Balance</span>
+              <span className="font-semibold text-primary-text">{formatPaise(availablePaise)}</span>
             </div>
           </Card>
 
@@ -121,12 +121,12 @@ export function MerchantPayPage() {
               className="p-3 rounded-xl border-2"
               style={{ borderColor: detectedWallet.color + '40', backgroundColor: detectedWallet.color + '08' }}
             >
-              <p className="text-[10px] text-paytm-muted mb-1.5">
+              <p className="text-[10px] text-primary-muted mb-1.5">
                 Merchant: {merchantId} ({merchantCategory})
               </p>
               {detectedWallet.balance_paise >= paise ? (
                 <>
-                  <p className="text-xs font-medium text-paytm-text">
+                  <p className="text-xs font-medium text-primary-text">
                     Use your {detectedWallet.icon} {detectedWallet.label} Wallet ({formatPaise(String(detectedWallet.balance_paise))} available)?
                   </p>
                   <div className="flex gap-2 mt-2">
@@ -139,14 +139,14 @@ export function MerchantPayPage() {
                     </button>
                     <button
                       onClick={() => setUseSubWallet(false)}
-                      className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-300 text-paytm-text"
+                      className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-300 text-primary-text"
                     >
                       Use Main Wallet
                     </button>
                   </div>
                 </>
               ) : (
-                <p className="text-xs font-medium text-paytm-text">
+                <p className="text-xs font-medium text-primary-text">
                   {detectedWallet.icon} {detectedWallet.label}: {formatPaise(String(detectedWallet.balance_paise))} + Main: {formatPaise(String(paise - detectedWallet.balance_paise))} = {formatPaise(String(paise))} ✓
                 </p>
               )}

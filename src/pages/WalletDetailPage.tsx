@@ -10,11 +10,11 @@ import { getMccCategory } from '../utils/mcc';
 import { ROUTES } from '../utils/constants';
 
 const actionItems = [
-  { label: 'Download Statement', icon: '📄', color: 'text-paytm-cyan', path: '/wallet/statement' },
-  { label: 'Send Money to Bank', icon: '🏦', color: 'text-paytm-cyan', path: ROUTES.TRANSFER_BANK },
-  { label: 'Add money to Wallet', icon: '➕', color: 'text-paytm-cyan', path: ROUTES.ADD_MONEY },
-  { label: 'Automatic Add Money', icon: '🔄', color: 'text-paytm-cyan', path: null, badge: 'Active' },
-  { label: 'View Spend Analytics', icon: '📊', color: 'text-paytm-cyan', path: '/analytics' },
+  { label: 'Download Statement', icon: '📄', color: 'text-primary-cyan', path: '/wallet/statement' },
+  { label: 'Send Money to Bank', icon: '🏦', color: 'text-primary-cyan', path: ROUTES.TRANSFER_BANK },
+  { label: 'Add money to Wallet', icon: '➕', color: 'text-primary-cyan', path: ROUTES.ADD_MONEY },
+  { label: 'Automatic Add Money', icon: '🔄', color: 'text-primary-cyan', path: null, badge: 'Active' },
+  { label: 'View Spend Analytics', icon: '📊', color: 'text-primary-cyan', path: '/analytics' },
 ];
 
 export function WalletDetailPage() {
@@ -29,8 +29,8 @@ export function WalletDetailPage() {
       <div className="px-4 pt-6 space-y-4">
         {/* Balance */}
         <div className="text-center">
-          <p className="text-sm text-paytm-muted font-medium">Wallet Balance</p>
-          <p className="text-4xl font-bold text-paytm-text mt-1">{formatPaise(availablePaise)}</p>
+          <p className="text-sm text-primary-muted font-medium">Wallet Balance</p>
+          <p className="text-4xl font-bold text-primary-text mt-1">{formatPaise(availablePaise)}</p>
         </div>
 
         {/* Actions */}
@@ -44,20 +44,20 @@ export function WalletDetailPage() {
               <span className="text-lg">{a.icon}</span>
               <span className={`text-sm font-medium flex-1 text-left ${a.color}`}>{a.label}</span>
               {a.badge && (
-                <span className="text-[10px] bg-green-50 text-paytm-green px-2 py-0.5 rounded-full font-semibold">{a.badge}</span>
+                <span className="text-[10px] bg-green-50 text-primary-green px-2 py-0.5 rounded-full font-semibold">{a.badge}</span>
               )}
             </button>
           ))}
         </Card>
 
         {/* Divider */}
-        <div className="h-0.5 bg-gradient-to-r from-paytm-cyan to-blue-400 rounded-full" />
+        <div className="h-0.5 bg-gradient-to-r from-primary-cyan to-blue-400 rounded-full" />
 
         {/* Recents */}
         <div>
           <div className="flex justify-between items-center mb-3">
-            <p className="text-sm font-semibold text-paytm-text">Recents</p>
-            <button onClick={() => navigate(ROUTES.PASSBOOK)} className="text-xs font-semibold text-paytm-cyan">View All</button>
+            <p className="text-sm font-semibold text-primary-text">Recents</p>
+            <button onClick={() => navigate(ROUTES.PASSBOOK)} className="text-xs font-semibold text-primary-cyan">View All</button>
           </div>
 
           {isLoading ? (
@@ -70,7 +70,7 @@ export function WalletDetailPage() {
             </div>
           ) : entries.length === 0 ? (
             <Card className="text-center">
-              <p className="text-paytm-muted text-sm">No recent transactions</p>
+              <p className="text-primary-muted text-sm">No recent transactions</p>
             </Card>
           ) : (
             <div className="space-y-2">
@@ -83,22 +83,22 @@ export function WalletDetailPage() {
                       <Avatar name={e.description ?? mcc.label} size="md" mcc={mcc} />
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start">
-                          <p className="text-sm font-medium text-paytm-text truncate">
+                          <p className="text-sm font-medium text-primary-text truncate">
                             {isCredit ? 'Received' : 'Paid'}{e.description ? ` · ${e.description}` : ''}
                           </p>
-                          <p className={`text-sm font-bold shrink-0 ml-2 ${isCredit ? 'text-paytm-green' : 'text-paytm-text'}`}>
+                          <p className={`text-sm font-bold shrink-0 ml-2 ${isCredit ? 'text-primary-green' : 'text-primary-text'}`}>
                             {isCredit ? '+' : '-'}{formatPaise(e.amount_paise)}
                           </p>
                         </div>
                         <div className="flex justify-between items-center mt-1">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[11px] text-paytm-muted">{formatTime(e.created_at)}</span>
+                            <span className="text-[11px] text-primary-muted">{formatTime(e.created_at)}</span>
                             <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${mcc.bgColor} ${mcc.textColor}`}>{mcc.label}</span>
                           </div>
-                          <span className="text-[10px] text-paytm-muted">Bal: {formatPaise(e.balance_after_paise)}</span>
+                          <span className="text-[10px] text-primary-muted">Bal: {formatPaise(e.balance_after_paise)}</span>
                         </div>
                         {e.payment_source && (
-                          <p className="text-[9px] text-paytm-cyan font-medium mt-0.5">via {e.payment_source}</p>
+                          <p className="text-[9px] text-primary-cyan font-medium mt-0.5">via {e.payment_source}</p>
                         )}
                       </div>
                     </div>

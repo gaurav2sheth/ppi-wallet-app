@@ -20,8 +20,8 @@ export function SubWalletCards() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold text-paytm-text tracking-wide">YOUR BENEFITS WALLETS</p>
-          <p className="text-[10px] text-paytm-muted mt-0.5">
+          <p className="text-xs font-semibold text-primary-text tracking-wide">YOUR BENEFITS WALLETS</p>
+          <p className="text-[10px] text-primary-muted mt-0.5">
             Total: {formatPaise(String(benefitsTotal))}
           </p>
         </div>
@@ -42,7 +42,7 @@ export function SubWalletCards() {
               <span className="text-xl">{sw.icon}</span>
               <StatusBadge status={sw.status} expiry={sw.expiry_date} />
             </div>
-            <p className="text-[11px] font-semibold text-paytm-text truncate">{sw.label}</p>
+            <p className="text-[11px] font-semibold text-primary-text truncate">{sw.label}</p>
             <p className="text-base font-bold mt-0.5" style={{ color: sw.color }}>
               {formatPaise(String(sw.balance_paise))}
             </p>
@@ -59,7 +59,7 @@ export function SubWalletCards() {
                     }}
                   />
                 </div>
-                <p className="text-[8px] text-paytm-muted mt-0.5">
+                <p className="text-[8px] text-primary-muted mt-0.5">
                   {formatPaise(String(sw.monthly_loaded_paise))} / {formatPaise(String(sw.monthly_limit_paise))}
                 </p>
               </div>

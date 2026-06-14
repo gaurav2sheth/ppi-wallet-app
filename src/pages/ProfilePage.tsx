@@ -38,37 +38,37 @@ export function ProfilePage() {
           <div className="flex justify-center mb-3">
             <Avatar name={userName ?? 'User'} size="lg" />
           </div>
-          <p className="text-lg font-bold text-paytm-text">{userName ?? 'User'}</p>
-          <p className="text-sm text-paytm-muted">+91 {phone ?? '...'}</p>
+          <p className="text-lg font-bold text-primary-text">{userName ?? 'User'}</p>
+          <p className="text-sm text-primary-muted">+91 {phone ?? '...'}</p>
         </Card>
 
         {/* Wallet Info */}
         <Card>
-          <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">WALLET INFO</p>
+          <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">WALLET INFO</p>
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-paytm-muted">Wallet ID</span>
-              <span className="font-mono text-xs text-paytm-text">{truncateId(walletId ?? '', 16)}</span>
+              <span className="text-primary-muted">Wallet ID</span>
+              <span className="font-mono text-xs text-primary-text">{truncateId(walletId ?? '', 16)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-paytm-muted">User ID</span>
-              <span className="font-mono text-xs text-paytm-text">{truncateId(userId ?? '', 16)}</span>
+              <span className="text-primary-muted">User ID</span>
+              <span className="font-mono text-xs text-primary-text">{truncateId(userId ?? '', 16)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-paytm-muted">Balance</span>
-              <span className="font-bold text-paytm-text">{formatPaise(availablePaise)}</span>
+              <span className="text-primary-muted">Balance</span>
+              <span className="font-bold text-primary-text">{formatPaise(availablePaise)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-paytm-muted">KYC Tier</span>
+              <span className="text-primary-muted">KYC Tier</span>
               <span className={`font-semibold text-xs px-2 py-0.5 rounded-full ${
-                kycTier === 'FULL' ? 'bg-green-50 text-paytm-green' : 'bg-orange-50 text-paytm-orange'
+                kycTier === 'FULL' ? 'bg-green-50 text-primary-green' : 'bg-orange-50 text-primary-orange'
               }`}>
                 {kycTier === 'FULL' ? 'Full KYC' : kycTier === 'MINIMUM' ? 'Min KYC' : '...'}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-paytm-muted">Status</span>
-              <span className="text-paytm-green font-medium">Active</span>
+              <span className="text-primary-muted">Status</span>
+              <span className="text-primary-green font-medium">Active</span>
             </div>
           </div>
         </Card>
@@ -82,7 +82,7 @@ export function ProfilePage() {
               className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition active:bg-gray-100"
             >
               <span className="text-lg">{item.icon}</span>
-              <span className="flex-1 text-sm font-medium text-paytm-text text-left">{item.label}</span>
+              <span className="flex-1 text-sm font-medium text-primary-text text-left">{item.label}</span>
               <svg width="16" height="16" fill="none" stroke="#8b949e" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
             </button>
           ))}
@@ -91,7 +91,7 @@ export function ProfilePage() {
         {/* Logout */}
         <Button fullWidth variant="danger" onClick={handleLogout}>Logout</Button>
 
-        <p className="text-center text-[10px] text-paytm-muted pb-4">Paytm PPI Wallet v1.0.0</p>
+        <p className="text-center text-[10px] text-primary-muted pb-4">Paytm PPI Wallet v1.0.0</p>
       </div>
     </div>
   );

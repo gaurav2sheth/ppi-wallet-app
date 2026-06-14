@@ -1,4 +1,4 @@
-# Paytm Wallet App
+# PPI Wallet App
 
 Consumer-facing mobile-first React SPA for the PPI Wallet.
 
@@ -43,4 +43,4 @@ React 19 + TypeScript + Vite 8 + Tailwind CSS v4 + Zustand + Axios. HashRouter f
 
 ## Design System
 
-Paytm PODS: Navy #002E6E, Cyan #00B9F1, Green #12B76A. Card-based layouts, pill buttons, bottom nav (Home / Scan & Pay / Passbook / Profile). Max-width 480px centred on desktop.
+Clean design with Navy #002E6E, Cyan #00B9F1, Green #12B76A. Card-based layouts, pill buttons, bottom nav (Home / Scan & Pay / Passbook / Profile). Max-width 480px centred on desktop.

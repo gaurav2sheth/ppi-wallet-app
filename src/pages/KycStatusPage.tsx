@@ -56,7 +56,7 @@ export function KycStatusPage() {
         {/* Current Tier */}
         <div className="text-center">
           <div className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold ${
-            status?.kyc_tier === 'FULL' ? 'bg-green-50 text-paytm-green' : 'bg-orange-50 text-paytm-orange'
+            status?.kyc_tier === 'FULL' ? 'bg-green-50 text-primary-green' : 'bg-orange-50 text-primary-orange'
           }`}>
             {status?.kyc_tier === 'FULL' ? '✓ Full KYC Verified' : '⚠ Minimum KYC'}
           </div>
@@ -64,34 +64,34 @@ export function KycStatusPage() {
 
         {/* Status Details */}
         <Card>
-          <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">KYC DETAILS</p>
+          <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">KYC DETAILS</p>
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-paytm-muted">KYC State</span>
-              <span className="font-medium text-paytm-text">{status?.kyc_state ?? '-'}</span>
+              <span className="text-primary-muted">KYC State</span>
+              <span className="font-medium text-primary-text">{status?.kyc_state ?? '-'}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-paytm-muted">Aadhaar Verified</span>
-              <span className={`font-medium ${status?.aadhaar_verified ? 'text-paytm-green' : 'text-paytm-red'}`}>
+              <span className="text-primary-muted">Aadhaar Verified</span>
+              <span className={`font-medium ${status?.aadhaar_verified ? 'text-primary-green' : 'text-primary-red'}`}>
                 {status?.aadhaar_verified ? '✓ Yes' : '✗ No'}
               </span>
             </div>
             {status?.pan_masked && (
               <div className="flex justify-between text-sm">
-                <span className="text-paytm-muted">PAN</span>
-                <span className="font-mono text-paytm-text">{status.pan_masked}</span>
+                <span className="text-primary-muted">PAN</span>
+                <span className="font-mono text-primary-text">{status.pan_masked}</span>
               </div>
             )}
             {status?.ckyc_number && (
               <div className="flex justify-between text-sm">
-                <span className="text-paytm-muted">CKYC Number</span>
-                <span className="font-mono text-paytm-text">{status.ckyc_number}</span>
+                <span className="text-primary-muted">CKYC Number</span>
+                <span className="font-mono text-primary-text">{status.ckyc_number}</span>
               </div>
             )}
             {status?.wallet_expiry_date && (
               <div className="flex justify-between text-sm">
-                <span className="text-paytm-muted">Wallet Expiry</span>
-                <span className="text-paytm-text">{status.wallet_expiry_date}</span>
+                <span className="text-primary-muted">Wallet Expiry</span>
+                <span className="text-primary-text">{status.wallet_expiry_date}</span>
               </div>
             )}
           </div>
@@ -99,25 +99,25 @@ export function KycStatusPage() {
 
         {/* Limits Info */}
         <Card>
-          <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">WALLET LIMITS</p>
+          <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">WALLET LIMITS</p>
           <div className="space-y-3">
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-paytm-muted">Max Balance</span>
+                <span className="text-primary-muted">Max Balance</span>
                 <span className="font-medium">{status?.kyc_tier === 'FULL' ? '₹2,00,000' : '₹10,000'}</span>
               </div>
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-paytm-green rounded-full" style={{ width: '40%' }} />
+                <div className="h-full bg-primary-green rounded-full" style={{ width: '40%' }} />
               </div>
             </div>
             {status?.kyc_tier === 'FULL' && (
               <div>
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-paytm-muted">Monthly P2P Cap</span>
+                  <span className="text-primary-muted">Monthly P2P Cap</span>
                   <span className="font-medium">₹1,00,000</span>
                 </div>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-paytm-cyan rounded-full" style={{ width: '15%' }} />
+                  <div className="h-full bg-primary-cyan rounded-full" style={{ width: '15%' }} />
                 </div>
               </div>
             )}
@@ -131,22 +131,22 @@ export function KycStatusPage() {
 
         {upgradeStep === 'form' && (
           <Card>
-            <p className="text-sm font-semibold text-paytm-text mb-4">Complete Full KYC</p>
+            <p className="text-sm font-semibold text-primary-text mb-4">Complete Full KYC</p>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-paytm-muted mb-1 block">Full Name</label>
+                <label className="text-xs text-primary-muted mb-1 block">Full Name</label>
                 <input value={name} onChange={e => setName(e.target.value)} placeholder="As per Aadhaar"
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors" />
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-primary-navy transition-colors" />
               </div>
               <div>
-                <label className="text-xs text-paytm-muted mb-1 block">Date of Birth</label>
+                <label className="text-xs text-primary-muted mb-1 block">Date of Birth</label>
                 <input type="date" value={dob} onChange={e => setDob(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors" />
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-primary-navy transition-colors" />
               </div>
               <div>
-                <label className="text-xs text-paytm-muted mb-1 block">Aadhaar Number</label>
+                <label className="text-xs text-primary-muted mb-1 block">Aadhaar Number</label>
                 <input value={aadhaar} onChange={e => setAadhaar(e.target.value.replace(/\D/g, ''))} maxLength={12} placeholder="12-digit Aadhaar"
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-paytm-navy transition-colors" />
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-primary-navy transition-colors" />
               </div>
               <Button fullWidth loading={submitting} disabled={!name || !dob || aadhaar.length !== 12} onClick={handleInitiate}>
                 Send OTP
@@ -157,11 +157,11 @@ export function KycStatusPage() {
 
         {upgradeStep === 'otp' && (
           <Card>
-            <p className="text-sm font-semibold text-paytm-text mb-2">Verify Aadhaar OTP</p>
-            <p className="text-xs text-paytm-muted mb-4">Enter the 6-digit OTP sent to your Aadhaar-linked mobile</p>
+            <p className="text-sm font-semibold text-primary-text mb-2">Verify Aadhaar OTP</p>
+            <p className="text-xs text-primary-muted mb-4">Enter the 6-digit OTP sent to your Aadhaar-linked mobile</p>
             <OtpInput onComplete={handleVerifyOtp} error={otpError} />
             {submitting && <LoadingSpinner size="sm" />}
-            <p className="text-[10px] text-paytm-muted text-center mt-3">Demo: enter any 6 digits</p>
+            <p className="text-[10px] text-primary-muted text-center mt-3">Demo: enter any 6 digits</p>
           </Card>
         )}
 
@@ -170,8 +170,8 @@ export function KycStatusPage() {
             <div className="w-16 h-16 bg-green-50 rounded-full mx-auto flex items-center justify-center mb-3">
               <svg width="32" height="32" fill="none" stroke="#4CAF50" strokeWidth="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </div>
-            <p className="text-lg font-bold text-paytm-text">KYC Upgraded!</p>
-            <p className="text-sm text-paytm-muted mt-1">You now have Full KYC access</p>
+            <p className="text-lg font-bold text-primary-text">KYC Upgraded!</p>
+            <p className="text-sm text-primary-muted mt-1">You now have Full KYC access</p>
           </Card>
         )}
       </div>

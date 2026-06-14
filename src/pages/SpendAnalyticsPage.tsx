@@ -51,20 +51,20 @@ export function SpendAnalyticsPage() {
             {/* Summary Cards */}
             <div className="grid grid-cols-2 gap-3">
               <Card className="text-center">
-                <p className="text-[10px] text-paytm-muted font-medium">Total Spent</p>
-                <p className="text-xl font-bold text-paytm-red mt-1">{formatPaise(analytics.totalSpendPaise.toString())}</p>
-                <p className="text-[10px] text-paytm-muted mt-1">{analytics.transactionCount} transactions</p>
+                <p className="text-[10px] text-primary-muted font-medium">Total Spent</p>
+                <p className="text-xl font-bold text-primary-red mt-1">{formatPaise(analytics.totalSpendPaise.toString())}</p>
+                <p className="text-[10px] text-primary-muted mt-1">{analytics.transactionCount} transactions</p>
               </Card>
               <Card className="text-center">
-                <p className="text-[10px] text-paytm-muted font-medium">Total Received</p>
-                <p className="text-xl font-bold text-paytm-green mt-1">{formatPaise(analytics.totalIncomePaise.toString())}</p>
+                <p className="text-[10px] text-primary-muted font-medium">Total Received</p>
+                <p className="text-xl font-bold text-primary-green mt-1">{formatPaise(analytics.totalIncomePaise.toString())}</p>
               </Card>
             </div>
 
             {/* Donut Chart */}
             {analytics.categoryBreakdown.length > 0 && (
               <Card>
-                <p className="text-xs font-semibold text-paytm-muted mb-4 tracking-wide">SPEND BY CATEGORY</p>
+                <p className="text-xs font-semibold text-primary-muted mb-4 tracking-wide">SPEND BY CATEGORY</p>
                 <div className="flex items-center gap-6">
                   {/* Donut */}
                   <div className="relative w-32 h-32 shrink-0">
@@ -74,8 +74,8 @@ export function SpendAnalyticsPage() {
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center">
-                        <p className="text-[10px] text-paytm-muted">Total</p>
-                        <p className="text-xs font-bold text-paytm-text">{formatPaise(analytics.totalSpendPaise.toString())}</p>
+                        <p className="text-[10px] text-primary-muted">Total</p>
+                        <p className="text-xs font-bold text-primary-text">{formatPaise(analytics.totalSpendPaise.toString())}</p>
                       </div>
                     </div>
                   </div>
@@ -84,8 +84,8 @@ export function SpendAnalyticsPage() {
                     {analytics.categoryBreakdown.slice(0, 6).map((cat, i) => (
                       <div key={cat.category.label} className="flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: colors[i % colors.length] }} />
-                        <span className="text-[11px] text-paytm-text flex-1 truncate">{cat.category.label}</span>
-                        <span className="text-[10px] font-semibold text-paytm-text">{cat.percentage.toFixed(0)}%</span>
+                        <span className="text-[11px] text-primary-text flex-1 truncate">{cat.category.label}</span>
+                        <span className="text-[10px] font-semibold text-primary-text">{cat.percentage.toFixed(0)}%</span>
                       </div>
                     ))}
                   </div>
@@ -96,15 +96,15 @@ export function SpendAnalyticsPage() {
             {/* Category Breakdown List */}
             {analytics.categoryBreakdown.length > 0 && (
               <Card>
-                <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">CATEGORY DETAILS</p>
+                <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">CATEGORY DETAILS</p>
                 <div className="space-y-3">
                   {analytics.categoryBreakdown.map((cat, i) => (
                     <div key={cat.category.label}>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-base">{cat.category.icon}</span>
-                        <span className="text-xs font-medium text-paytm-text flex-1">{cat.category.label}</span>
-                        <span className="text-xs font-bold text-paytm-text">{formatPaise(cat.totalPaise.toString())}</span>
-                        <span className="text-[10px] text-paytm-muted w-10 text-right">{cat.count}x</span>
+                        <span className="text-xs font-medium text-primary-text flex-1">{cat.category.label}</span>
+                        <span className="text-xs font-bold text-primary-text">{formatPaise(cat.totalPaise.toString())}</span>
+                        <span className="text-[10px] text-primary-muted w-10 text-right">{cat.count}x</span>
                       </div>
                       <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                         <div
@@ -121,19 +121,19 @@ export function SpendAnalyticsPage() {
             {/* Top Merchants */}
             {analytics.topMerchants.length > 0 && (
               <Card>
-                <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">TOP MERCHANTS</p>
+                <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">TOP MERCHANTS</p>
                 <div className="space-y-2.5">
                   {analytics.topMerchants.map((m, i) => (
                     <div key={m.name} className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-paytm-muted w-4">{i + 1}</span>
+                      <span className="text-xs font-bold text-primary-muted w-4">{i + 1}</span>
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${m.category.bgColor}`}>
                         {m.category.icon}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-paytm-text truncate">{m.name}</p>
-                        <p className="text-[10px] text-paytm-muted">{m.count} transaction{m.count > 1 ? 's' : ''}</p>
+                        <p className="text-xs font-medium text-primary-text truncate">{m.name}</p>
+                        <p className="text-[10px] text-primary-muted">{m.count} transaction{m.count > 1 ? 's' : ''}</p>
                       </div>
-                      <p className="text-xs font-bold text-paytm-text">{formatPaise(m.totalPaise.toString())}</p>
+                      <p className="text-xs font-bold text-primary-text">{formatPaise(m.totalPaise.toString())}</p>
                     </div>
                   ))}
                 </div>
@@ -142,20 +142,20 @@ export function SpendAnalyticsPage() {
 
             {/* Daily Spend Trend */}
             <Card>
-              <p className="text-xs font-semibold text-paytm-muted mb-3 tracking-wide">DAILY SPEND (LAST 30 DAYS)</p>
+              <p className="text-xs font-semibold text-primary-muted mb-3 tracking-wide">DAILY SPEND (LAST 30 DAYS)</p>
               <div className="flex items-end gap-[2px] h-24">
                 {analytics.dailySpend.map(d => {
                   const height = maxDailySpend > 0n ? Number((d.totalPaise * 100n) / maxDailySpend) : 0;
                   return (
                     <div key={d.date} className="flex-1 flex flex-col items-center justify-end h-full group relative">
                       <div
-                        className={`w-full rounded-t-sm transition-all ${d.totalPaise > 0n ? 'bg-paytm-navy hover:bg-paytm-cyan' : 'bg-gray-100'}`}
+                        className={`w-full rounded-t-sm transition-all ${d.totalPaise > 0n ? 'bg-primary-navy hover:bg-primary-cyan' : 'bg-gray-100'}`}
                         style={{ height: `${Math.max(height, 2)}%` }}
                       />
                       {/* Tooltip on hover */}
                       {d.totalPaise > 0n && (
                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block z-10">
-                          <div className="bg-paytm-text text-white text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap">
+                          <div className="bg-primary-text text-white text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap">
                             {formatPaise(d.totalPaise.toString())}
                           </div>
                         </div>
@@ -165,8 +165,8 @@ export function SpendAnalyticsPage() {
                 })}
               </div>
               <div className="flex justify-between mt-1">
-                <span className="text-[8px] text-paytm-muted">{analytics.dailySpend[0]?.dayLabel}</span>
-                <span className="text-[8px] text-paytm-muted">Today</span>
+                <span className="text-[8px] text-primary-muted">{analytics.dailySpend[0]?.dayLabel}</span>
+                <span className="text-[8px] text-primary-muted">Today</span>
               </div>
             </Card>
 
@@ -174,8 +174,8 @@ export function SpendAnalyticsPage() {
             {analytics.categoryBreakdown.length === 0 && (
               <Card className="text-center py-8">
                 <p className="text-3xl mb-2">📊</p>
-                <p className="text-sm text-paytm-muted">No spending data for this period</p>
-                <p className="text-xs text-paytm-muted mt-1">Make some transactions to see analytics</p>
+                <p className="text-sm text-primary-muted">No spending data for this period</p>
+                <p className="text-xs text-primary-muted mt-1">Make some transactions to see analytics</p>
               </Card>
             )}
           </>

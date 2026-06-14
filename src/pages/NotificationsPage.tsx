@@ -31,7 +31,7 @@ export function NotificationsPage() {
         title="Notifications"
         rightActions={
           unreadCount > 0 ? (
-            <button onClick={markAllRead} className="text-xs font-semibold text-paytm-cyan">Mark all read</button>
+            <button onClick={markAllRead} className="text-xs font-semibold text-primary-cyan">Mark all read</button>
           ) : null
         }
       />
@@ -39,7 +39,7 @@ export function NotificationsPage() {
         {items.length === 0 ? (
           <Card className="text-center py-12">
             <p className="text-3xl mb-2">🔔</p>
-            <p className="text-sm text-paytm-muted">No notifications yet</p>
+            <p className="text-sm text-primary-muted">No notifications yet</p>
           </Card>
         ) : (
           items.map((n: Notification) => {
@@ -47,7 +47,7 @@ export function NotificationsPage() {
             return (
               <Card
                 key={n.id}
-                className={`!p-3 ${isKyc ? 'border-l-3 border-l-amber-500 bg-amber-50/40' : !n.read ? 'border-l-3 border-l-paytm-cyan' : ''}`}
+                className={`!p-3 ${isKyc ? 'border-l-3 border-l-amber-500 bg-amber-50/40' : !n.read ? 'border-l-3 border-l-primary-cyan' : ''}`}
                 onClick={() => handleTap(n)}
               >
                 <div className="flex items-start gap-3">
@@ -56,12 +56,12 @@ export function NotificationsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <p className={`text-sm ${!n.read ? 'font-semibold' : 'font-medium'} ${isKyc ? 'text-amber-800' : 'text-paytm-text'}`}>{n.title}</p>
-                      {!n.read && <span className={`w-2 h-2 ${isKyc ? 'bg-amber-500' : 'bg-paytm-cyan'} rounded-full shrink-0 mt-1.5`} />}
+                      <p className={`text-sm ${!n.read ? 'font-semibold' : 'font-medium'} ${isKyc ? 'text-amber-800' : 'text-primary-text'}`}>{n.title}</p>
+                      {!n.read && <span className={`w-2 h-2 ${isKyc ? 'bg-amber-500' : 'bg-primary-cyan'} rounded-full shrink-0 mt-1.5`} />}
                     </div>
-                    <p className="text-xs text-paytm-muted mt-0.5 leading-relaxed">{n.body}</p>
+                    <p className="text-xs text-primary-muted mt-0.5 leading-relaxed">{n.body}</p>
                     <div className="flex items-center justify-between mt-1.5">
-                      <p className="text-[10px] text-paytm-muted">{formatDate(n.createdAt)}</p>
+                      <p className="text-[10px] text-primary-muted">{formatDate(n.createdAt)}</p>
                       {isKyc ? (
                         <button
                           onClick={(e) => { e.stopPropagation(); markRead(n.id); navigate('/kyc'); }}
@@ -72,7 +72,7 @@ export function NotificationsPage() {
                       ) : n.actionLabel ? (
                         <button
                           onClick={(e) => { e.stopPropagation(); markRead(n.id); if (n.actionPath) navigate(n.actionPath); }}
-                          className="text-[11px] font-semibold text-paytm-cyan bg-paytm-cyan-light px-3 py-1 rounded-full"
+                          className="text-[11px] font-semibold text-primary-cyan bg-primary-cyan-light px-3 py-1 rounded-full"
                         >
                           {n.actionLabel}
                         </button>

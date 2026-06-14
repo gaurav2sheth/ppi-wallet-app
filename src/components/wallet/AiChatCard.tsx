@@ -227,8 +227,8 @@ export function AiChatCard() {
             </svg>
           </div>
           <div className="text-left flex-1">
-            <p className="text-sm font-semibold text-paytm-text">Ask AI anything</p>
-            <p className="text-[11px] text-paytm-muted">Check balance, transactions, spending insights...</p>
+            <p className="text-sm font-semibold text-primary-text">Ask AI anything</p>
+            <p className="text-[11px] text-primary-muted">Check balance, transactions, spending insights...</p>
           </div>
           <svg width="16" height="16" fill="none" stroke="#707070" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
         </button>
@@ -277,12 +277,12 @@ export function AiChatCard() {
       <div className="max-h-64 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50/50">
         {messages.length === 0 && (
           <div className="space-y-2">
-            <p className="text-[11px] text-paytm-muted text-center">Try one of these questions:</p>
+            <p className="text-[11px] text-primary-muted text-center">Try one of these questions:</p>
             {SUGGESTED_QUESTIONS.map(q => (
               <button
                 key={q}
                 onClick={() => sendMessage(q)}
-                className="w-full text-left px-3 py-2 rounded-lg bg-white border border-gray-100 text-xs text-paytm-text hover:border-violet-300 hover:bg-violet-50 transition"
+                className="w-full text-left px-3 py-2 rounded-lg bg-white border border-gray-100 text-xs text-primary-text hover:border-violet-300 hover:bg-violet-50 transition"
               >
                 {q}
               </button>
@@ -296,7 +296,7 @@ export function AiChatCard() {
               <div className={`px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-line ${
                 msg.role === 'user'
                   ? 'bg-violet-500 text-white rounded-br-sm'
-                  : 'bg-white border border-gray-100 text-paytm-text rounded-bl-sm'
+                  : 'bg-white border border-gray-100 text-primary-text rounded-bl-sm'
               }`}>
                 {msg.text}
               </div>
@@ -326,7 +326,7 @@ export function AiChatCard() {
           <div className="flex justify-start">
             <div className="bg-white border border-gray-100 px-3 py-2 rounded-xl rounded-bl-sm flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-violet-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-[11px] text-paytm-muted">Investigating...</span>
+              <span className="text-[11px] text-primary-muted">Investigating...</span>
             </div>
           </div>
         )}
@@ -370,7 +370,7 @@ export function AiChatCard() {
       </div>
 
       <div className="px-4 pb-2 flex items-center justify-between">
-        <span className="text-[9px] text-paytm-muted">Powered by Claude AI</span>
+        <span className="text-[9px] text-primary-muted">Powered by Claude AI</span>
         <button
           onClick={() => navigate('/support/tickets')}
           className="text-[9px] font-medium text-violet-600 hover:text-violet-800 transition"

@@ -764,8 +764,8 @@ export const mockApi = {
     const sagaId = uuidv4();
 
     // Sync to admin dashboard
-    const walletId = localStorage.getItem('ppsl_wallet_id') ?? DEMO_WALLET_ID;
-    const userName = localStorage.getItem('ppsl_user_name') ?? 'Demo User';
+    const walletId = localStorage.getItem('wallet_id') ?? DEMO_WALLET_ID;
+    const userName = localStorage.getItem('user_name') ?? 'Demo User';
     syncTransaction({
       saga_id: sagaId,
       wallet_id: walletId,
