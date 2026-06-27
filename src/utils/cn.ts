@@ -1,2 +1,3 @@
-// Re-export from shared utils package
-export * from '../../../../packages/utils/cn';
+export function cn(...classes: (string | false | undefined | null)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
