@@ -458,7 +458,7 @@ export function SubWalletDetailPage() {
           {!isFastag && (
             <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between">
               <span className="text-xs text-primary-muted">Loaded by</span>
-              <span className="text-xs font-medium text-primary-text">{wallet.loaded_by === 'employer_001' ? 'Paytm' : wallet.loaded_by === 'self' ? 'Self' : wallet.loaded_by}</span>
+              <span className="text-xs font-medium text-primary-text">{wallet.loaded_by === 'employer_001' ? 'Employer' : wallet.loaded_by === 'self' ? 'Self' : wallet.loaded_by}</span>
             </div>
           )}
         </Card>

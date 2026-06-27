@@ -124,7 +124,7 @@ export function WalletStatementPage() {
         <Button fullWidth onClick={handleConfirm}>Confirm</Button>
 
         {/* Footer */}
-        <p className="text-center text-[10px] text-primary-muted pb-2">Powered by Paytm</p>
+        <p className="text-center text-[10px] text-primary-muted pb-2">PPI Wallet</p>
       </div>
     </div>
   );

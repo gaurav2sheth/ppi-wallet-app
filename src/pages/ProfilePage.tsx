@@ -91,7 +91,7 @@ export function ProfilePage() {
         {/* Logout */}
         <Button fullWidth variant="danger" onClick={handleLogout}>Logout</Button>
 
-        <p className="text-center text-[10px] text-primary-muted pb-4">Paytm PPI Wallet v1.0.0</p>
+        <p className="text-center text-[10px] text-primary-muted pb-4">PPI Wallet v1.0.0</p>
       </div>
     </div>
   );
